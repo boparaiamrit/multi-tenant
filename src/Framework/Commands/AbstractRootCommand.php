@@ -17,8 +17,8 @@ abstract class AbstractRootCommand extends Command implements SelfHandling, Shou
         parent::__construct();
 
         // set the queue if specified in the configuration file
-        if (is_null($this->queue) && config('multi-tenant.queue.root')) {
-            $this->onQueue(config('multi-tenant.queue.root'));
+        if (is_null($this->queue) && config('multitenant.queue.root')) {
+            $this->onQueue(config('multitenant.queue.root'));
         }
     }
 }

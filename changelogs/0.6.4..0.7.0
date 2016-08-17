@@ -3,7 +3,7 @@
 * a8cbc2b version constraint added
 *   2e7770f fixed merge for hyn namespace move
 |\
-| *   cbee907 Merge branch 'master' of git://github.com/laraflock/multi-tenant
+| *   cbee907 Merge branch 'master' of git://github.com/laraflock/multitenant
 | |\
 | * | ff30b8f moving to hyn namespace for all depending packages
 * | | ffade46 moved dependancies in composer to hyn as well

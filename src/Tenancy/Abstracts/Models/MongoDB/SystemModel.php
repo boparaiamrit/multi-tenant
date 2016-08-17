@@ -1,8 +1,8 @@
 <?php
 
-namespace Hyn\Tenancy\Abstracts\Models;
+namespace Hyn\Tenancy\Abstracts\Models\MongoDB;
 
-use Hyn\Framework\Models\AbstractModel;
+use Hyn\Framework\Models\MongoDB\AbstractModel;
 use Hyn\Tenancy\Tenant\DatabaseConnection;
 
 class SystemModel extends AbstractModel

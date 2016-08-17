@@ -3,7 +3,7 @@
 namespace Hyn\Tenancy\Models;
 
 use Carbon\Carbon;
-use Hyn\Tenancy\Abstracts\Models\SystemModel;
+use Hyn\Tenancy\Abstracts\Models\MySQL\SystemModel;
 use Hyn\Webserver\Models\SslCertificate;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;

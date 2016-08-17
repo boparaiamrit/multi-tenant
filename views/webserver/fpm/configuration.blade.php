@@ -9,12 +9,12 @@
 [{{ $website->id }}-{{ $website->present()->urlName }}]
 
 ;# listening for nginx proxying
-listen=/var/run/php5-fpm.hyn-{{ $config['port'] + $website->id }}.sock
+listen=/run/php/php7.0-fpm.hyn-{{ $config['port'] + $website->id }}.sock
 listen.allowed_clients=127.0.0.1
 
 
 ;# user under which the application runs
-user={{ $website->websiteUser }}
+user={{ $user }}
 
 ;# group under which the application runs
 group={{ config('webserver.group', 'users') }}

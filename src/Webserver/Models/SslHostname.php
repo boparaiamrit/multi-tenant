@@ -2,7 +2,7 @@
 
 namespace Hyn\Webserver\Models;
 
-use Hyn\Tenancy\Abstracts\Models\SystemModel;
+use Hyn\Tenancy\Abstracts\Models\MySQL\SystemModel;
 use Laracasts\Presenter\PresentableTrait;
 
 class SslHostname extends SystemModel

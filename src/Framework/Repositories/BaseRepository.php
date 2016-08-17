@@ -3,7 +3,7 @@
 namespace Hyn\Framework\Repositories;
 
 use Closure;
-use Hyn\Framework\Models\AbstractModel;
+use Hyn\Framework\Models\MySQL\AbstractModel;
 use Input;
 
 abstract class BaseRepository

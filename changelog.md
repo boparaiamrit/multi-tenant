@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `hyn/multi-tenant` will be documented in this file.
+All notable changes to `hyn/multitenant` will be documented in this file.
 
 ---
 
@@ -57,7 +57,7 @@ All notable changes to `hyn/multi-tenant` will be documented in this file.
 
 ### 0.8.0
 
-- Moved from Laraflock to Hyn namespace for main multi-tenant package. Require dependency by using `hyn/multi-tenant`.
+- Moved from Laraflock to Hyn namespace for main multitenant package. Require dependency by using `hyn/multitenant`.
 
 ### 0.7.5
 

@@ -39,7 +39,7 @@ class TenancySetupTest extends TestCase
             'Class FrameworkServiceProvider does not exist'
         );
         $this->assertNotFalse(
-            $this->app->make('hyn.package.multi-tenant'),
+            $this->app->make('hyn.package.multitenant'),
             'packages are not loaded through FrameworkServiceProvider'
         );
 
@@ -49,7 +49,7 @@ class TenancySetupTest extends TestCase
         );
         $this->assertTrue($this->app->isBooted());
 
-        $this->assertNotFalse($this->app->make('hyn.package.multi-tenant'));
+        $this->assertNotFalse($this->app->make('hyn.package.multitenant'));
     }
 
     /**
@@ -72,7 +72,7 @@ class TenancySetupTest extends TestCase
         $this->assertEquals(
             0,
             $this->artisan(
-                'multi-tenant:setup',
+                'multitenant:setup',
                 [
                     '--customer'  => 'example',
                     // configured in travis as primary hostname

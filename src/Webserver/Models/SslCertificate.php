@@ -4,7 +4,7 @@ namespace Hyn\Webserver\Models;
 
 use Cache;
 use Config;
-use Hyn\Tenancy\Abstracts\Models\SystemModel;
+use Hyn\Tenancy\Abstracts\Models\MySQL\SystemModel;
 use Hyn\Tenancy\Models\Customer;
 use Hyn\Webserver\Tools\CertificateParser;
 use Laracasts\Presenter\PresentableTrait;
@@ -87,7 +87,7 @@ class SslCertificate extends SystemModel
      */
     public function publishPath($postfix = 'key')
     {
-        return sprintf('%s/%s/certificate.%s', Config::get('webserver.ssl.path'), $this->id, $postfix);
+        return sprintf('%s/%s/certificate.%s', config('webserver.ssl.path'), $this->id, $postfix);
     }
 
     /**

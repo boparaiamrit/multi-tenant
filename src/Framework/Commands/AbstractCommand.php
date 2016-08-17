@@ -17,8 +17,8 @@ abstract class AbstractCommand extends Command implements SelfHandling, ShouldQu
         parent::__construct();
 
         // set the queue if specified in the configuration file
-        if (is_null($this->queue) && config('multi-tenant.queue.other')) {
-            $this->onQueue(config('multi-tenant.queue.other'));
+        if (is_null($this->queue) && config('multitenant.queue.other')) {
+            $this->onQueue(config('multitenant.queue.other'));
         }
     }
 }

@@ -40,7 +40,7 @@
         AddType application/x-httpd-fastphp5 .php
         Action application/x-httpd-fastphp5 /php5-fcgi
         Alias /php5-fcgi /usr/lib/cgi-bin/php5-fcgi
-        FastCgiExternalServer /usr/lib/cgi-bin/php5-fcgi -socket /var/run/php5-fpm.hyn-{{ $fpm_port + $website->id }}.sock -pass-header Authorization
+        FastCgiExternalServer /usr/lib/cgi-bin/php5-fcgi -socket /var/run/php/php7.0-fpm.hyn-{{ $fpm_port + $website->id }}.sock -pass-header Authorization
         <Directory /usr/lib/cgi-bin>
         Require all granted
         </Directory>

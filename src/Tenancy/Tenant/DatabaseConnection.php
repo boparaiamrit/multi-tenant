@@ -15,13 +15,13 @@ use Hyn\Tenancy\Models\Website;
 class DatabaseConnection
 {
     /**
-     * See the multi-tenant configuration file. Configuration set
+     * See the multitenant configuration file. Configuration set
      * to use separate databases.
      */
     const TENANT_MODE_SEPARATE_DATABASE = 'database';
 
     /**
-     * See the multi-tenant configuration file. Configuration set
+     * See the multitenant configuration file. Configuration set
      * to use prefixed table in same database.
      */
     const TENANT_MODE_TABLE_PREFIX = 'prefix';
@@ -70,16 +70,16 @@ class DatabaseConnection
      */
     protected function config()
     {
-        $clone = Config::get(sprintf('database.connections.%s', static::systemConnectionName()));
+        $clone = config(sprintf('database.connections.%s', static::systemConnectionName()));
 
-        if (Config::get('multi-tenant.db.tenant-division-mode') == static::TENANT_MODE_SEPARATE_DATABASE) {
-            $clone['password'] = md5(Config::get('app.key') . $this->website->id);
+        if (config('multitenant.db.tenant-division-mode') == static::TENANT_MODE_SEPARATE_DATABASE) {
+            $clone['password'] = md5(config('app.key') . $this->website->id);
             $clone['username'] = $clone['database'] = sprintf('%d-%s', $this->website->id,
                 $this->website->present()->identifier);
-        } elseif (Config::get('multi-tenant.db.tenant-division-mode') == static::TENANT_MODE_TABLE_PREFIX) {
+        } elseif (config('multitenant.db.tenant-division-mode') == static::TENANT_MODE_TABLE_PREFIX) {
             $clone['prefix'] = sprintf('t%d_', $this->website->id);
         } else {
-            throw new TenantDatabaseException('Unknown database division mode configured in the multi-tenant configuration file.');
+            throw new TenantDatabaseException('Unknown database division mode configured in the multitenant configuration file.');
         }
 
         return $clone;
@@ -92,7 +92,7 @@ class DatabaseConnection
      */
     public static function systemConnectionName()
     {
-        return Config::get('multi-tenant.db.system-connection-name', 'hyn');
+        return config('multitenant.db.system-connection-name', 'hyn');
     }
 
     /**
@@ -132,7 +132,7 @@ class DatabaseConnection
      */
     public static function tenantConnectionName()
     {
-        return Config::get('multi-tenant.db.tenant-connection-name', 'tenant');
+        return config('multitenant.db.tenant-connection-name', 'tenant');
     }
 
     /**
@@ -155,7 +155,7 @@ class DatabaseConnection
      */
     public function create()
     {
-        if (Config::get('multi-tenant.db.tenant-division-mode') != static::TENANT_MODE_SEPARATE_DATABASE) {
+        if (config('multitenant.db.tenant-division-mode') != static::TENANT_MODE_SEPARATE_DATABASE) {
             return;
         }
 
@@ -180,7 +180,7 @@ class DatabaseConnection
      */
     public function delete()
     {
-        if (Config::get('multi-tenant.db.tenant-division-mode') != static::TENANT_MODE_SEPARATE_DATABASE) {
+        if (config('multitenant.db.tenant-division-mode') != static::TENANT_MODE_SEPARATE_DATABASE) {
             return;
         }
 

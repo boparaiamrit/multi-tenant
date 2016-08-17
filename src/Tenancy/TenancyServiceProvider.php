@@ -22,6 +22,9 @@ use Illuminate\Database\MigrationServiceProvider;
 use Illuminate\Database\SeedServiceProvider;
 use Illuminate\Support\ServiceProvider;
 
+/**
+ * @property  commands
+ */
 class TenancyServiceProvider extends ServiceProvider
 {
     /**
@@ -36,8 +39,8 @@ class TenancyServiceProvider extends ServiceProvider
         /*
          * Set configuration variables
          */
-        $this->mergeConfigFrom(__DIR__ . '/../../config/multi-tenant.php', 'multi-tenant');
-        $this->publishes([__DIR__ . '/../../config/multi-tenant.php' => config_path('multi-tenant.php')], 'multi-tenant-config');
+        $this->mergeConfigFrom(__DIR__ . '/../../config/multitenant.php', 'multitenant');
+        $this->publishes([__DIR__ . '/../../config/multitenant.php' => config_path('multitenant.php')], 'multitenant-config');
         /*
          * Publish migrations
          */
@@ -51,7 +54,7 @@ class TenancyServiceProvider extends ServiceProvider
         /*
          * Register middleware to detect hostname and redirect if required
          */
-        if (config('multi-tenant.hostname-detection-middleware')) {
+        if (config('multitenant.hostname-detection-middleware')) {
             $this->app->make(Kernel::class)
                 ->prependMiddleware(HostnameMiddleware::class);
         }
@@ -86,7 +89,7 @@ class TenancyServiceProvider extends ServiceProvider
     /**
      * Register all of the migration commands.
      *
-     * @param $app
+     * @param Application $app
      */
     protected function registerCommands($app)
     {
@@ -116,6 +119,7 @@ class TenancyServiceProvider extends ServiceProvider
          * Bind setup command into ioc
          */
         $this->app->bind(SetupCommand::class, function ($app) {
+			/** @var Application $app */
             return new SetupCommand(
                 $app->make(HostnameRepositoryContract::class),
                 $app->make(WebsiteRepositoryContract::class),

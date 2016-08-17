@@ -19,13 +19,13 @@ class SetupCommand extends Command
     /**
      * @var string
      */
-    protected $signature = 'multi-tenant:setup
+    protected $signature = 'multitenant:setup
         {--customer= : Name of the first customer}
         {--email= : Email address of the first customer}
         {--hostname= : Domain- or hostname for the first customer website}
         {--webserver= : Hook into webserver (nginx|apache|no)}
         {--identifier= : Website identifier}
-        {--tenant-config= : Location of a preset of configuration items to use for multi-tenant.php}';
+        {--tenant-config= : Location of a preset of configuration items to use for multitenant.php}';
 
     /**
      * @var string
@@ -114,12 +114,12 @@ class SetupCommand extends Command
 
         // Give the user a chance to change the config or check whether it's been provided as option.
         if (null !== $tenantConfig && File::exists($tenantConfig)) {
-            File::copy($tenantConfig, config_path('multi-tenant.php'));
+            File::copy($tenantConfig, config_path('multitenant.php'));
         } elseif (null !== $tenantConfig) {
             $this->error("Ignored $tenantConfig, it does not exist");
         } else {
             $this->confirm(
-                "You are now able to edit the published multi-tenant.php configuration file before continuing. Ready?",
+                "You are now able to edit the published multitenant.php configuration file before continuing. Ready?",
                 true
             );
         }
@@ -136,7 +136,7 @@ class SetupCommand extends Command
             $this->runMigrations();
         }
 
-        $tenantDirectory = config('multi-tenant.tenant-directory') ? config('multi-tenant.tenant-directory') : storage_path('multi-tenant');
+        $tenantDirectory = config('multitenant.tenant-directory') ? config('multitenant.tenant-directory') : storage_path('multitenant');
 
         if (! File::isDirectory($tenantDirectory) && File::makeDirectory($tenantDirectory, 0755, true)) {
             $this->comment("The directory to hold your tenant websites has been created under {$tenantDirectory}.");

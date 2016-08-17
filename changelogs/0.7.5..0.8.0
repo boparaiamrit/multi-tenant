@@ -12,7 +12,7 @@
 * 42d20d7 fixed spacing
 * 6fe30b3 updated phpdoc
 * 7dff9ea fixed formatting
-*   e11e92d Merge branch 'master' of github.com:laraflock/multi-tenant
+*   e11e92d Merge branch 'master' of github.com:laraflock/multitenant
 |\
 | * c1c64d3 Update CHANGELOG.md
 * 9f11191 middleware now configurable

@@ -17,9 +17,9 @@ class Nginx extends AbstractFileGenerator
         return view('webserver::nginx.configuration', [
             'website'     => $this->website,
             'public_path' => public_path(),
-            'log_path'    => Config::get('webserver.log.path')."/nginx-{$this->website->id}-{$this->website->identifier}",
-            'config'      => Config::get('webserver.nginx'),
-            'fpm_port'    => Config::get('webserver.fpm.port'),
+            'log_path'    => config('webserver.log.path')."/nginx-{$this->website->id}-{$this->website->identifier}",
+            'config'      => config('webserver.nginx'),
+            'fpm_port'    => config('webserver.fpm.port'),
         ]);
     }
 
@@ -30,6 +30,6 @@ class Nginx extends AbstractFileGenerator
      */
     protected function publishPath()
     {
-        return sprintf('%s%s.conf', Config::get('webserver.nginx.path'), $this->name());
+        return sprintf('%s%s.conf', config('webserver.nginx.path'), $this->name());
     }
 }

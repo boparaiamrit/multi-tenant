@@ -1,11 +1,11 @@
 * 33c1fe4 lock is not required for packages
 * de9fb67 lock is required; also remove user specific files fixes #52
-*   1af5238 Merge branch 'master' of github.com:hyn/multi-tenant
+*   1af5238 Merge branch 'master' of github.com:hyn/multitenant
 |\
 | * b2b62aa Update readme.md
 * | 0a2884b fixed incorrectly documented default path for tenants, fixed publishing tenant configuration
 |/
-*   d94614b Merge branch 'master' of github.com:hyn/multi-tenant
+*   d94614b Merge branch 'master' of github.com:hyn/multitenant
 |\
 | *   a20bf2c Merge pull request #51 from hyn/analysis-86yalz
 | |\
@@ -15,7 +15,7 @@
 |/
 * 631db6e formatting and removed double exists check
 * 09b3a9c currently supporting only laravel 5.1 LTS
-*   b9c085f Merge branch 'master' of github.com:hyn/multi-tenant
+*   b9c085f Merge branch 'master' of github.com:hyn/multitenant
 |\
 | * 1dfe503 getHttpHost gives port too
 | * 0fa86c8 Update license.md

@@ -51,7 +51,7 @@ class Directory implements DirectoryContract
 
         if ($this->website->isDirty('identifier')) {
             $this->old_path = sprintf('%s/%d-%s/',
-                config('multi-tenant.tenant-directory') ? config('multi-tenant.tenant-directory') : storage_path('multi-tenant'),
+                config('multitenant.tenant-directory') ? config('multitenant.tenant-directory') : storage_path('multitenant'),
                 $this->website->id,
                 $this->website->getOriginal('identifier'));
             if (!File::isDirectory($this->old_path)) {
@@ -60,7 +60,7 @@ class Directory implements DirectoryContract
         }
 
         $this->base_path = sprintf('%s/%d-%s/',
-            config('multi-tenant.tenant-directory') ? config('multi-tenant.tenant-directory') : storage_path('multi-tenant'),
+            config('multitenant.tenant-directory') ? config('multitenant.tenant-directory') : storage_path('multitenant'),
             $this->website->id,
             $this->website->identifier);
     }
@@ -137,7 +137,7 @@ class Directory implements DirectoryContract
      */
     protected function disallowed($type)
     {
-        return config('multi-tenant.disallow-for-tenant.' . $type, false);
+        return config('multitenant.disallow-for-tenant.' . $type, false);
     }
 
     /**

@@ -17,10 +17,10 @@ class Apache extends AbstractFileGenerator
         return view('webserver::apache.configuration', [
             'website'     => $this->website,
             'public_path' => public_path(),
-            'log_path'    => Config::get('webserver.log.path')."/apache-{$this->website->id}-{$this->website->identifier}",
+            'log_path'    => config('webserver.log.path')."/apache-{$this->website->id}-{$this->website->identifier}",
             'base_path'   => base_path(),
-            'config'      => Config::get('webserver.apache'),
-            'fpm_port'    => Config::get('webserver.fpm.port'),
+            'config'      => config('webserver.apache'),
+            'fpm_port'    => config('webserver.fpm.port'),
         ]);
     }
 
@@ -31,6 +31,6 @@ class Apache extends AbstractFileGenerator
      */
     protected function publishPath()
     {
-        return sprintf('%s%s.conf', Config::get('webserver.apache.path'), $this->name());
+        return sprintf('%s%s.conf', config('webserver.apache.path'), $this->name());
     }
 }

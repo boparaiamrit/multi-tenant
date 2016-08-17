@@ -29,7 +29,7 @@ class TestCase extends IlluminateTestCase
 
         $app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
 
-        Config::set('database.connections.hyn', Config::get('database.connections.mysql'));
+        Config::set('database.connections.hyn', config('database.connections.mysql'));
 
         // register framework service provider and all dependencies
         $provider = $app->register(FrameworkServiceProvider::class);

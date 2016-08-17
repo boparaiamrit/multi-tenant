@@ -35,7 +35,7 @@ class TenancyEnvironment
 
         // sets file access to as wide as possible, ignoring server masks
         umask(0);
-
+		
         // bind tenancy environment into IOC
         $this->setupBinds();
 

@@ -1,11 +1,11 @@
 # Multi tenancy
 
-[![Latest Stable Version](https://poser.pugx.org/hyn/multi-tenant/v/stable?format=flat-square)](https://packagist.org/packages/hyn/multi-tenant)
-[![License](https://poser.pugx.org/hyn/multi-tenant/license?format=flat-square)](https://packagist.org/packages/hyn/multi-tenant)
-[![Build Status](https://img.shields.io/travis/hyn/multi-tenant/2.x.svg?maxAge=2592000&style=flat-square)](https://travis-ci.org/hyn/multi-tenant)
-[![Code Coverage](https://img.shields.io/codecov/c/github/hyn/multi-tenant/2.x.svg?maxAge=2592000&style=flat-square)](https://codecov.io/github/hyn/multi-tenant)
+[![Latest Stable Version](https://poser.pugx.org/hyn/multitenant/v/stable?format=flat-square)](https://packagist.org/packages/hyn/multitenant)
+[![License](https://poser.pugx.org/hyn/multitenant/license?format=flat-square)](https://packagist.org/packages/hyn/multitenant)
+[![Build Status](https://img.shields.io/travis/hyn/multitenant/2.x.svg?maxAge=2592000&style=flat-square)](https://travis-ci.org/hyn/multitenant)
+[![Code Coverage](https://img.shields.io/codecov/c/github/hyn/multitenant/2.x.svg?maxAge=2592000&style=flat-square)](https://codecov.io/github/hyn/multitenant)
 [![StyleCI](https://styleci.io/repos/39585488/shield)](https://styleci.io/repos/39585488)
-[![Reference Status](https://www.versioneye.com/php/hyn:multi-tenant/reference_badge.svg?style=flat)](https://www.versioneye.com/php/hyn:multi-tenant/references)
+[![Reference Status](https://www.versioneye.com/php/hyn:multitenant/reference_badge.svg?style=flat)](https://www.versioneye.com/php/hyn:multitenant/references)
 [![SensioLabsInsight](https://img.shields.io/sensiolabs/i/f8241f3b-ab7b-4a58-9123-488c13560887.svg?maxAge=2592000&style=flat-square)](https://insight.sensiolabs.com/projects/f8241f3b-ab7b-4a58-9123-488c13560887)
 [![Awesome Laravel](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/chiraggude/awesome-laravel)
 
@@ -56,7 +56,7 @@ One website running on the multi tenant installation of [hyn.me][1] is [dummy.hy
 ## Chat or critical bug
 
 - For priority bug reports, please contact me directly on [gitter.im/luceos][6].
-- The package chat can be found at [gitter.im/hyn/multi-tenant][8].
+- The package chat can be found at [gitter.im/hyn/multitenant][8].
 - A support forum will be made available in the future.
 
 ## Q&A
@@ -65,9 +65,9 @@ One website running on the multi tenant installation of [hyn.me][1] is [dummy.hy
 
 
 [1]: https://hyn.me
-[2]: https://hyn.me/packages/multi-tenant
-[3]: https://github.com/hyn/multi-tenant
-[5]: https://github.com/hyn/multi-tenant/issues
+[2]: https://hyn.me/packages/multitenant
+[3]: https://github.com/hyn/multitenant
+[5]: https://github.com/hyn/multitenant/issues
 [6]: https://gitter.im/luceos
 [7]: https://hyn.readme.io
-[8]: https://gitter.im/hyn/multi-tenant
+[8]: https://gitter.im/hyn/multitenant
