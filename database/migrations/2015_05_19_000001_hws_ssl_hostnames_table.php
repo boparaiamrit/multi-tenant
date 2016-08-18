@@ -1,6 +1,6 @@
 <?php
 
-use Hyn\Tenancy\Tenant\DatabaseConnection;
+use Hyn\Tenancy\Tenant\Database\MySQLConnection;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
@@ -13,8 +13,8 @@ class HwsSslHostnamesTable extends Migration
      */
     public function up()
     {
-        if (!Schema::connection(DatabaseConnection::systemConnectionName())->hasTable('ssl_hostnames')) {
-            Schema::connection(DatabaseConnection::systemConnectionName())->create('ssl_hostnames',
+        if (!Schema::connection(MySQLConnection::systemConnectionName())->hasTable('ssl_hostnames')) {
+            Schema::connection(MySQLConnection::systemConnectionName())->create('ssl_hostnames',
                 function (Blueprint $table) {
                     $table->bigIncrements('id');
                     // certificate id
@@ -46,8 +46,8 @@ class HwsSslHostnamesTable extends Migration
      */
     public function down()
     {
-        if (!Schema::connection(DatabaseConnection::systemConnectionName())->hasTable('ssl_hostnames')) {
-            Schema::connection(DatabaseConnection::systemConnectionName())->dropIfExists('ssl_hostnames');
+        if (!Schema::connection(MySQLConnection::systemConnectionName())->hasTable('ssl_hostnames')) {
+            Schema::connection(MySQLConnection::systemConnectionName())->dropIfExists('ssl_hostnames');
         }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-use Hyn\Tenancy\Tenant\DatabaseConnection;
+use Hyn\Tenancy\Tenant\Database\MySQLConnection;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
@@ -13,7 +13,7 @@ class HwsSslLetsEncryptRequestsTable extends Migration
      */
     public function up()
     {
-        Schema::connection(DatabaseConnection::systemConnectionName())->create('ssl_lets_encrypt_requests', function (Blueprint $table) {
+        Schema::connection(MySQLConnection::systemConnectionName())->create('ssl_lets_encrypt_requests', function (Blueprint $table) {
             $table->bigIncrements('id');
             // domain relation
             $table->bigInteger('hostname_id')->unsigned();
@@ -44,6 +44,6 @@ class HwsSslLetsEncryptRequestsTable extends Migration
      */
     public function down()
     {
-        Schema::connection(DatabaseConnection::systemConnectionName())->dropIfExists('ssl_lets_encrypt_requests');
+        Schema::connection(MySQLConnection::systemConnectionName())->dropIfExists('ssl_lets_encrypt_requests');
     }
 }

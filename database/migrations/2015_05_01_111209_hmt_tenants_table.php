@@ -1,6 +1,6 @@
 <?php
 
-use Hyn\Tenancy\Tenant\DatabaseConnection;
+use Hyn\Tenancy\Tenant\Database\MySQLConnection;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,8 +14,8 @@ class HmtTenantsTable extends Migration
      */
     public function up()
     {
-        if (!Schema::connection(DatabaseConnection::systemConnectionName())->hasTable('tenants')) {
-            Schema::connection(DatabaseConnection::systemConnectionName())->create(
+        if (!Schema::connection(MySQLConnection::systemConnectionName())->hasTable('tenants')) {
+            Schema::connection(MySQLConnection::systemConnectionName())->create(
                 'tenants',
                 function (Blueprint $table) {
                     $table->bigIncrements('id');
@@ -46,8 +46,8 @@ class HmtTenantsTable extends Migration
      */
     public function down()
     {
-        if (Schema::connection(DatabaseConnection::systemConnectionName())->hasTable('tenants')) {
-            Schema::connection(DatabaseConnection::systemConnectionName())->dropIfExists('tenants');
+        if (Schema::connection(MySQLConnection::systemConnectionName())->hasTable('tenants')) {
+            Schema::connection(MySQLConnection::systemConnectionName())->dropIfExists('tenants');
         }
     }
 }

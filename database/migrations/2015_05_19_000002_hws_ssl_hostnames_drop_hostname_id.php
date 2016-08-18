@@ -1,6 +1,6 @@
 <?php
 
-use Hyn\Tenancy\Tenant\DatabaseConnection;
+use Hyn\Tenancy\Tenant\Database\MySQLConnection;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
@@ -13,7 +13,7 @@ class HwsSslHostnamesDropHostnameId extends Migration
      */
     public function up()
     {
-        Schema::connection(DatabaseConnection::systemConnectionName())->table('ssl_hostnames', function (Blueprint $table) {
+        Schema::connection(MySQLConnection::systemConnectionName())->table('ssl_hostnames', function (Blueprint $table) {
             // domain relation
             $table->dropColumn('hostname_id');
         });
@@ -26,7 +26,7 @@ class HwsSslHostnamesDropHostnameId extends Migration
      */
     public function down()
     {
-        Schema::connection(DatabaseConnection::systemConnectionName())->table('ssl_hostnames', function (Blueprint $table) {
+        Schema::connection(MySQLConnection::systemConnectionName())->table('ssl_hostnames', function (Blueprint $table) {
             // domain relation
             $table->bigInteger('hostname_id')->unsigned();
         });

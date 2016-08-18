@@ -1,6 +1,6 @@
 <?php
 
-use Hyn\Tenancy\Tenant\DatabaseConnection;
+use Hyn\Tenancy\Tenant\Database\MySQLConnection;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,8 +14,8 @@ class HmtHostnamesTable extends Migration
      */
     public function up()
     {
-        if (!Schema::connection(DatabaseConnection::systemConnectionName())->hasTable('hostnames')) {
-            Schema::connection(DatabaseConnection::systemConnectionName())->create(
+        if (!Schema::connection(MySQLConnection::systemConnectionName())->hasTable('hostnames')) {
+            Schema::connection(MySQLConnection::systemConnectionName())->create(
                 'hostnames',
                 function (Blueprint $table) {
                     $table->bigIncrements('id');
@@ -58,8 +58,8 @@ class HmtHostnamesTable extends Migration
      */
     public function down()
     {
-        if (Schema::connection(DatabaseConnection::systemConnectionName())->hasTable('hostnames')) {
-            Schema::connection(DatabaseConnection::systemConnectionName())->dropIfExists('hostnames');
+        if (Schema::connection(MySQLConnection::systemConnectionName())->hasTable('hostnames')) {
+            Schema::connection(MySQLConnection::systemConnectionName())->dropIfExists('hostnames');
         }
     }
 }

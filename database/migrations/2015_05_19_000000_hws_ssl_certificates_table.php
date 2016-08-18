@@ -1,6 +1,6 @@
 <?php
 
-use Hyn\Tenancy\Tenant\DatabaseConnection;
+use Hyn\Tenancy\Tenant\Database\MySQLConnection;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
@@ -13,8 +13,8 @@ class HwsSslCertificatesTable extends Migration
      */
     public function up()
     {
-        if (!Schema::connection(DatabaseConnection::systemConnectionName())->hasTable('ssl_certificates')) {
-            Schema::connection(DatabaseConnection::systemConnectionName())->create('ssl_certificates',
+        if (!Schema::connection(MySQLConnection::systemConnectionName())->hasTable('ssl_certificates')) {
+            Schema::connection(MySQLConnection::systemConnectionName())->create('ssl_certificates',
                 function (Blueprint $table) {
                     $table->bigIncrements('id');
                     // tenant owner
@@ -53,8 +53,8 @@ class HwsSslCertificatesTable extends Migration
      */
     public function down()
     {
-        if (Schema::connection(DatabaseConnection::systemConnectionName())->hasTable('ssl_certificates')) {
-            Schema::connection(DatabaseConnection::systemConnectionName())->dropIfExists('ssl_certificates');
+        if (Schema::connection(MySQLConnection::systemConnectionName())->hasTable('ssl_certificates')) {
+            Schema::connection(MySQLConnection::systemConnectionName())->dropIfExists('ssl_certificates');
         }
     }
 }

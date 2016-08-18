@@ -12,7 +12,7 @@ use Hyn\Tenancy\Contracts\WebsiteRepositoryContract;
 use Hyn\Tenancy\Models\Customer;
 use Hyn\Tenancy\Models\Hostname;
 use Hyn\Tenancy\Models\Website;
-use Hyn\Tenancy\Tenant\DatabaseConnection;
+use Hyn\Tenancy\Tenant\Database\MySQLConnection;
 use Hyn\Webserver\Helpers\ServerConfigurationHelper;
 use Illuminate\Console\Command;
 
@@ -216,7 +216,7 @@ class SetupCommand extends Command
 	protected function runMigrations()
 	{
 		$this->call('migrate', [
-			'--database' => DatabaseConnection::systemConnectionName(),
+			'--database' => MySQLConnection::systemConnectionName(),
 			'-n',
 		]);
 	}

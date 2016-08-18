@@ -49,7 +49,7 @@ class TenancyEnvironment
 
         // sets the database connection for the tenant website
         if (! is_null($this->website)) {
-            $this->website->database->setCurrent();
+            $this->website->mongodb->setCurrent();
         }
 
         // register tenant IOC bindings

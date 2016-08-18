@@ -5,7 +5,6 @@ namespace Hyn\Framework\Models\MySQL;
 
 use Illuminate\Database\Eloquent\Model;
 use ReflectionClass;
-use Request;
 
 class AbstractModel extends Model
 {
@@ -63,7 +62,7 @@ class AbstractModel extends Model
 	 */
 	public function getClassNameAttribute()
 	{
-		return get_called_class($this);
+		return get_called_class();
 	}
 	
 	/**
@@ -71,6 +70,7 @@ class AbstractModel extends Model
 	 */
 	public function getEasyClassNameAttribute()
 	{
+		/** @noinspection PhpUndefinedFieldInspection */
 		return snake_case($this->classNameReflections['short_name']);
 	}
 	
@@ -83,7 +83,7 @@ class AbstractModel extends Model
 	{
 		return
 			!\App::runningInConsole() &&
-			(env('HYN_READ_ONLY') && !in_array(Request::ip(), explode(',', env('HYN_READ_ONLY_WHITELIST'))));
+			(env('HYN_READ_ONLY') && !in_array(request()->ip(), explode(',', env('HYN_READ_ONLY_WHITELIST'))));
 	}
 	
 	/**

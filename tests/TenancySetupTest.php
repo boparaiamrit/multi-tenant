@@ -10,7 +10,7 @@ use Hyn\Tenancy\Contracts\HostnameRepositoryContract;
 use Hyn\Tenancy\Contracts\TenantRepositoryContract;
 use Hyn\Tenancy\MultiTenantServiceProvider;
 use Hyn\Tenancy\TenancyServiceProvider;
-use Hyn\Tenancy\Tenant\DatabaseConnection;
+use Hyn\Tenancy\Tenant\Database\MySQLConnection;
 use Hyn\Tests\Seeds\TestTenantSeeder;
 use Illuminate\Database\Connection;
 
@@ -130,7 +130,7 @@ class TenancySetupTest extends TestCase
      */
     public function tenant_database_should_exist()
     {
-        $databases = DB::connection(DatabaseConnection::systemConnectionName())->select('SHOW DATABASES');
+        $databases = DB::connection(Connection::systemConnectionName())->select('SHOW DATABASES');
 
         $found = false;
         $list = [];
@@ -174,7 +174,7 @@ class TenancySetupTest extends TestCase
     {
         $hostname = $this->loadSystemTesting();
 
-        /** @var \Hyn\Tenancy\Tenant\DatabaseConnection $connection */
+        /** @var \Hyn\Tenancy\Tenant\Database\MySQLConnection $connection */
         $connection = $hostname->website->database;
 
         $connection->setCurrent();

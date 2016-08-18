@@ -8,9 +8,9 @@ class HostnameMiddleware
 {
     public function handle($request, Closure $next)
     {
-        /* @var \Hyn\Tenancy\Models\Hostname */
-        $hostname = app('tenant.hostname');
-        if ($hostname && ! is_null($redirect = $hostname->redirectActionRequired())) {
+        /** @var \Hyn\Tenancy\Models\Hostname $Hostname */
+        $Hostname = app('tenant.hostname');
+        if ($Hostname && ! is_null($redirect = $Hostname->redirectActionRequired())) {
             return $redirect;
         }
 

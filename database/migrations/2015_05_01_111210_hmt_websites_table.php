@@ -1,6 +1,6 @@
 <?php
 
-use Hyn\Tenancy\Tenant\DatabaseConnection;
+use Hyn\Tenancy\Tenant\Database\MySQLConnection;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,8 +14,8 @@ class HmtWebsitesTable extends Migration
      */
     public function up()
     {
-        if (!Schema::connection(DatabaseConnection::systemConnectionName())->hasTable('websites')) {
-            Schema::connection(DatabaseConnection::systemConnectionName())->create(
+        if (!Schema::connection(MySQLConnection::systemConnectionName())->hasTable('websites')) {
+            Schema::connection(MySQLConnection::systemConnectionName())->create(
                 'websites',
                 function (Blueprint $table) {
                     $table->bigIncrements('id');
@@ -40,8 +40,8 @@ class HmtWebsitesTable extends Migration
      */
     public function down()
     {
-        if (Schema::connection(DatabaseConnection::systemConnectionName())->hasTable('websites')) {
-            Schema::connection(DatabaseConnection::systemConnectionName())->dropIfExists('websites');
+        if (Schema::connection(MySQLConnection::systemConnectionName())->hasTable('websites')) {
+            Schema::connection(MySQLConnection::systemConnectionName())->dropIfExists('websites');
         }
     }
 }

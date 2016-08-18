@@ -2,6 +2,7 @@
 
 namespace Hyn\Tenancy\Commands\Seeds;
 
+use Hyn\Tenancy\Models\Website;
 use Hyn\Tenancy\Traits\TenantDatabaseCommandTrait;
 use Illuminate\Database\ConnectionResolverInterface as Resolver;
 
@@ -9,7 +10,7 @@ class SeedCommand extends \Illuminate\Database\Console\Seeds\SeedCommand
 {
     use TenantDatabaseCommandTrait;
     /**
-     * @var \Hyn\Tenancy\Contracts\WebsiteRepositoryContract
+     * @var \Hyn\Tenancy\Contracts\WebsiteRepositoryContract|Website
      */
     protected $website;
 
@@ -31,7 +32,7 @@ class SeedCommand extends \Illuminate\Database\Console\Seeds\SeedCommand
     {
         // if no tenant option is set, simply run the native laravel seeder
         if (! $this->option('tenant')) {
-            return parent::fire();
+			$this->error('No Tenant Provided.');
         }
 
         if (! $this->option('force') && ! $this->confirmToProceed()) {
@@ -48,11 +49,12 @@ class SeedCommand extends \Illuminate\Database\Console\Seeds\SeedCommand
         }
 
         foreach ($websites as $website) {
-            $this->info("Seeding for {$website->id}: {$website->present()->name}");
+			/** @var Website $website */
+			$this->info("Seeding for {$website->identifier}");
 
-            $website->database->setCurrent();
+            $website->mongodb->setCurrent();
 
-            $this->resolver->setDefaultConnection($website->database->name);
+            $this->resolver->setDefaultConnection($website->mongodb->name);
 
             $this->getSeeder()->run();
         }
