@@ -3,7 +3,7 @@
 namespace Hyn\Framework\Validators;
 
 use App;
-use Hyn\Framework\Models\AbstractModel;
+use Hyn\Framework\Models\MySQL\AbstractModel;
 use Input;
 use Request;
 use Validator;
