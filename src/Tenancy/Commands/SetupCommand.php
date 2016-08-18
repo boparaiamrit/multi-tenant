@@ -120,11 +120,6 @@ class SetupCommand extends Command
 			File::copy($tenantConfig, config_path('multitenant.php'));
 		} elseif (null !== $tenantConfig) {
 			$this->error("Ignored $tenantConfig, it does not exist");
-		} else {
-			$this->confirm(
-				"You are now able to edit the published multitenant.php configuration file before continuing. Ready?",
-				true
-			);
 		}
 		
 		// If the dashboard is installed we need to prevent default laravel migrations

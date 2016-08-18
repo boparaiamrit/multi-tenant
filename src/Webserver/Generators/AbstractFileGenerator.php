@@ -74,12 +74,12 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 		exec(array_get($this->configuration(), 'actions.configtest'), $out, $test);
 		
 		if ($test == 0) {
-			exec(array_get($this->configuration(), 'actions.reload'), $out, $reload);
+			exec(array_get($this->configuration(), 'actions.restart'), $out, $restart);
 		} else {
-			$reload = 1;
+			$restart = 1;
 		}
 		
-		return $test == 0 && $reload == 0;
+		return $test == 0 && $restart == 0;
 	}
 	
 	/**

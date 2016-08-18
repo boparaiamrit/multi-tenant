@@ -55,8 +55,8 @@ class Fpm extends AbstractFileGenerator
 			return;
 		}
 		
-		exec(array_get($this->configuration(), 'actions.reload'), $out, $reload);
+		exec(array_get($this->configuration(), 'actions.restart'), $out, $restart);
 		
-		return $reload == 0;
+		return $restart == 0;
 	}
 }
