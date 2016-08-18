@@ -22,12 +22,12 @@ class Fpm extends AbstractFileGenerator
 			'config'    => config('webserver.fpm'),
 		];
 		
-		$defaultUser = config('webserver.default-user');
-		if ($defaultUser) {
+		$defaultUser = config('webserver.user');
+		if ($defaultUser === true) {
 			$config['user'] = $this->website->identifier;
 		} else if (is_string($defaultUser)) {
 			$config['user'] = $defaultUser;
-		} else if (empty($defaultUser)) {
+		} else if ($defaultUser === false) {
 			$config['user'] = 'vagrant';
 		}
 		

@@ -11,6 +11,14 @@ use Laracasts\Presenter\PresentableTrait;
 
 /**
  * Class SslCertificate.
+ *
+ * @property mixed pathKey
+ * @property mixed pathCrt
+ * @property mixed pathCa
+ * @property mixed pathPem
+ * @property mixed key
+ * @property mixed certificate
+ * @property mixed authority_bundle
  */
 class SslCertificate extends SystemModel
 {

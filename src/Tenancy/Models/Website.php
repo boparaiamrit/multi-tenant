@@ -114,10 +114,10 @@ class Website extends SystemModel
      */
     public function getWebsiteUserAttribute()
     {
-        if (config('webserver.default-user') === true) {
+        if (config('webserver.user') === true) {
             return $this->identifier;
         }
 
-        return config('webserver.default-user');
+        return config('webserver.user');
     }
 }

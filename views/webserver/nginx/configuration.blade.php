@@ -2,7 +2,7 @@
 #   Auto generated Nginx configuration
 #       @time: {{ date('H:i:s d-m-Y') }}
 #       @author: hyn-me/webserver
-#       @website: {{ $website->id }} "{{ $website->present()->name }}"
+#       @website: "{{ $website->present()->name }}"
 #
 
 @if($website->directory->image_cache())

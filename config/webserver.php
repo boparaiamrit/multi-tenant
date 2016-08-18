@@ -12,12 +12,12 @@ return [
     'webservers' => ['nginx', 'apache'],
 
     /*
-     * If tenant files should belong to a certain user, set the `default-user` value to that username
+     * If tenant files should belong to a certain user, set the `user` value to that username
      *      - true will generate a username automatically based on the website
      *      - <string> will use the specified existing username for the website
      *      - null will disable generating users
      */
-    'default-user' => true,
+    'user' => true,
 
     /*
      * The group the tenant files should belong to

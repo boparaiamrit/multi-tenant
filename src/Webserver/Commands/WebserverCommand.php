@@ -3,7 +3,9 @@
 namespace Hyn\Webserver\Commands;
 
 
+use Cache;
 use Hyn\Framework\Commands\AbstractRootCommand;
+use Hyn\Tenancy\Models\Website;
 use Hyn\Webserver\Generators\Database\Database;
 use Hyn\Webserver\Generators\Unix\WebsiteUser;
 use Hyn\Webserver\Generators\Webserver\Apache;
@@ -14,6 +16,7 @@ use Hyn\Webserver\Generators\Webserver\Ssl;
 class WebserverCommand extends AbstractRootCommand
 {
 	protected $name = 'webserver';
+	
 	/**
 	 * @var Website
 	 */
@@ -34,8 +37,8 @@ class WebserverCommand extends AbstractRootCommand
 	{
 		parent::__construct();
 		
-		$this->website = app('Hyn\Tenancy\Contracts\WebsiteRepositoryContract')->findById($website_id);
-		$this->action  = $action;
+		$this->setWebsite($website_id);
+		$this->setAction($action);
 	}
 	
 	/**
@@ -55,7 +58,7 @@ class WebserverCommand extends AbstractRootCommand
 			(new Ssl($hostname->certificate))->onUpdate();
 		}
 		
-		if (config('webserver.default-user')) {
+		if (config('webserver.user') === true) {
 			(new WebsiteUser($this->website))->{$action}();
 		}
 		
@@ -63,9 +66,30 @@ class WebserverCommand extends AbstractRootCommand
 		(new Fpm($this->website))->{$action}();
 		
 		// Webservers
-		(new Apache($this->website))->{$action}();
-		(new Nginx($this->website))->{$action}();
+		$webserver = Cache::get('webserver:option', 'nginx');
+		if ($webserver == 'apache') {
+			(new Apache($this->website))->{$action}();
+		} else if ($webserver == 'nginx') {
+			(new Nginx($this->website))->{$action}();
+		}
 		
 		(new Database($this->website))->{$action}();
+	}
+	
+	
+	public function setWebsite($websiteId)
+	{
+		/** @var Website $website */
+		$website = app('Hyn\Tenancy\Contracts\WebsiteRepositoryContract')->findById($websiteId);
+		
+		$this->website = $website;
+	}
+	
+	/**
+	 * @param string $action
+	 */
+	public function setAction($action)
+	{
+		$this->action = $action;
 	}
 }
