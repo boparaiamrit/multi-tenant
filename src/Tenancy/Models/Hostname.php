@@ -4,11 +4,8 @@ namespace Hyn\Tenancy\Models;
 
 
 use Carbon\Carbon;
-use Hyn\Tenancy\Abstracts\Models\MySQL\SystemModel;
 use Hyn\Webserver\Models\SslCertificate;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Laracasts\Presenter\PresentableTrait;
 
 /**
  * @property int            $id
@@ -29,10 +26,8 @@ use Laracasts\Presenter\PresentableTrait;
  * @property Carbon         $updated_at
  * @property Carbon         $deleted_at
  */
-class Hostname extends SystemModel
+class Hostname extends BaseModel
 {
-	use PresentableTrait, SoftDeletes;
-	
 	/**
 	 * @var string
 	 */
@@ -108,7 +103,7 @@ class Hostname extends SystemModel
 	/**
 	 * Identifies whether a redirect is required for this hostname.
 	 *
-	 * @return \Illuminate\Http\RedirectResponse|null
+	 * @return \Illuminate\Http\RedirectResponse|false
 	 */
 	public function redirectActionRequired()
 	{
@@ -125,5 +120,7 @@ class Hostname extends SystemModel
 		if (request()->getHttpHost() != $this->hostname) {
 			return redirect()->away("http://{$this->hostname}/" . (request()->path() == '/' ? null : request()->path()));
 		}
+		
+		return false;
 	}
 }

@@ -2,10 +2,14 @@
 
 namespace Hyn\Webserver\Models;
 
-use Hyn\Tenancy\Abstracts\Models\MySQL\SystemModel;
+use Jenssegers\Mongodb\Eloquent\Model;
 use Laracasts\Presenter\PresentableTrait;
 
-class SslHostname extends SystemModel
+/**
+ * @property mixed ssl_certificate_id
+ * @property mixed hostname
+ */
+class SslHostname extends Model
 {
     use PresentableTrait;
 

@@ -7,7 +7,7 @@ namespace Hyn\Tenancy\Models;
  *
  * @info       the term tenant was quite confusing.
  */
-class Tenant extends Customer
+class Tenant extends BaseModel
 {
-    protected $table = 'customers';
+	protected $table = 'customers';
 }

@@ -37,24 +37,11 @@ server {
     access_log          {{ $log_path }}.access.log;
     error_log           {{ $log_path }}.error.log notice;
 
-    @if($website->directory->media())
-    # attempt to passthrough to image service
-    location ~* ^/media/(.+)$ {
-        alias 		{{ $website->directory->media() }}$1;
-    }
-    @endif
-
-    @if($website->directory->cache())
-    # map public cache folder to private domain folder
-    location /cache/ {
-        alias 		{{ $website->directory->cache() }};
-    }
-    @endif
-
     location / {
         index           index.php;
         try_files       $uri $uri/ $uri/index.php?$args /index.php?$args;
     }
+
     # pass the PHP scripts to FastCGI server from upstream phpfcgi
     location ~ \.php(/|$) {
         fastcgi_pass    unix:/var/run/php/php7.0-fpm.hyn-{{ $fpm_port + $website->id }}.sock;

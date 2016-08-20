@@ -39,11 +39,6 @@ class WebserverServiceProvider extends ServiceProvider
 			'webserver'
 		);
 		
-		// migrations
-		$this->publishes(
-			[__DIR__ . '/../../database/migrations/' => database_path('/migrations')],
-			'hyn-webserver-migrations');
-		
 		Hostname::observe(new Observers\HostnameObserver());
 		SslCertificate::observe(new Observers\SslCertificateObserver());
 	}

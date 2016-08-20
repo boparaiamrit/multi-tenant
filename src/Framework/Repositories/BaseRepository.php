@@ -4,13 +4,10 @@ namespace Hyn\Framework\Repositories;
 
 
 use Closure;
-use Hyn\Framework\Models\MySQL\AbstractModel;
+use Jenssegers\Mongodb\Eloquent\Model;
 
 abstract class BaseRepository
 {
-	/**
-	 * @var AbstractModel
-	 */
 	protected $model;
 	
 	public function __construct()
@@ -18,8 +15,10 @@ abstract class BaseRepository
 		$args = func_get_args();
 		
 		foreach ($args as $i => $argument) {
-			if ($argument instanceof AbstractModel) {
-				$className          = $argument->easyClassName;
+			if ($argument instanceof Model) {
+				$className = class_basename($argument);
+				$className = strtolower($className);
+				
 				$this->{$className} = $argument;
 				if ($i == 0) {
 					$this->model = $argument;

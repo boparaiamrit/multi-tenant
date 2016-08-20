@@ -3,16 +3,12 @@
 namespace Hyn\Tenancy\Commands;
 
 
-use Cache;
-use File;
 use Hyn\Tenancy\Contracts\CustomerRepositoryContract;
 use Hyn\Tenancy\Contracts\HostnameRepositoryContract;
-use Hyn\Tenancy\Contracts\TenantRepositoryContract;
 use Hyn\Tenancy\Contracts\WebsiteRepositoryContract;
 use Hyn\Tenancy\Models\Customer;
 use Hyn\Tenancy\Models\Hostname;
 use Hyn\Tenancy\Models\Website;
-use Hyn\Tenancy\Tenant\Database\MySQLConnection;
 use Hyn\Webserver\Helpers\ServerConfigurationHelper;
 use Illuminate\Console\Command;
 
@@ -25,9 +21,8 @@ class SetupCommand extends Command
         {--customer= : Name of the first customer}
         {--email= : Email address of the first customer}
         {--hostname= : Domain- or hostname for the first customer website}
-        {--webserver= : Hook into webserver (nginx|apache|no)}
-        {--identifier= : Website identifier}
-        {--tenant-config= : Location of a preset of configuration items to use for multitenant.php}';
+        {--webserver= : Hook into webserver (nginx|no)}
+        {--identifier= : Website identifier}';
 	
 	/**
 	 * @var string
@@ -89,11 +84,10 @@ class SetupCommand extends Command
 	{
 		$this->configuration = config('webserver');
 		
-		$name         = $this->option('customer');
-		$email        = $this->option('email');
-		$hostname     = $this->option('hostname');
-		$identifier   = $this->option('identifier');
-		$tenantConfig = $this->option('tenant-config');
+		$name       = $this->option('customer');
+		$email      = $this->option('email');
+		$hostname   = $this->option('hostname');
+		$identifier = $this->option('identifier');
 		
 		if (empty($name)) {
 			$name = $this->ask('Please provide a customer name or restart command with --customer');
@@ -114,33 +108,6 @@ class SetupCommand extends Command
 		$this->comment('Welcome to hyn multi tenancy.');
 		
 		$this->publishFiles();
-		
-		// Give the user a chance to change the config or check whether it's been provided as option.
-		if (null !== $tenantConfig && File::exists($tenantConfig)) {
-			File::copy($tenantConfig, config_path('multitenant.php'));
-		} elseif (null !== $tenantConfig) {
-			$this->error("Ignored $tenantConfig, it does not exist");
-		}
-		
-		// If the dashboard is installed we need to prevent default laravel migrations
-		// so we run the dashboard setup command before running any migrations
-		if (class_exists('Hyn\ManagementInterface\ManagementInterfaceServiceProvider')) {
-			$this->info('The management interface will be installed first.');
-			$this->call('dashboard:setup');
-		} else {
-			$this->comment('First off, migrations for the packages will run.');
-			
-			// Migrations are run during dashboard setup or here.
-			$this->runMigrations();
-		}
-		
-		$tenantDirectory = config('multitenant.tenant-directory') ? config('multitenant.tenant-directory') : storage_path('multitenant');
-		
-		if (!File::isDirectory($tenantDirectory) && File::makeDirectory($tenantDirectory, 0755, true)) {
-			$this->comment("The directory to hold your tenant websites has been created under {$tenantDirectory}.");
-		}
-		
-		$webserver = null;
 		
 		// Setup webserver
 		if ($this->helper) {
@@ -169,8 +136,6 @@ class SetupCommand extends Command
 			
 			$webserver = $this->option('webserver');
 			
-			Cache::add('webserver:option', $webserver, 10);
-			
 			if (empty($webserver)) {
 				$webserver = $this->anticipate('Integrate into a webserver?', ['no', 'apache', 'nginx'], 'no');
 			}
@@ -179,11 +144,13 @@ class SetupCommand extends Command
 				$webserverConfiguration = array_get($this->configuration, $webserver);
 				$webserverClass         = array_get($webserverConfiguration, 'class');
 			} else {
-				$webserver = null;
+				$webserver = 'Nginx';
 			}
 			
 			// hook into the webservice of choice once object creation succeeded
 			if ($webserver) {
+				/** @noinspection PhpUndefinedMethodInspection */
+				/** @noinspection PhpUndefinedVariableInspection */
 				(new $webserverClass($website))->register();
 			}
 			
@@ -216,7 +183,7 @@ class SetupCommand extends Command
 	protected function runMigrations()
 	{
 		$this->call('migrate', [
-			'--database' => MySQLConnection::systemConnectionName(),
+			'--database' => config('multitenant.database'),
 			'-n',
 		]);
 	}

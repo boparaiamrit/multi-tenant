@@ -4,6 +4,9 @@ namespace Hyn\Tenancy\Presenters;
 
 use Hyn\Framework\Presenters\AbstractModelPresenter;
 
+/**
+ * @property mixed hostname
+ */
 class HostnamePresenter extends AbstractModelPresenter
 {
     /**

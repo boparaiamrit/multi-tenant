@@ -4,6 +4,10 @@ namespace Hyn\Tenancy\Presenters;
 
 use Hyn\Framework\Presenters\AbstractModelPresenter;
 
+/**
+ * @property mixed hostnames
+ * @property mixed identifier
+ */
 class WebsitePresenter extends AbstractModelPresenter
 {
     /**

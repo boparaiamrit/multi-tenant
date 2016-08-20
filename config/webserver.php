@@ -9,20 +9,14 @@
  * configuration file. See documentation for more info.
  */
 return [
-    'webservers' => ['nginx', 'apache'],
+    'webservers' => ['nginx'],
 
-    /*
-     * If tenant files should belong to a certain user, set the `user` value to that username
-     *      - true will generate a username automatically based on the website
-     *      - <string> will use the specified existing username for the website
-     *      - null will disable generating users
-     */
-    'user' => true,
-
+	'user' => 'vagrant',
+	
     /*
      * The group the tenant files should belong to
      */
-    'group' => 'www-data',
+    'group' => 'vagrant',
 
     /*
      * SSL
@@ -30,6 +24,7 @@ return [
     'ssl'   => [
         'path' => storage_path('webserver/ssl'),
     ],
+	
     /*
      * Logging specific settings
      */
@@ -37,35 +32,7 @@ return [
         // path where to store the webserver logs
         'path' => storage_path('logs'),
     ],
-    /*
-     * Apache
-     */
-    'apache' => [
-        'path' => storage_path('webserver/apache/'),
-        // class that runs functionality for this service
-        'class'   => 'Hyn\Webserver\Generators\Webserver\Apache',
-        'enabled' => true,
-        'port'    => [
-            'http'  => 80,
-            'https' => 443,
-        ],
-        // path to service daemon, used to verify service exists
-        'service' => '/etc/init.d/apache2',
-        // how to run actions for this service
-        'actions' => [
-            'configtest' => 'apache2ctl -t',
-            'reload'     => 'apache2ctl graceful',
-        ],
-        // system wide configuration directory
-        'conf' => [
-            // location for ubuntu 14.04 systems
-            '/etc/apache2/sites-enabled/',
-        ],
-        // mask for auto-generated config file that includes the tenant configurations
-        'mask' => '%s.conf',
-        // include format using sprintf to include the location of the storage/webserver/apache directory
-        'include' => 'IncludeOptional %s*',
-    ],
+	
     /*
      * Nginx
      */
@@ -82,7 +49,7 @@ return [
         // how to run actions for this service
         'actions' => [
             'configtest' => '/etc/init.d/nginx configtest',
-            'reload'     => '/etc/init.d/nginx reload',
+            'restart'     => '/etc/init.d/nginx restart',
         ],
         'conf'    => ['/etc/nginx/sites-enabled/'],
         'mask'    => '%s.conf',
@@ -95,6 +62,7 @@ return [
             'fpm',
         ],
     ],
+	
     /*
      * PHP FPM
      */
@@ -102,13 +70,13 @@ return [
         'path'    => storage_path('webserver/fpm/'),
         'class'   => 'Hyn\Webserver\Generators\Webserver\Fpm',
         'enabled' => true,
-        'conf'    => ['/etc/php5/fpm/pool.d/'],
+        'conf'    => ['/etc/php/7.0/fpm/pool.d/'],
         // path to service daemon, used to verify service exists
-        'service' => '/etc/init.d/php5-fpm',
+        'service' => '/etc/init.d/php7.0-fpm',
         // how to run actions for this service
         'actions' => [
-            'configtest' => '/etc/init.d/php5-fpm -t',
-            'reload'     => '/etc/init.d/php5-fpm reload',
+            'configtest' => '/etc/init.d/php7.0-fpm -t',
+            'restart'     => '/etc/init.d/php7.0-fpm restart',
         ],
         'mask'    => '%s.conf',
         'include' => 'include=%s*;',

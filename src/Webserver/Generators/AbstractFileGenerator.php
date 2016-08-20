@@ -13,14 +13,14 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 	/**
 	 * @var Website
 	 */
-	protected $website;
+	protected $Website;
 	
 	/**
-	 * @param Website $website
+	 * @param Website $Website
 	 */
-	public function __construct(Website $website)
+	public function __construct(Website $Website)
 	{
-		$this->website = $website;
+		$this->Website = $Website;
 	}
 	
 	/**
@@ -32,12 +32,12 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 	 */
 	public function onUpdate()
 	{
-		if ($this->website->isDirty('identifier')) {
-			$new = $this->website->identifier;
+		if ($this->Website->isDirty('identifier')) {
+			$new = $this->Website->identifier;
 			
-			$this->website->identifier = $this->website->getOriginal('identifier');
+			$this->Website->identifier = $this->Website->getOriginal('identifier');
 			$this->onDelete();
-			$this->website->identifier = $new;
+			$this->Website->identifier = $new;
 		}
 		
 		return $this->onCreate();
@@ -71,10 +71,16 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 			return;
 		}
 		
-		exec(array_get($this->configuration(), 'actions.configtest'), $out, $test);
+		$configtest = array_get($this->configuration(), 'actions.configtest');
+		if (!empty($configtest)) {
+			exec($configtest, $out, $test);
+		}
 		
 		if ($test == 0) {
-			exec(array_get($this->configuration(), 'actions.restart'), $out, $restart);
+			$restart = array_get($this->configuration(), 'actions.restart');
+			if (!empty($restart)) {
+				exec($restart, $out, $test);
+			}
 		} else {
 			$restart = 1;
 		}
@@ -129,7 +135,7 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 	public function onCreate()
 	{
 		// take no action with no hostnames
-		if ($this->website->hostnames->count() == 0) {
+		if ($this->Website->hostnames->count() == 0) {
 			return;
 		}
 		
@@ -165,7 +171,7 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 	 */
 	public function name()
 	{
-		return $this->website->identifier;
+		return $this->Website->identifier;
 	}
 	
 	/**
@@ -199,7 +205,7 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 			if (empty($class)) {
 				continue;
 			}
-			(new $class($this->website))->register();
+			(new $class($this->Website))->register();
 		}
 		
 		// reload any services

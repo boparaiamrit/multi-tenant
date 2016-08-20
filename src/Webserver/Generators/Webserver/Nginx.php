@@ -15,9 +15,9 @@ class Nginx extends AbstractFileGenerator
     public function generate()
     {
         return view('webserver::nginx.configuration', [
-            'website'     => $this->website,
+            'website'     => $this->Website,
             'public_path' => public_path(),
-            'log_path'    => config('webserver.log.path')."/nginx-{$this->website->identifier}",
+            'log_path'    => config('webserver.log.path')."/nginx-{$this->Website->identifier}",
             'config'      => config('webserver.nginx'),
             'fpm_port'    => config('webserver.fpm.port'),
         ]);

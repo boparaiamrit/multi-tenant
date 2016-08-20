@@ -2,18 +2,25 @@
 
 namespace Hyn\Tenancy\Middleware;
 
+
 use Closure;
+use Hyn\Tenancy\Bootstrap\Configuration;
+use Hyn\Tenancy\Models\Hostname;
 
 class HostnameMiddleware
 {
-    public function handle($request, Closure $next)
-    {
-        /** @var \Hyn\Tenancy\Models\Hostname $Hostname */
-        $Hostname = app('tenant.hostname');
-        if ($Hostname && ! is_null($redirect = $Hostname->redirectActionRequired())) {
-            return $redirect;
-        }
-
-        return $next($request);
-    }
+	public function handle($request, Closure $next)
+	{
+		/** @var Hostname $Hostname */
+		$Hostname = app('tenant.hostname');
+		$redirect = $Hostname->redirectActionRequired();
+		
+		if ($Hostname && !empty($redirect)) {
+			return $redirect;
+		}
+		
+		(new Configuration($Hostname->website->identifier))->reload();
+		
+		return $next($request);
+	}
 }

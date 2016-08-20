@@ -3,7 +3,6 @@
 namespace Hyn\Webserver\Generators\Webserver;
 
 
-use Config;
 use Hyn\Webserver\Generators\AbstractFileGenerator;
 
 class Fpm extends AbstractFileGenerator
@@ -16,7 +15,7 @@ class Fpm extends AbstractFileGenerator
 	public function generate()
 	{
 		$config = [
-			'website'   => $this->website,
+			'website'   => $this->Website,
 			'base_path' => base_path(),
 			'group'     => config('webserver.group'),
 			'config'    => config('webserver.fpm'),
@@ -24,7 +23,7 @@ class Fpm extends AbstractFileGenerator
 		
 		$defaultUser = config('webserver.user');
 		if ($defaultUser === true) {
-			$config['user'] = $this->website->identifier;
+			$config['user'] = $this->Website->identifier;
 		} else if (is_string($defaultUser)) {
 			$config['user'] = $defaultUser;
 		} else if ($defaultUser === false) {
@@ -55,7 +54,10 @@ class Fpm extends AbstractFileGenerator
 			return;
 		}
 		
-		exec(array_get($this->configuration(), 'actions.restart'), $out, $restart);
+		$restart = array_get($this->configuration(), 'actions.restart');
+		if (!empty($restart)) {
+			exec($restart, $out, $test);
+		}
 		
 		return $restart == 0;
 	}

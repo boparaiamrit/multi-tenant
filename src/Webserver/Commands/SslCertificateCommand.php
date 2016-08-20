@@ -3,7 +3,7 @@
 namespace Hyn\Webserver\Commands;
 
 use Hyn\Framework\Commands\AbstractRootCommand;
-use Hyn\Webserver\Generators\Webserver\Ssl;
+use Hyn\Webserver\Generators\Webserver\SSL;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SslCertificateCommand extends AbstractRootCommand implements ShouldQueue
@@ -46,6 +46,6 @@ class SslCertificateCommand extends AbstractRootCommand implements ShouldQueue
 
         $action = sprintf('on%s', ucfirst($this->action));
 
-        (new Ssl($this->certificate))->{$action}();
+        (new SSL($this->certificate))->{$action}();
     }
 }

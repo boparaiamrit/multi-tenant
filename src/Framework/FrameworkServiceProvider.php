@@ -18,8 +18,9 @@ class FrameworkServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->mergeConfigFrom(__DIR__ . '/../../config/hyn.php', 'hyn');
-
-        $this->app->validator->resolver(function ($translator, $data, $rules, $messages) {
+	
+		/** @noinspection PhpUndefinedFieldInspection */
+		$this->app->validator->resolver(function ($translator, $data, $rules, $messages) {
             return new ExtendedValidation($translator, $data, $rules, $messages);
         });
     }

@@ -4,11 +4,12 @@ namespace Hyn\Tenancy\Repositories;
 
 use Hyn\Framework\Repositories\BaseRepository;
 use Hyn\Tenancy\Contracts\CustomerRepositoryContract;
+use Hyn\Tenancy\Models\Customer;
 
 class CustomerRepository extends BaseRepository implements CustomerRepositoryContract
 {
     /**
-     * @var \Hyn\Tenancy\Models\Customer
+     * @var Customer
      */
     protected $customer;
 
@@ -17,7 +18,7 @@ class CustomerRepository extends BaseRepository implements CustomerRepositoryCon
      *
      * @param $name
      *
-     * @return \Hyn\Tenancy\Models\Costumer
+     * @return Costumer
      */
     public function findByName($name)
     {

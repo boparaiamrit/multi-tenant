@@ -11,16 +11,6 @@ use File;
 class ServerConfigurationHelper
 {
 	/**
-	 * current user under which process is running.
-	 *
-	 * @return string
-	 */
-	public function currentUser()
-	{
-		return function_exists('posix_getuid') && posix_getuid() == 0 ? get_current_user() : 'root';
-	}
-	
-	/**
 	 * Creates directories if not yet existing
 	 * Generated for any configured service in config.
 	 */

@@ -4,6 +4,9 @@ namespace Hyn\Framework\Presenters;
 
 use Laracasts\Presenter\Presenter;
 
+/**
+ * @property mixed id
+ */
 abstract class AbstractModelPresenter extends Presenter
 {
     /**

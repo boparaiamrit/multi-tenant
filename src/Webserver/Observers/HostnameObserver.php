@@ -9,24 +9,24 @@ class HostnameObserver
 {
     use DispatchesJobs;
 
-    public function created($model)
+    public function created($Model)
     {
         $this->dispatch(
-            new WebserverCommand($model->website_id, 'create')
+            new WebserverCommand($Model->website_id, 'create')
         );
     }
 
-    public function updated($model)
+    public function updated($Model)
     {
         $this->dispatch(
-            new WebserverCommand($model->website_id, 'update')
+            new WebserverCommand($Model->website_id, 'update')
         );
     }
 
-    public function deleting($model)
+    public function deleting($Model)
     {
         $this->dispatch(
-            new WebserverCommand($model->website_id, 'delete')
+            new WebserverCommand($Model->website_id, 'delete')
         );
     }
 }

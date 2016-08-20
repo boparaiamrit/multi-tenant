@@ -4,6 +4,11 @@ namespace Hyn\Webserver\Presenters;
 
 use Hyn\Framework\Presenters\AbstractModelPresenter;
 
+/**
+ * @property mixed hostnames
+ * @property mixed X509
+ * @property mixed invalidates_at
+ */
 class SslCertificatePresenter extends AbstractModelPresenter
 {
     /**
