@@ -1,8 +1,8 @@
 <?php
 
-namespace Hyn\Framework;
+namespace Boparaiamrit\Framework;
 
-use Hyn\Framework\Validation\ExtendedValidation;
+use Boparaiamrit\Framework\Validation\ExtendedValidation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 
@@ -17,7 +17,7 @@ class FrameworkServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/hyn.php', 'hyn');
+        $this->mergeConfigFrom(__DIR__ . '/../../config/config.php', 'config');
 	
 		/** @noinspection PhpUndefinedFieldInspection */
 		$this->app->validator->resolver(function ($translator, $data, $rules, $messages) {
@@ -32,11 +32,11 @@ class FrameworkServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $config = require __DIR__ . '/../../config/hyn.php';
+        $config = require __DIR__ . '/../../config/config.php';
         $packages = Arr::get($config, 'packages', []);
 
         if (empty($packages)) {
-            throw new \Exception("It seems config files are not available, hyn won't work without the configuration file");
+            throw new \Exception("It seems config files are not available, boparaiamrit won't work without the configuration file");
         }
 
         foreach ($packages as $name => $package) {
@@ -45,7 +45,7 @@ class FrameworkServiceProvider extends ServiceProvider
                 $this->app->register(Arr::get($package, 'service-provider'));
             }
             // set global state
-            $this->app->bind("hyn.package.$name", function () use ($package) {
+            $this->app->bind("boparaiamrit.package.$name", function () use ($package) {
                 return class_exists(Arr::get($package, 'service-provider')) ? $package : false;
             });
         }

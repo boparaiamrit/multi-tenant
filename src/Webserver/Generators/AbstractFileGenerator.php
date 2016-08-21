@@ -1,26 +1,26 @@
 <?php
 
-namespace Hyn\Webserver\Generators;
+namespace Boparaiamrit\Webserver\Generators;
 
 
-use File;
-use Hyn\Tenancy\Models\Website;
-use Hyn\Webserver\Abstracts\AbstractGenerator;
+use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
+use Boparaiamrit\Tenancy\Models\Host;
+use Boparaiamrit\Webserver\Abstracts\AbstractGenerator;
 use ReflectionClass;
 
 abstract class AbstractFileGenerator extends AbstractGenerator
 {
 	/**
-	 * @var Website
+	 * @var Host|HostRepositoryContract
 	 */
-	protected $Website;
+	protected $Host;
 	
 	/**
-	 * @param Website $Website
+	 * @param Host $Host
 	 */
-	public function __construct(Website $Website)
+	public function __construct(Host $Host)
 	{
-		$this->Website = $Website;
+		$this->Host = $Host;
 	}
 	
 	/**
@@ -32,25 +32,25 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 	 */
 	public function onUpdate()
 	{
-		if ($this->Website->isDirty('identifier')) {
-			$new = $this->Website->identifier;
+		if ($this->Host->isDirty('identifier')) {
+			$new = $this->Host->identifier;
 			
-			$this->Website->identifier = $this->Website->getOriginal('identifier');
+			$this->Host->identifier = $this->Host->getOriginal('identifier');
 			$this->onDelete();
-			$this->Website->identifier = $new;
+			$this->Host->identifier = $new;
 		}
 		
 		return $this->onCreate();
 	}
 	
 	/**
-	 * Action when deleting the Website.
+	 * Action when deleting the Host.
 	 *
 	 * @return bool
 	 */
 	public function onDelete()
 	{
-		return File::delete($this->publishPath()) && $this->serviceReload();
+		return app('files')->delete($this->publishPath()) && $this->serviceReload();
 	}
 	
 	/**
@@ -68,8 +68,11 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 	protected function serviceReload()
 	{
 		if (!$this->isInstalled()) {
-			return;
+			return false;
 		}
+		
+		$test  = 1;
+		$test2 = 1;
 		
 		$configtest = array_get($this->configuration(), 'actions.configtest');
 		if (!empty($configtest)) {
@@ -79,13 +82,13 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 		if ($test == 0) {
 			$restart = array_get($this->configuration(), 'actions.restart');
 			if (!empty($restart)) {
-				exec($restart, $out, $test);
+				exec($restart, $out, $test2);
 			}
 		} else {
-			$restart = 1;
+			$test2 = 1;
 		}
 		
-		return $test == 0 && $restart == 0;
+		return $test == 0 && $test2 == 0;
 	}
 	
 	/**
@@ -97,7 +100,7 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 	{
 		$service = array_get($this->configuration(), 'service');
 		
-		return $service && File::exists($service);
+		return $service && app('files')->exists($service);
 	}
 	
 	/**
@@ -134,12 +137,11 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 	 */
 	public function onCreate()
 	{
-		// take no action with no hostnames
-		if ($this->Website->hostnames->count() == 0) {
-			return;
+		if (is_null($this->Host)) {
+			return false;
 		}
 		
-		return File::put(
+		return app('files')->put(
 			$this->publishPath(),
 			$this->generate()->render(),
 			true
@@ -171,7 +173,7 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 	 */
 	public function name()
 	{
-		return $this->Website->identifier;
+		return $this->Host->identifier;
 	}
 	
 	/**
@@ -193,7 +195,7 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 		$targetPath = array_get($this->configuration(), 'path');
 		
 		// save file to global include path
-		File::put($webserviceFileLocation, sprintf(array_get($this->configuration(), 'include'), $targetPath));
+		app('files')->put($webserviceFileLocation, sprintf(array_get($this->configuration(), 'include'), $targetPath));
 		
 		/*
 		 * Register any depending services as well
@@ -205,7 +207,8 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 			if (empty($class)) {
 				continue;
 			}
-			(new $class($this->Website))->register();
+			/** @noinspection PhpUndefinedMethodInspection */
+			(new $class($this->Host))->register();
 		}
 		
 		// reload any services
@@ -224,9 +227,11 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 	protected function findPathForRegistration($paths = [])
 	{
 		foreach ($paths as $path) {
-			if (!empty($path) && File::isDirectory($path)) {
+			if (!empty($path) && app('files')->isDirectory($path)) {
 				return $path;
 			}
 		}
+		
+		return '';
 	}
 }

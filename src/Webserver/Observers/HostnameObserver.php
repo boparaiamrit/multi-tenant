@@ -1,8 +1,8 @@
 <?php
 
-namespace Hyn\Webserver\Observers;
+namespace Boparaiamrit\Webserver\Observers;
 
-use Hyn\Webserver\Commands\WebserverCommand;
+use Boparaiamrit\Webserver\Commands\WebserverCommand;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class HostnameObserver

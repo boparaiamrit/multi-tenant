@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyn\Webserver\Commands;
+namespace Boparaiamrit\Webserver\Commands;
 
-use Hyn\Framework\Commands\AbstractCommand;
-use Hyn\Tenancy\Contracts\WebsiteRepositoryContract;
+use Boparaiamrit\Framework\Commands\AbstractCommand;
+use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class ToolboxCommand extends AbstractCommand
@@ -16,18 +16,18 @@ class ToolboxCommand extends AbstractCommand
     protected $description = 'Allows mutation of webserver related to tenancy.';
 
     /**
-     * @var WebsiteRepositoryContract
+     * @var HostRepositoryContract
      */
-    protected $website;
+    protected $Host;
 
     /**
-     * @param WebsiteRepositoryContract $website
+     * @param HostRepositoryContract $Host
      */
-    public function __construct(WebsiteRepositoryContract $website)
+    public function __construct(HostRepositoryContract $Host)
     {
         parent::__construct();
 
-        $this->website = $website;
+        $this->Host = $Host;
     }
 
     /**
@@ -35,10 +35,10 @@ class ToolboxCommand extends AbstractCommand
      */
     public function handle()
     {
-        $this->website->queryBuilder()->chunk(50, function ($websites) {
-            foreach ($websites as $website) {
+        $this->Host->queryBuilder()->chunk(50, function ($Hosts) {
+            foreach ($Hosts as $Host) {
                 if ($this->option('update-configs')) {
-                    $this->dispatch(new WebserverCommand($website->id, 'update'));
+                    $this->dispatch(new WebserverCommand($Host->id, 'update'));
                 } else {
                     $this->error('Unknown option, please specify one.');
 

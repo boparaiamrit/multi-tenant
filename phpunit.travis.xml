@@ -11,7 +11,7 @@
          syntaxCheck="false"
 >
     <testsuites>
-        <testsuite name="hyn multi tenant">
+        <testsuite name="boparaiamrit multi tenant">
             <directory suffix=".php">./tests/</directory>
         </testsuite>
     </testsuites>

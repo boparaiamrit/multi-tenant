@@ -1,10 +1,10 @@
 <?php
 
-namespace Hyn\Tenancy\Repositories;
+namespace Boparaiamrit\Tenancy\Repositories;
 
-use Hyn\Framework\Repositories\BaseRepository;
-use Hyn\Tenancy\Contracts\CustomerRepositoryContract;
-use Hyn\Tenancy\Models\Customer;
+use Boparaiamrit\Framework\Repositories\BaseRepository;
+use Boparaiamrit\Tenancy\Contracts\CustomerRepositoryContract;
+use Boparaiamrit\Tenancy\Models\Customer;
 
 class CustomerRepository extends BaseRepository implements CustomerRepositoryContract
 {
@@ -18,7 +18,7 @@ class CustomerRepository extends BaseRepository implements CustomerRepositoryCon
      *
      * @param $name
      *
-     * @return Costumer
+     * @return Customer
      */
     public function findByName($name)
     {

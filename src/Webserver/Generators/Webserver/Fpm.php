@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyn\Webserver\Generators\Webserver;
+namespace Boparaiamrit\Webserver\Generators\Webserver;
 
 
-use Hyn\Webserver\Generators\AbstractFileGenerator;
+use Boparaiamrit\Webserver\Generators\AbstractFileGenerator;
 
 class Fpm extends AbstractFileGenerator
 {
@@ -15,7 +15,7 @@ class Fpm extends AbstractFileGenerator
 	public function generate()
 	{
 		$config = [
-			'website'   => $this->Website,
+			'host'   => $this->Host,
 			'base_path' => base_path(),
 			'group'     => config('webserver.group'),
 			'config'    => config('webserver.fpm'),
@@ -23,7 +23,7 @@ class Fpm extends AbstractFileGenerator
 		
 		$defaultUser = config('webserver.user');
 		if ($defaultUser === true) {
-			$config['user'] = $this->Website->identifier;
+			$config['user'] = $this->Host->identifier;
 		} else if (is_string($defaultUser)) {
 			$config['user'] = $defaultUser;
 		} else if ($defaultUser === false) {

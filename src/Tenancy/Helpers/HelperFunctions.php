@@ -1,32 +1,9 @@
 <?php
 
-use Hyn\Tenancy\Contracts\CustomerRepositoryContract;
-use Hyn\Tenancy\Contracts\DirectoryContract;
-use Hyn\Tenancy\Contracts\HostnameRepositoryContract;
-use Hyn\Tenancy\Contracts\WebsiteRepositoryContract;
-use Hyn\Tenancy\Models\Customer;
-use Hyn\Tenancy\Models\Hostname;
-use Hyn\Tenancy\Models\Website;
+use Boparaiamrit\Tenancy\Contracts\CustomerRepositoryContract;
+use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
+use Boparaiamrit\Tenancy\TenancyServiceProvider;
 
-if (!function_exists('website')) {
-	/**
-	 * Loads a tenant website, or the current one.
-	 *
-	 * @param null $id
-	 *
-	 * @return Website|bool
-	 */
-	function website($id = null)
-	{
-		if (!empty($id)) {
-			return app(WebsiteRepositoryContract::class)->findById($id);
-		}
-		
-		$hostname = app('tenant.hostname');
-		
-		return $hostname ? $hostname->website : false;
-	}
-}
 
 if (!function_exists('customer')) {
 	/**
@@ -34,7 +11,7 @@ if (!function_exists('customer')) {
 	 *
 	 * @param null $id
 	 *
-	 * @return Customer|bool
+	 * @return CustomerRepositoryContract|bool
 	 */
 	function customer($id = null)
 	{
@@ -42,28 +19,28 @@ if (!function_exists('customer')) {
 			return app(CustomerRepositoryContract::class)->findById($id);
 		}
 		
-		$hostname = app('tenant.hostname');
+		$host = app(TenancyServiceProvider::CUSTOMER_HOST);
 		
-		return $hostname ? $hostname->customer : false;
+		return $host ? $host->customer : false;
 	}
 }
 
-if (!function_exists('hostname')) {
+if (!function_exists('host')) {
 	/**
-	 * Loads a hostname, or the current one.
+	 * Loads a host, or the current one.
 	 *
 	 * @param null $id
 	 *
-	 * @return Hostname|bool
+	 * @return HostRepositoryContract|bool
 	 */
-	function hostname($id = null)
+	function host($id = null)
 	{
 		if (!empty($id)) {
-			return app(HostnameRepositoryContract::class)->findById($id);
+			return app(HostRepositoryContract::class)->findById($id);
 		}
 		
-		$hostname = app('tenant.hostname');
+		$host = app(TenancyServiceProvider::CUSTOMER_HOST);
 		
-		return $hostname ? $hostname : false;
+		return $host ? $host : false;
 	}
 }

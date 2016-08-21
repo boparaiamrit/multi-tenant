@@ -3,7 +3,7 @@
 namespace Hyn\Tenancy\Tests;
 
 use Hyn\Framework\Testing\TestCase;
-use Hyn\Tenancy\Models\Hostname;
+use Hyn\Tenancy\Models\Host;
 use Hyn\Tenancy\Models\Website;
 use Hyn\Tenancy\Tenant\Directory;
 
@@ -37,7 +37,7 @@ class WebsiteModelTest extends TestCase
      */
     public function hostnames_relation_is_correct()
     {
-        $this->assertEquals(new Hostname(), $this->website->hostnames()->getRelated()->newInstance());
+        $this->assertEquals(new Host(), $this->website->hostnames()->getRelated()->newInstance());
     }
 
     /**

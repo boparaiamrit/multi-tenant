@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyn\Framework\Helpers;
+namespace Boparaiamrit\Framework\Helpers;
 
 use Auth;
 

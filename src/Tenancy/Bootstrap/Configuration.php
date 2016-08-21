@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyn\Tenancy\Bootstrap;
+namespace Boparaiamrit\Tenancy\Bootstrap;
 
 
 use Dotenv\Dotenv;
@@ -27,7 +27,7 @@ class Configuration
 	
 	private function reloadEnvironment()
 	{
-		$environmentPath = base_path() . DIRECTORY_SEPARATOR . 'envs';
+		$environmentPath = base_path() . '/envs';
 		$environmentFile = '.' . $this->tenant . '.env';
 		
 		(new Dotenv($environmentPath, $environmentFile))->overload();

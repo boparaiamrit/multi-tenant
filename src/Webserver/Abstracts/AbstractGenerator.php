@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyn\Webserver\Abstracts;
+namespace Boparaiamrit\Webserver\Abstracts;
 
 /**
  * Class AbstractGenerator.

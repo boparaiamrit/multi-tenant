@@ -1,12 +1,13 @@
 <?php
 
-namespace Hyn\Webserver\Commands;
+namespace Boparaiamrit\Webserver\Commands;
 
-use Hyn\Framework\Commands\AbstractRootCommand;
-use Hyn\Webserver\Generators\Webserver\SSL;
+use Boparaiamrit\Framework\Commands\AbstractRootCommand;
+use Boparaiamrit\Tenancy\Models\Certificate;
+use Boparaiamrit\Webserver\Generators\Webserver\SSL;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SslCertificateCommand extends AbstractRootCommand implements ShouldQueue
+class CertificateCommand extends AbstractRootCommand implements ShouldQueue
 {
 
     /**
@@ -29,7 +30,7 @@ class SslCertificateCommand extends AbstractRootCommand implements ShouldQueue
     {
         parent::__construct();
 
-        $this->certificate = app('Hyn\Webserver\Contracts\SslRepositoryContract')->findById($certificate_id);
+        $this->certificate = app('Boparaiamrit\Webserver\Contracts\SslRepositoryContract')->findById($certificate_id);
         $this->action = $action;
     }
 

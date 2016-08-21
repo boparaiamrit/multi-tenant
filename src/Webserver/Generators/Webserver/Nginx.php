@@ -1,9 +1,9 @@
 <?php
 
-namespace Hyn\Webserver\Generators\Webserver;
+namespace Boparaiamrit\Webserver\Generators\Webserver;
 
 use Config;
-use Hyn\Webserver\Generators\AbstractFileGenerator;
+use Boparaiamrit\Webserver\Generators\AbstractFileGenerator;
 
 class Nginx extends AbstractFileGenerator
 {
@@ -15,9 +15,9 @@ class Nginx extends AbstractFileGenerator
     public function generate()
     {
         return view('webserver::nginx.configuration', [
-            'website'     => $this->Website,
+            'host'     => $this->Host,
             'public_path' => public_path(),
-            'log_path'    => config('webserver.log.path')."/nginx-{$this->Website->identifier}",
+            'log_path'    => config('webserver.log.path')."/nginx-{$this->Host->identifier}",
             'config'      => config('webserver.nginx'),
             'fpm_port'    => config('webserver.fpm.port'),
         ]);

@@ -1,15 +1,13 @@
 <?php
 
-namespace Hyn\Tenancy\Commands;
+namespace Boparaiamrit\Tenancy\Commands;
 
 
-use Hyn\Tenancy\Contracts\CustomerRepositoryContract;
-use Hyn\Tenancy\Contracts\HostnameRepositoryContract;
-use Hyn\Tenancy\Contracts\WebsiteRepositoryContract;
-use Hyn\Tenancy\Models\Customer;
-use Hyn\Tenancy\Models\Hostname;
-use Hyn\Tenancy\Models\Website;
-use Hyn\Webserver\Helpers\ServerConfigurationHelper;
+use Boparaiamrit\Tenancy\Contracts\CustomerRepositoryContract;
+use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
+use Boparaiamrit\Tenancy\Models\Customer;
+use Boparaiamrit\Tenancy\Models\Host;
+use Boparaiamrit\Webserver\Helpers\ServerConfigurationHelper;
 use Illuminate\Console\Command;
 
 class SetupCommand extends Command
@@ -27,25 +25,22 @@ class SetupCommand extends Command
 	/**
 	 * @var string
 	 */
-	protected $description = 'Final configuration step for hyn multi tenancy packages';
+	protected $description = 'Final configuration step for boparaiamrit multitenancy packages';
+	
+	/**
+	 * @var HostRepositoryContract
+	 */
+	protected $Host;
+	
+	/**
+	 * @var CustomerRepositoryContract
+	 */
+	protected $Customer;
 	
 	/**
 	 * @var ServerConfigurationHelper
 	 */
-	protected $helper;
-	
-	/**
-	 * @var HostnameRepositoryContract
-	 */
-	protected $hostname;
-	/**
-	 * @var WebsiteRepositoryContract
-	 */
-	protected $website;
-	/**
-	 * @var CustomerRepositoryContract
-	 */
-	protected $customer;
+	protected $Helper;
 	
 	/**
 	 * @var array
@@ -58,23 +53,20 @@ class SetupCommand extends Command
 	protected $step = 1;
 	
 	/**
-	 * @param HostnameRepositoryContract $hostname
-	 * @param WebsiteRepositoryContract  $website
-	 * @param CustomerRepositoryContract $customer
+	 * @param CustomerRepositoryContract $Customer
+	 * @param HostRepositoryContract     $Host
 	 */
 	public function __construct(
-		HostnameRepositoryContract $hostname,
-		WebsiteRepositoryContract $website,
-		CustomerRepositoryContract $customer
+		CustomerRepositoryContract $Customer,
+		HostRepositoryContract $Host
 	)
 	{
 		parent::__construct();
 		
-		$this->hostname = $hostname;
-		$this->website  = $website;
-		$this->customer = $customer;
+		$this->Host     = $Host;
+		$this->Customer = $Customer;
 		
-		$this->helper = new ServerConfigurationHelper();
+		$this->Helper = new ServerConfigurationHelper();
 	}
 	
 	/**
@@ -105,33 +97,28 @@ class SetupCommand extends Command
 			$identifier = $this->ask('Please provide an identifier with a max length of 10 or restart command with --identifier');
 		}
 		
-		$this->comment('Welcome to hyn multi tenancy.');
+		$this->comment('Welcome to boparaiamrit multitenancy.');
 		
 		$this->publishFiles();
 		
 		// Setup webserver
-		if ($this->helper) {
-			$this->helper->createDirectories();
+		if ($this->Helper) {
+			$this->Helper->createDirectories();
 			
-			// Create the first tenant configurations
-			/** @var Customer $customer */
-			$customer = $this->customer->create(compact('name', 'email'));
+			// Create the Customer configurations
+			
+			/** @var Customer $Customer */
+			$Customer = $this->Customer->create(compact('name', 'email'));
 			
 			if (empty($identifier)) {
 				$identifier = str_limit(str_replace(['.'], '', $hostname), 100, '');
 			}
 			
-			/** @var Website $website */
-			$website = $this->website->create([
-				'customer_id' => $customer->id,
-				'identifier'  => $identifier
-			]);
-			
-			/** @var Hostname $host */
-			$host = $this->hostname->create([
+			/** @var Host $Host */
+			$Host = $this->Host->create([
 				'hostname'    => $hostname,
-				'website_id'  => $website->id,
-				'customer_id' => $customer->id,
+				'identifier'  => $identifier,
+				'customer_id' => $Customer->id,
 			]);
 			
 			$webserver = $this->option('webserver');
@@ -154,11 +141,11 @@ class SetupCommand extends Command
 				(new $webserverClass($website))->register();
 			}
 			
-			if ($customer->exists && $website->exists && $host->exists) {
+			if ($Customer->exists && $Host->exists) {
 				$this->info('Configuration successful');
 			}
 		} else {
-			$this->error('The hyn/webserver package is not installed. Visit http://hyn.me/packages/webserver for more information.');
+			$this->error('The boparaiamrit/webserver package is not installed');
 		}
 	}
 	
@@ -167,7 +154,7 @@ class SetupCommand extends Command
 	 */
 	protected function publishFiles()
 	{
-		foreach (config('hyn.packages', []) as $name => $package) {
+		foreach (config('config.packages', []) as $name => $package) {
 			if (class_exists(array_get($package, 'service-provider'))) {
 				$this->call('vendor:publish', [
 					'--provider' => array_get($package, 'service-provider'),
@@ -175,16 +162,5 @@ class SetupCommand extends Command
 				]);
 			}
 		}
-	}
-	
-	/**
-	 * Run migrations for all depending service providers.
-	 */
-	protected function runMigrations()
-	{
-		$this->call('migrate', [
-			'--database' => config('multitenant.database'),
-			'-n',
-		]);
 	}
 }

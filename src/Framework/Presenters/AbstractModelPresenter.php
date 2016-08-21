@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyn\Framework\Presenters;
+namespace Boparaiamrit\Framework\Presenters;
 
 use Laracasts\Presenter\Presenter;
 

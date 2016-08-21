@@ -1,36 +1,24 @@
 <?php
 
-namespace Hyn\Tenancy;
+namespace Boparaiamrit\Tenancy;
 
 
-use Hyn\Tenancy\Commands\Config\CacheCommand;
-use Hyn\Tenancy\Commands\Migrate\InstallCommand;
-use Hyn\Tenancy\Commands\Migrate\MigrateCommand;
-use Hyn\Tenancy\Commands\Migrate\MigrateMakeCommand;
-use Hyn\Tenancy\Commands\Migrate\RefreshCommand;
-use Hyn\Tenancy\Commands\Migrate\ResetCommand;
-use Hyn\Tenancy\Commands\Migrate\RollbackCommand;
-use Hyn\Tenancy\Commands\Migrate\StatusCommand;
-use Hyn\Tenancy\Commands\Seeds\SeedCommand;
-use Hyn\Tenancy\Commands\SetupCommand;
-use Hyn\Tenancy\Contracts\CustomerRepositoryContract;
-use Hyn\Tenancy\Contracts\HostnameRepositoryContract;
-use Hyn\Tenancy\Contracts\WebsiteRepositoryContract;
-use Hyn\Tenancy\Middleware\HostnameMiddleware;
+use Boparaiamrit\Tenancy\Commands\Config\CacheCommand;
+use Boparaiamrit\Tenancy\Commands\Seeds\SeedCommand;
+use Boparaiamrit\Tenancy\Commands\SetupCommand;
+use Boparaiamrit\Tenancy\Contracts\CustomerRepositoryContract;
+use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
+use Boparaiamrit\Tenancy\Middleware\HostMiddleware;
+use Boparaiamrit\TenancyObservers\CertificateObserver;
 use Illuminate\Contracts\Http\Kernel;
-use Illuminate\Database\MigrationServiceProvider;
-use Illuminate\Database\SeedServiceProvider;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
 
 class TenancyServiceProvider extends ServiceProvider
 {
-	/**
-	 * Indicates if loading of the provider is deferred.
-	 *
-	 * @var bool
-	 */
+	const CUSTOMER_HOST = 'customer.host';
+	
 	protected $defer = false;
 	
 	public function boot()
@@ -43,65 +31,30 @@ class TenancyServiceProvider extends ServiceProvider
 		$this->mergeConfigFrom(__DIR__ . '/../../config/multitenant.php', 'multitenant');
 		$this->publishes([__DIR__ . '/../../config/multitenant.php' => config_path('multitenant.php')], 'multitenant-config');
 		
-		/*
-		 * Bind tenancy into container
-		 */
-		new TenancyEnvironment($app);
+		// Tenancy Binding
+		(new TenancyEnvironment())->setup($app);
 		
-		/*
-		 * Register middleware to detect hostname and redirect if required
-		 */
+		// register middleware
 		if (config('multitenant.middleware')) {
 			$app->make(Kernel::class)
-				->prependMiddleware(HostnameMiddleware::class);
+				->prependMiddleware(HostMiddleware::class);
 		}
 		
-		/*
-		 * Model observers
-		 */
-		$this->observers();
+		// Register Observer
+		$this->registerObservers();
 		
-		/*
-		 * override the default migrate command
-		 */
-		$app->booted(function (Application $app) {
-			$this->registerCommands($app);
-		});
-		/*
-		 * Add helper functions
-		 */
+		// Add Helper Function
 		require_once __DIR__ . '/Helpers/HelperFunctions.php';
 	}
 	
 	/**
 	 * Registers model observers.
 	 */
-	protected function observers()
+	protected function registerObservers()
 	{
-		Models\Hostname::observe(new Observers\HostnameObserver());
+		Models\Host::observe(new Observers\HostObserver());
 		Models\Customer::observe(new Observers\CustomerObserver());
-	}
-	
-	/**
-	 * Register all of the migration commands.
-	 *
-	 * @param Application $app
-	 */
-	protected function registerCommands($app)
-	{
-		$this->app = $app;
-		
-		$app->registerDeferredProvider(MigrationServiceProvider::class);
-		$app->registerDeferredProvider(SeedServiceProvider::class);
-		
-		$commands = ['Migrate', 'Rollback', 'Reset', 'Refresh', 'Install', 'Make', 'Status', 'Seed'];
-		
-		// We'll simply spin through the list of commands that are migration related
-		// and register each one of them with an application container. They will
-		// be resolved in the Artisan start file and registered on the console.
-		foreach ($commands as $command) {
-			$this->{'register' . $command . 'Command'}();
-		}
+		Models\Certificate::observe(new Observers\CertificateObserver());
 	}
 	
 	/**
@@ -111,8 +64,14 @@ class TenancyServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
+		/** @noinspection PhpUnusedParameterInspection */
 		$this->app->extend('command.config.cache', function ($command, $app) {
 			return new CacheCommand($app['files']);
+		});
+		
+		/** @noinspection PhpUnusedParameterInspection */
+		$this->app->extend('command.seed', function ($command, $app) {
+			return new SeedCommand($app['db']);
 		});
 		
 		/*
@@ -121,18 +80,10 @@ class TenancyServiceProvider extends ServiceProvider
 		$this->app->bind(SetupCommand::class, function ($app) {
 			/** @var Application $app */
 			return new SetupCommand(
-				$app->make(HostnameRepositoryContract::class),
-				$app->make(WebsiteRepositoryContract::class),
-				$app->make(CustomerRepositoryContract::class)
+				$app->make(CustomerRepositoryContract::class),
+				$app->make(HostRepositoryContract::class)
 			);
 		});
-		
-		/*
-		 * Register commands
-		 */
-		$this->commands([
-			SetupCommand::class,
-		]);
 	}
 	
 	/**
@@ -142,114 +93,11 @@ class TenancyServiceProvider extends ServiceProvider
 	 */
 	public function provides()
 	{
-		/** @noinspection PhpUndefinedFieldInspection */
-		return array_merge($this->commands, [
-			'tenant.hostname',
-			WebsiteRepositoryContract::class,
-			HostnameRepositoryContract::class,
-		]);
-	}
-	
-	/**
-	 * Register the "migrate" migration command.
-	 *
-	 * @return void
-	 */
-	protected function registerMigrateCommand()
-	{
-		$this->app->bind('command.migrate', function () {
-			return new MigrateCommand($this->app->make('migrator'));
-		});
-	}
-	
-	/**
-	 * Register the "seed" command.
-	 *
-	 * @return void
-	 */
-	protected function registerSeedCommand()
-	{
-		$this->app->bind('command.seed', function () {
-			return new SeedCommand($this->app->make('db'));
-		});
-	}
-	
-	/**
-	 * Register the "rollback" migration command.
-	 *
-	 * @return void
-	 */
-	protected function registerRollbackCommand()
-	{
-		$this->app->bind('command.migrate.rollback', function () {
-			return new RollbackCommand($this->app->make('migrator'));
-		});
-	}
-	
-	/**
-	 * Register the "reset" migration command.
-	 *
-	 * @return void
-	 */
-	protected function registerResetCommand()
-	{
-		$this->app->bind('command.migrate.reset', function () {
-			return new ResetCommand($this->app->make('migrator'));
-		});
-	}
-	
-	/**
-	 * Register the "refresh" migration command.
-	 *
-	 * @return void
-	 */
-	protected function registerRefreshCommand()
-	{
-		$this->app->bind('command.migrate.refresh', function () {
-			return new RefreshCommand();
-		});
-	}
-	
-	/**
-	 * Register the "status" migration command.
-	 *
-	 * @return void
-	 */
-	protected function registerStatusCommand()
-	{
-		$this->app->bind('command.migrate.status', function () {
-			return new StatusCommand($this->app->make('migrator'));
-		});
-	}
-	
-	/**
-	 * Register the "install" migration command.
-	 *
-	 * @return void
-	 */
-	protected function registerInstallCommand()
-	{
-		$this->app->bind('command.migrate.install', function () {
-			return new InstallCommand($this->app->make('migration.repository'));
-		});
-	}
-	
-	/**
-	 * Register the "make" migration command.
-	 *
-	 * @return void
-	 */
-	protected function registerMakeCommand()
-	{
-		$this->app->bind('command.migrate.make', function () {
-			// Once we have the migration creator registered, we will create the command
-			// and inject the creator. The creator is responsible for the actual file
-			// creation of the migrations, and may be extended by these developers.
-			$creator = $this->app->make('migration.creator');
-			
-			$composer = $this->app->make('composer');
-			
-			return new MigrateMakeCommand($creator, $composer);
-		});
+		return [
+			self::CUSTOMER_HOST,
+			CustomerRepositoryContract::class,
+			HostRepositoryContract::class,
+			SetupCommand::class,
+		];
 	}
 }

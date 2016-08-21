@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyn\Framework\Repositories;
+namespace Boparaiamrit\Framework\Repositories;
 
 
 use Closure;
@@ -8,7 +8,10 @@ use Jenssegers\Mongodb\Eloquent\Model;
 
 abstract class BaseRepository
 {
-	protected $model;
+	/**
+	 * @var Model Model
+	 */
+	protected $Model;
 	
 	public function __construct()
 	{
@@ -21,7 +24,7 @@ abstract class BaseRepository
 				
 				$this->{$className} = $argument;
 				if ($i == 0) {
-					$this->model = $argument;
+					$this->Model = $argument;
 				}
 			}
 		}
@@ -58,7 +61,7 @@ abstract class BaseRepository
 	public function newInstance($type = null)
 	{
 		if (is_null($type)) {
-			return $this->model->newInstance();
+			return $this->Model->newInstance();
 		}
 		
 		return $this->{$type}->newInstance();
@@ -106,7 +109,7 @@ abstract class BaseRepository
 	public function queryBuilder($type = null)
 	{
 		if (is_null($type)) {
-			return $this->model->query();
+			return $this->Model->query();
 		}
 		
 		return $this->{$type}->query();
@@ -122,12 +125,12 @@ abstract class BaseRepository
 	 */
 	public function findById($id, $softDeleted = true)
 	{
-		if ($softDeleted && method_exists($this->model, 'withTrashed')) {
-			return $this->model->withTrashed()->find($id);
+		if ($softDeleted && method_exists($this->Model, 'withTrashed')) {
+			return $this->Model->withTrashed()->find($id);
 		}
 		
 		/** @noinspection PhpUndefinedMethodInspection */
-		return $this->model->find($id);
+		return $this->Model->find($id);
 	}
 	
 	/**
@@ -140,7 +143,7 @@ abstract class BaseRepository
 	public function paginated($per_page = 20)
 	{
 		/** @noinspection PhpUndefinedMethodInspection */
-		return $this->model->paginate($per_page);
+		return $this->Model->paginate($per_page);
 	}
 	
 	/**
@@ -150,6 +153,6 @@ abstract class BaseRepository
 	 */
 	public function all()
 	{
-		return $this->model->all();
+		return $this->Model->all();
 	}
 }

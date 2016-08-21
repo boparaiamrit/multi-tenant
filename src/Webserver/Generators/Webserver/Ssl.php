@@ -1,19 +1,19 @@
 <?php
 
-namespace Hyn\Webserver\Generators\Webserver;
+namespace Boparaiamrit\Webserver\Generators\Webserver;
 
 use File;
-use Hyn\Webserver\Abstracts\AbstractGenerator;
-use Hyn\Webserver\Models\SslCertificate;
+use Boparaiamrit\Webserver\Abstracts\AbstractGenerator;
+use Boparaiamrit\Tenancy\Models\Certificate;
 
 class Ssl extends AbstractGenerator
 {
     /**
-     * @var SslCertificate
+     * @var Certificate
      */
     protected $certificate;
 
-    public function __construct(SslCertificate $certificate)
+    public function __construct(Certificate $certificate)
     {
         $this->certificate = $certificate;
     }

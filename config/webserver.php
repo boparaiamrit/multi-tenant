@@ -1,9 +1,9 @@
 <?php
 
 /**
- * All hyn-me/webserver related configuration options.
+ * All boparaiamrit-me/webserver related configuration options.
  *
- * @warning please be advised, read the documentation on http://hyn.me before editing
+ * @warning please be advised, read the documentation on http://boparaiamrit.me before editing
  *
  * None of the generated configurations will work as long as you don't add the paths to the corresponding webservice
  * configuration file. See documentation for more info.

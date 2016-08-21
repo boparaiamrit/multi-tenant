@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyn\Framework\Contracts;
+namespace Boparaiamrit\Framework\Contracts;
 
 use Closure;
 

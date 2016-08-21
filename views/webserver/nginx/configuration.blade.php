@@ -1,7 +1,7 @@
 #
 #   Auto generated Nginx configuration
 #       @time: {{ date('H:i:s d-m-Y') }}
-#       @author: hyn-me/webserver
+#       @author: boparaiamrit-me/webserver
 #       @website: "{{ $website->present()->name }}"
 #
 

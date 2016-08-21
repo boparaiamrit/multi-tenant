@@ -1,10 +1,10 @@
 <?php
 
-namespace Hyn\Tenancy;
+namespace Boparaiamrit\Tenancy;
 
 
-use Hyn\Tenancy\Helpers\TenancyRequestHelper;
-use Illuminate\Foundation\Application;
+use Boparaiamrit\Tenancy\Helpers\RequestHelper;
+use Illuminate\Contracts\Foundation\Application;
 
 /**
  * Class TenancyEnvironment.
@@ -14,73 +14,48 @@ use Illuminate\Foundation\Application;
 class TenancyEnvironment
 {
 	/**
-	 * @var \Illuminate\Contracts\Foundation\Application
+	 * @param Application $app
 	 */
-	protected $app;
-	
-	/**
-	 * @var \Hyn\Tenancy\Models\Hostname
-	 */
-	protected $hostname;
-	
-	/**
-	 * @var \Hyn\Tenancy\Models\Website
-	 */
-	protected $website;
-	
-	public function __construct($app)
+	public function setup($app)
 	{
-		// share the application
-		$this->app = $app;
-		
 		// sets file access to as wide as possible, ignoring server masks
 		umask(0);
 		
 		// bind tenancy environment into IOC
-		$this->setupBinds();
+		$this->contractsBinding($app);
 		
-		// load hostname object or default
-		$this->hostname = TenancyRequestHelper::hostname(
-			$this->app->make(Contracts\HostnameRepositoryContract::class)
-		);
-		
-		// set website
-		$this->website = !is_null($this->hostname) ? $this->hostname->website : null;
+		$app->singleton(TenancyServiceProvider::CUSTOMER_HOST, function ($app) {
+			/** @var Application $app */
+			return RequestHelper::getHost($app->make(Contracts\HostRepositoryContract::class));
+		});
 	}
 	
 	/**
 	 * Binds all interfaces to the IOC container.
+	 *
+	 * @param Application $app
 	 */
-	protected function setupBinds()
+	protected function contractsBinding($app)
 	{
 		/*
-		 * Tenant repository
+		 * Tenant Customer repository
 		 */
-		$this->app->bind(Contracts\CustomerRepositoryContract::class, function () {
+		$app->bind(Contracts\CustomerRepositoryContract::class, function () {
 			return new Repositories\CustomerRepository(new Models\Customer());
-		});
-		/*
-		 * Tenant hostname repository
-		 */
-		$this->app->bind(Contracts\HostnameRepositoryContract::class, function () {
-			return new Repositories\HostnameRepository(new Models\Hostname());
-		});
-		/*
-		 * Tenant website repository
-		 */
-		$this->app->bind(Contracts\WebsiteRepositoryContract::class, function ($app) {
-			/** @var Application $app */
-			return new Repositories\WebsiteRepository(
-				new Models\Website(),
-				$app->make(Contracts\HostnameRepositoryContract::class)
-			);
 		});
 		
 		/*
-         * Tenant hostname
-         */
-		$this->app->singleton('tenant.hostname', function () {
-			return $this->hostname;
+		 * Tenant Host repository
+		 */
+		$app->bind(Contracts\HostRepositoryContract::class, function () {
+			return new Repositories\HostRepository(new Models\Host());
+		});
+		
+		/*
+		 * Tenant repository
+		 */
+		$app->bind(Contracts\CertificateRepositoryContract::class, function () {
+			return new Repositories\CustomerRepository(new Models\Certificate());
 		});
 	}
 }

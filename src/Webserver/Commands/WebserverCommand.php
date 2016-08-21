@@ -1,22 +1,23 @@
 <?php
 
-namespace Hyn\Webserver\Commands;
+namespace Boparaiamrit\Webserver\Commands;
 
 
-use Hyn\Framework\Commands\AbstractRootCommand;
-use Hyn\Tenancy\Models\Website;
-use Hyn\Webserver\Generators\Webserver\Fpm;
-use Hyn\Webserver\Generators\Webserver\Nginx;
-use Hyn\Webserver\Generators\Webserver\SSL;
+use Boparaiamrit\Framework\Commands\AbstractRootCommand;
+use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
+use Boparaiamrit\Tenancy\Models\Host;
+use Boparaiamrit\Webserver\Generators\Webserver\Fpm;
+use Boparaiamrit\Webserver\Generators\Webserver\Nginx;
+use Boparaiamrit\Webserver\Generators\Webserver\Ssl;
 
 class WebserverCommand extends AbstractRootCommand
 {
 	protected $name = 'webserver';
 	
 	/**
-	 * @var Website
+	 * @var Host
 	 */
-	protected $Website;
+	protected $Host;
 	
 	/**
 	 * @var string
@@ -26,14 +27,15 @@ class WebserverCommand extends AbstractRootCommand
 	/**
 	 * Create a new command instance.
 	 *
-	 * @param int    $Website_id
+	 * @param        $HostId
 	 * @param string $action
+	 *
 	 */
-	public function __construct($Website_id, $action = 'update')
+	public function __construct($HostId, $action = 'update')
 	{
 		parent::__construct();
 		
-		$this->setWebsite($Website_id);
+		$this->setHost($HostId);
 		$this->setAction($action);
 	}
 	
@@ -50,24 +52,24 @@ class WebserverCommand extends AbstractRootCommand
 		
 		$action = sprintf('on%s', ucfirst($this->action));
 		
-		foreach ($this->Website->hostnamesWithCertificate as $hostname) {
-			(new SSL($hostname->certificate))->onUpdate();
+		if(!empty($this->Host->certificate_id)) {
+			(new Ssl($this->Host->certificate))->onUpdate();
 		}
 		
 		// Php FPM
-		(new Fpm($this->Website))->{$action}();
+		(new Fpm($this->Host))->{$action}();
 		
 		// Webservers
-		(new Nginx($this->Website))->{$action}();
+		(new Nginx($this->Host))->{$action}();
 	}
 	
 	
-	public function setWebsite($websiteId)
+	public function setHost($HostId)
 	{
-		/** @var Website $Website */
-		$Website = app('Hyn\Tenancy\Contracts\WebsiteRepositoryContract')->findById($websiteId);
+		/** @var Host $Host */
+		$Host = app(HostRepositoryContract::class)->findById($HostId);
 		
-		$this->Website = $Website;
+		$this->Host = $Host;
 	}
 	
 	/**

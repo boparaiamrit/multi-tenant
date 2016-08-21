@@ -1,14 +1,11 @@
 <?php
 
-namespace Hyn\Webserver;
+namespace Boparaiamrit\Webserver;
 
 
-use Hyn\Tenancy\Contracts\WebsiteRepositoryContract;
-use Hyn\Tenancy\Models\Hostname;
-use Hyn\Webserver\Contracts\SslRepositoryContract;
-use Hyn\Webserver\Models\SslCertificate;
-use Hyn\Webserver\Models\SslHostname;
-use Hyn\Webserver\Repositories\SslRepository;
+use Boparaiamrit\Tenancy\Contracts\CertificateRepositoryContract;
+use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
 class WebserverServiceProvider extends ServiceProvider
@@ -30,7 +27,7 @@ class WebserverServiceProvider extends ServiceProvider
 		);
 		$this->publishes(
 			[__DIR__ . '/../../config/webserver.php' => config_path('webserver.php')],
-			'hyn-webserver-config'
+			'boparaiamrit-webserver-config'
 		);
 		
 		// adds views
@@ -38,9 +35,6 @@ class WebserverServiceProvider extends ServiceProvider
 			__DIR__ . '/../../views/webserver',
 			'webserver'
 		);
-		
-		Hostname::observe(new Observers\HostnameObserver());
-		SslCertificate::observe(new Observers\SslCertificateObserver());
 	}
 	
 	/**
@@ -51,20 +45,14 @@ class WebserverServiceProvider extends ServiceProvider
 	public function register()
 	{
 		/*
-		 * Ssl repository
-		 */
-		$this->app->bind(SslRepositoryContract::class, function ($app) {
-			return new SslRepository(new SslCertificate(), new SslHostname());
-		});
-		
-		/*
 		 * Toolbox command
 		 */
-		$this->app->bind('hyn.webserver.command.toolbox', function ($app) {
-			return new Commands\ToolboxCommand($app->make(WebsiteRepositoryContract::class));
+		$this->app->bind('boparaiamrit.webserver.command.toolbox', function ($app) {
+			/** @var Application $app */
+			return new Commands\ToolboxCommand($app->make(HostRepositoryContract::class));
 		});
 		
-		$this->commands(['hyn.webserver.command.toolbox']);
+		$this->commands(['boparaiamrit.webserver.command.toolbox']);
 	}
 	
 	/**
@@ -75,8 +63,8 @@ class WebserverServiceProvider extends ServiceProvider
 	public function provides()
 	{
 		return [
-			'hyn.webserver.command.toolbox',
-			SslRepositoryContract::class,
+			'boparaiamrit.webserver.command.toolbox',
+			CertificateRepositoryContract::class,
 		];
 	}
 }

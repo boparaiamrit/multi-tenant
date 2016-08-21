@@ -1,18 +1,16 @@
 <?php
 
-namespace Hyn\Tenancy\Observers;
+namespace Boparaiamrit\Tenancy\Observers;
 
-use Hyn\Tenancy\Models\Customer;
+
+use Boparaiamrit\Tenancy\Models\Customer;
 
 class CustomerObserver
 {
-    public function deleting(Customer $model)
-    {
-        foreach ($model->hostnames as $hostname) {
-            $hostname->delete();
-        }
-        foreach ($model->websites as $website) {
-            $website->delete();
-        }
-    }
+	public function deleting(Customer $Model)
+	{
+		foreach ($Model->hosts as $Host) {
+			$Host->delete();
+		}
+	}
 }

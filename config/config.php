@@ -1,7 +1,7 @@
 <?php
 
-use Hyn\Tenancy\TenancyServiceProvider;
-use Hyn\Webserver\WebserverServiceProvider;
+use Boparaiamrit\Tenancy\TenancyServiceProvider;
+use Boparaiamrit\Webserver\WebserverServiceProvider;
 
 return [
 	'packages' => [

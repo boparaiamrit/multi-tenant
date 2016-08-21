@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyn\Webserver\Helpers;
+namespace Boparaiamrit\Webserver\Helpers;
 
 
 use File;

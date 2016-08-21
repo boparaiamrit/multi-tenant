@@ -1,8 +1,9 @@
 <?php
 
-namespace Hyn\Tenancy\Models;
+namespace Boparaiamrit\Tenancy\Models;
 
 
+use Boparaiamrit\Tenancy\Presenters\CustomerPresenter;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -10,87 +11,29 @@ use Illuminate\Database\Eloquent\Collection;
  * @property int        $id
  * @property string     $name
  * @property string     $email
- * @property string     $customer_no
- * @property bool       $administrator
- * @property int        $reseller_id
- * @property int        $referer_id
- * @property Customer   $referer
- * @property Customer   $reseller
- * @property Collection $refered
- * @property Collection $reselled
- * @property Collection $hostnames
- * @property Collection $websites
+ * @property Collection $hosts
  * @property Carbon     $created_at
  * @property Carbon     $updated_at
  * @property Carbon     $deleted_at
  */
 class Customer extends BaseModel
 {
+	const NAME  = 'name';
+	const EMAIL = 'email';
+	
+	protected $collection = 'customers';
+	
+	protected $presenter = CustomerPresenter::class;
+	
+	protected $fillable = [self::NAME, self::EMAIL];
 	
 	/**
-	 * @var string
-	 */
-	protected $presenter = 'Hyn\Tenancy\Presenters\TenantPresenter';
-	
-	protected $fillable = ['name', 'email', 'customer_no'];
-	
-	/**
-	 * All hostnames of this tenant.
+	 * All hosts of this customer.
 	 *
 	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
 	 */
-	public function hostnames()
+	public function hosts()
 	{
-		return $this->hasMany(Hostname::class);
-	}
-	
-	/**
-	 * All websites of this tenant.
-	 *
-	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
-	 */
-	public function websites()
-	{
-		return $this->hasMany(Website::class);
-	}
-	
-	/**
-	 * The reseller of this tenant.
-	 *
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-	 */
-	public function reseller()
-	{
-		return $this->belongsTo(self::class);
-	}
-	
-	/**
-	 * The referer of this tenant.
-	 *
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-	 */
-	public function referer()
-	{
-		return $this->belongsTo(self::class);
-	}
-	
-	/**
-	 * Those who have been reselled by this tenant.
-	 *
-	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
-	 */
-	public function reselled()
-	{
-		return $this->hasMany(self::class, 'reseller_id');
-	}
-	
-	/**
-	 * Those that have been refered by this tenant.
-	 *
-	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
-	 */
-	public function refered()
-	{
-		return $this->hasMany(self::class, 'referer_id');
+		return $this->hasMany(Host::class);
 	}
 }

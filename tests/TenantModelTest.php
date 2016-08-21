@@ -4,7 +4,7 @@ namespace Hyn\Tenancy\Tests;
 
 use Hyn\Framework\Testing\TestCase;
 use Hyn\Tenancy\Models\Customer;
-use Hyn\Tenancy\Models\Hostname;
+use Hyn\Tenancy\Models\Host;
 use Hyn\Tenancy\Models\Website;
 
 /**
@@ -38,7 +38,7 @@ class TenantModelTest extends TestCase
     {
         $this->assertEquals(0, $this->customer->hostnames->count());
 
-        $this->assertEquals(new Hostname(), $this->customer->hostnames()->getRelated()->newInstance([]));
+        $this->assertEquals(new Host(), $this->customer->hostnames()->getRelated()->newInstance([]));
     }
 
     /**

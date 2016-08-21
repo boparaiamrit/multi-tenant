@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyn\Framework\Commands;
+namespace Boparaiamrit\Framework\Commands;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Console\Command;

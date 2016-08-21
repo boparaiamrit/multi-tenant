@@ -1,7 +1,7 @@
 ;#
 ;#   Auto generated Fpm configuration
 ;#       @time: {{ date('H:i:s d-m-Y') }}
-;#       @author: hyn.me
+;#       @author: boparaiamrit.me
 ;#       @website: "{{ $website->present()->name }}"
 ;#
 
@@ -9,7 +9,7 @@
 [{{ $website->present()->urlName }}]
 
 ;# listening for nginx proxying
-listen=/run/php/php7.0-fpm.hyn-{{ $config['port'] + $website->id }}.sock
+listen=/run/php/php7.0-fpm.boparaiamrit-{{ $config['port'] + $website->id }}.sock
 listen.allowed_clients=127.0.0.1
 
 

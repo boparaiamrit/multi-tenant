@@ -4,7 +4,7 @@ namespace Hyn\Tenancy\Tests;
 
 use Hyn\Framework\Testing\TestCase;
 use Hyn\Tenancy\Models\Customer;
-use Hyn\Tenancy\Models\Hostname;
+use Hyn\Tenancy\Models\Host;
 use Hyn\Tenancy\Models\Website;
 use Hyn\Webserver\Models\SslCertificate;
 use Illuminate\Http\RedirectResponse;
@@ -17,7 +17,7 @@ use Illuminate\Http\RedirectResponse;
 class HostnameModelTest extends TestCase
 {
     /**
-     * @var Hostname
+     * @var Host
      */
     protected $hostname;
 
@@ -25,7 +25,7 @@ class HostnameModelTest extends TestCase
     {
         parent::setUp();
 
-        $hostname = new Hostname();
+        $hostname = new Host();
         $hostname->hostname = 'example.org';
 
         $this->hostname = $hostname;
@@ -63,7 +63,7 @@ class HostnameModelTest extends TestCase
      */
     public function redirect_to_hostname_relation_is_correct()
     {
-        $this->assertEquals(new Hostname(), $this->hostname->redirectToHostname()->getRelated()->newInstance([]));
+        $this->assertEquals(new Host(), $this->hostname->redirectToHostname()->getRelated()->newInstance([]));
     }
 
     /**
@@ -72,7 +72,7 @@ class HostnameModelTest extends TestCase
      */
     public function sub_domain_of_relation_is_correct()
     {
-        $this->assertEquals(new Hostname(), $this->hostname->subDomainOf()->getRelated()->newInstance([]));
+        $this->assertEquals(new Host(), $this->hostname->subDomainOf()->getRelated()->newInstance([]));
     }
 
     /**
@@ -81,7 +81,7 @@ class HostnameModelTest extends TestCase
      */
     public function sub_domains_relation_is_correct()
     {
-        $this->assertEquals(new Hostname(), $this->hostname->subDomains()->getRelated()->newInstance([]));
+        $this->assertEquals(new Host(), $this->hostname->subDomains()->getRelated()->newInstance([]));
     }
 
     /**

@@ -1,11 +1,11 @@
 <?php
 
-namespace Hyn\Webserver\Models;
+namespace Boparaiamrit\Tenancy\Models;
 
 
+use Boparaiamrit\Tenancy\Presenters\CertificatePresenter;
+use Boparaiamrit\Webserver\Tools\CertificateParser;
 use Cache;
-use Hyn\Tenancy\Models\Customer;
-use Hyn\Webserver\Tools\CertificateParser;
 use Jenssegers\Mongodb\Eloquent\Model;
 use Laracasts\Presenter\PresentableTrait;
 
@@ -25,19 +25,19 @@ use Laracasts\Presenter\PresentableTrait;
  * @property mixed wildcard
  * @property mixed x509
  */
-class SslCertificate extends Model
+class Certificate extends Model
 {
 	use PresentableTrait;
 	
 	/**
 	 * @var string
 	 */
-	protected $presenter = 'Hyn\Webserver\Presenters\SslCertificatePresenter';
+	protected $presenter = CertificatePresenter::class;
 	
 	/**
 	 * @var array
 	 */
-	protected $fillable = ['tenant_id', 'certificate', 'authority_bundle', 'key'];
+	protected $fillable = ['customer_id', 'certificate', 'authority_bundle', 'key'];
 	
 	/**
 	 * @var array
@@ -80,9 +80,9 @@ class SslCertificate extends Model
 	/**
 	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
 	 */
-	public function hostnames()
+	public function hosts()
 	{
-		return $this->hasMany(SslHostname::class);
+		return $this->hasMany(Host::class);
 	}
 	
 	/**

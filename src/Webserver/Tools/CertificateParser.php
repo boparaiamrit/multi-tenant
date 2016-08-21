@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyn\Webserver\Tools;
+namespace Boparaiamrit\Webserver\Tools;
 
 use Carbon\Carbon;
 use phpseclib\File\X509;
@@ -36,7 +36,7 @@ class CertificateParser
         // get all certificate alt names
         $altNames = $this->x509->getExtension('id-ce-subjectAltName');
         if ($altNames) {
-            array_walk($altNames, function (&$value, $key) {
+            array_walk($altNames, function (&$value) {
                 $value = $value['dNSName'];
             });
         } else {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Hyn\Framework\Validation;
+namespace Boparaiamrit\Framework\Validation;
 
 use Illuminate\Validation\Validator;
 

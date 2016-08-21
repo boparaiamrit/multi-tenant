@@ -6,7 +6,7 @@ use DB;
 use File;
 use Hyn\Framework\Testing\TestCase;
 use Hyn\Tenancy\Contracts\CustomerRepositoryContract;
-use Hyn\Tenancy\Contracts\HostnameRepositoryContract;
+use Hyn\Tenancy\Contracts\HostRepositoryContract;
 use Hyn\Tenancy\Contracts\TenantRepositoryContract;
 use Hyn\Tenancy\MultiTenantServiceProvider;
 use Hyn\Tenancy\TenancyServiceProvider;
@@ -22,7 +22,7 @@ class TenancySetupTest extends TestCase
     protected $tenant;
 
     /**
-     * @var HostnameRepositoryContract
+     * @var HostRepositoryContract
      */
     protected $hostname;
 
@@ -39,7 +39,7 @@ class TenancySetupTest extends TestCase
             'Class FrameworkServiceProvider does not exist'
         );
         $this->assertNotFalse(
-            $this->app->make('hyn.package.multitenant'),
+            $this->app->make('boparaiamrit.package.multitenant'),
             'packages are not loaded through FrameworkServiceProvider'
         );
 
@@ -49,7 +49,7 @@ class TenancySetupTest extends TestCase
         );
         $this->assertTrue($this->app->isBooted());
 
-        $this->assertNotFalse($this->app->make('hyn.package.multitenant'));
+        $this->assertNotFalse($this->app->make('boparaiamrit.package.multitenant'));
     }
 
     /**
@@ -116,7 +116,7 @@ class TenancySetupTest extends TestCase
     }
 
     /**
-     * @return \Hyn\Tenancy\Models\Hostname
+     * @return \Hyn\Tenancy\Models\Host
      */
     protected function loadSystemTesting()
     {

@@ -1,8 +1,9 @@
 <?php
 
-namespace Hyn\Tenancy\Contracts;
+namespace Boparaiamrit\Tenancy\Contracts;
 
-use Hyn\Framework\Contracts\BaseRepositoryContract;
+use Boparaiamrit\Framework\Contracts\BaseRepositoryContract;
+use Boparaiamrit\Tenancy\Models\Customer;
 
 interface CustomerRepositoryContract extends BaseRepositoryContract
 {
@@ -27,7 +28,7 @@ interface CustomerRepositoryContract extends BaseRepositoryContract
      *
      * @param $name
      *
-     * @return \Hyn\Tenancy\Models\Customer
+     * @return Customer
      */
     public function findByName($name);
 }
