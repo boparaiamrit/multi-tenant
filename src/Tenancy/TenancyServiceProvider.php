@@ -8,8 +8,9 @@ use Boparaiamrit\Tenancy\Commands\Seeds\SeedCommand;
 use Boparaiamrit\Tenancy\Commands\SetupCommand;
 use Boparaiamrit\Tenancy\Contracts\CustomerRepositoryContract;
 use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
+use Boparaiamrit\Tenancy\Helpers\RequestHelper;
 use Boparaiamrit\Tenancy\Middleware\HostMiddleware;
-use Boparaiamrit\TenancyObservers\CertificateObserver;
+use Boparaiamrit\Tenancy\Observers\CertificateObserver;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
@@ -17,8 +18,6 @@ use Illuminate\Support\ServiceProvider;
 
 class TenancyServiceProvider extends ServiceProvider
 {
-	const CUSTOMER_HOST = 'customer.host';
-	
 	protected $defer = false;
 	
 	public function boot()
@@ -41,20 +40,12 @@ class TenancyServiceProvider extends ServiceProvider
 		}
 		
 		// Register Observer
-		$this->registerObservers();
-		
-		// Add Helper Function
-		require_once __DIR__ . '/Helpers/HelperFunctions.php';
-	}
-	
-	/**
-	 * Registers model observers.
-	 */
-	protected function registerObservers()
-	{
 		Models\Host::observe(new Observers\HostObserver());
 		Models\Customer::observe(new Observers\CustomerObserver());
 		Models\Certificate::observe(new Observers\CertificateObserver());
+		
+		// Add Helper Function
+		require_once __DIR__ . '/Helpers/helpers.php';
 	}
 	
 	/**
@@ -94,7 +85,7 @@ class TenancyServiceProvider extends ServiceProvider
 	public function provides()
 	{
 		return [
-			self::CUSTOMER_HOST,
+			RequestHelper::CUSTOMER_HOST,
 			CustomerRepositoryContract::class,
 			HostRepositoryContract::class,
 			SetupCommand::class,

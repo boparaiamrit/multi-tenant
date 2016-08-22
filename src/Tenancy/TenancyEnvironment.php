@@ -23,11 +23,6 @@ class TenancyEnvironment
 		
 		// bind tenancy environment into IOC
 		$this->contractsBinding($app);
-		
-		$app->singleton(TenancyServiceProvider::CUSTOMER_HOST, function ($app) {
-			/** @var Application $app */
-			return RequestHelper::getHost($app->make(Contracts\HostRepositoryContract::class));
-		});
 	}
 	
 	/**

@@ -13,6 +13,8 @@ use Boparaiamrit\Tenancy\Models\Host;
  */
 abstract class RequestHelper
 {
+	const CUSTOMER_HOST = 'customer.host';
+	
 	/**
 	 * Loads Hostname models based on request.
 	 *

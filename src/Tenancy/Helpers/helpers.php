@@ -2,7 +2,7 @@
 
 use Boparaiamrit\Tenancy\Contracts\CustomerRepositoryContract;
 use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
-use Boparaiamrit\Tenancy\TenancyServiceProvider;
+use Boparaiamrit\Tenancy\Helpers\RequestHelper;
 
 
 if (!function_exists('customer')) {
@@ -19,7 +19,7 @@ if (!function_exists('customer')) {
 			return app(CustomerRepositoryContract::class)->findById($id);
 		}
 		
-		$host = app(TenancyServiceProvider::CUSTOMER_HOST);
+		$host = app(RequestHelper::CUSTOMER_HOST);
 		
 		return $host ? $host->customer : false;
 	}
@@ -39,7 +39,7 @@ if (!function_exists('host')) {
 			return app(HostRepositoryContract::class)->findById($id);
 		}
 		
-		$host = app(TenancyServiceProvider::CUSTOMER_HOST);
+		$host = app(RequestHelper::CUSTOMER_HOST);
 		
 		return $host ? $host : false;
 	}
