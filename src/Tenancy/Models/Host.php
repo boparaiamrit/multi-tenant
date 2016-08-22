@@ -5,6 +5,7 @@ namespace Boparaiamrit\Tenancy\Models;
 
 use Boparaiamrit\Tenancy\Presenters\HostPresenter;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @property string      $id
@@ -18,6 +19,8 @@ use Carbon\Carbon;
  * @property Customer    $customer
  * @property Host        $redirectToHost
  * @property Certificate $certificate
+ * @property Collection  $withCertificate
+ * @property Collection  $withoutCertificate
  * @property Carbon      $deleted_at
  */
 class Host extends BaseModel
@@ -64,6 +67,28 @@ class Host extends BaseModel
 	public function certificate()
 	{
 		return $this->belongsTo(Certificate::class, self::CERTIFICATE_ID);
+	}
+	
+	/**
+	 * Load all hostnames that have a certificate.
+	 *
+	 * @return \Illuminate\Database\Eloquent\Collection
+	 */
+	public function getWithCertificateAttribute()
+	{
+		/** @noinspection PhpUndefinedMethodInspection */
+		return $this->whereNotNull(self::CERTIFICATE_ID)->get();
+	}
+	
+	/**
+	 * Loads all hostnames that have no certificate.
+	 *
+	 * @return \Illuminate\Database\Eloquent\Collection
+	 */
+	public function getWithoutCertificateAttribute()
+	{
+		/** @noinspection PhpUndefinedMethodInspection */
+		return $this->whereNull(self::CERTIFICATE_ID)->get();
 	}
 	
 	/**

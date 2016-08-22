@@ -3,7 +3,9 @@
 namespace Boparaiamrit\Tenancy;
 
 
-use Boparaiamrit\Tenancy\Helpers\RequestHelper;
+use Boparaiamrit\Tenancy\Commands\SetupCommand;
+use Boparaiamrit\Tenancy\Contracts\CustomerRepositoryContract;
+use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
 use Illuminate\Contracts\Foundation\Application;
 
 /**
@@ -51,6 +53,17 @@ class TenancyEnvironment
 		 */
 		$app->bind(Contracts\CertificateRepositoryContract::class, function () {
 			return new Repositories\CustomerRepository(new Models\Certificate());
+		});
+		
+		/*
+		 * Bind setup command into ioc
+		 */
+		$app->bind(SetupCommand::class, function ($app) {
+			/** @var Application $app */
+			return new SetupCommand(
+				$app->make(CustomerRepositoryContract::class),
+				$app->make(HostRepositoryContract::class)
+			);
 		});
 	}
 }

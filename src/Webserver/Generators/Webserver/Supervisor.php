@@ -5,7 +5,7 @@ namespace Boparaiamrit\Webserver\Generators\Webserver;
 
 use Boparaiamrit\Webserver\Generators\AbstractFileGenerator;
 
-class Fpm extends AbstractFileGenerator
+class Supervisor extends AbstractFileGenerator
 {
 	/**
 	 * Generates the view that is written.
@@ -17,20 +17,10 @@ class Fpm extends AbstractFileGenerator
 		$config = [
 			'Host'      => $this->Host,
 			'base_path' => base_path(),
-			'group'     => config('webserver.group'),
-			'config'    => config('webserver.fpm'),
 		];
 		
-		$defaultUser = config('webserver.user');
-		if ($defaultUser === true) {
-			$config['user'] = $this->Host->identifier;
-		} else if (is_string($defaultUser)) {
-			$config['user'] = $defaultUser;
-		} else if ($defaultUser === false) {
-			$config['user'] = 'vagrant';
-		}
 		
-		return view('webserver::fpm.configuration', $config);
+		return view('webserver::supervisor.configuration', $config);
 	}
 	
 	/**

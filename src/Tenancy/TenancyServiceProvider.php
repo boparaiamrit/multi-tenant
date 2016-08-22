@@ -33,6 +33,9 @@ class TenancyServiceProvider extends ServiceProvider
 		// Tenancy Binding
 		(new TenancyEnvironment())->setup($app);
 		
+		// Register Commands
+		$this->commands(SetupCommand::class);
+		
 		// register middleware
 		if (config('multitenant.middleware')) {
 			$app->make(Kernel::class)
@@ -63,17 +66,6 @@ class TenancyServiceProvider extends ServiceProvider
 		/** @noinspection PhpUnusedParameterInspection */
 		$this->app->extend('command.seed', function ($command, $app) {
 			return new SeedCommand($app['db']);
-		});
-		
-		/*
-		 * Bind setup command into ioc
-		 */
-		$this->app->bind(SetupCommand::class, function ($app) {
-			/** @var Application $app */
-			return new SetupCommand(
-				$app->make(CustomerRepositoryContract::class),
-				$app->make(HostRepositoryContract::class)
-			);
 		});
 	}
 	

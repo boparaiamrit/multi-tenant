@@ -98,69 +98,46 @@ class SetupCommand extends Command
 		}
 		
 		$this->comment('Welcome to boparaiamrit multitenancy.');
+		$this->Helper->createDirectories();
 		
-		$this->publishFiles();
+		// Create the Customer configurations
 		
-		// Setup webserver
-		if ($this->Helper) {
-			$this->Helper->createDirectories();
-			
-			// Create the Customer configurations
-			
-			/** @var Customer $Customer */
-			$Customer = $this->Customer->create(compact('name', 'email'));
-			
-			if (empty($identifier)) {
-				$identifier = str_limit(str_replace(['.'], '', $hostname), 100, '');
-			}
-			
-			/** @var Host $Host */
-			$Host = $this->Host->create([
-				'hostname'    => $hostname,
-				'identifier'  => $identifier,
-				'customer_id' => $Customer->id,
-			]);
-			
-			$webserver = $this->option('webserver');
-			
-			if (empty($webserver)) {
-				$webserver = $this->anticipate('Integrate into a webserver?', ['no', 'apache', 'nginx'], 'no');
-			}
-			
-			if ($webserver != 'no') {
-				$webserverConfiguration = array_get($this->configuration, $webserver);
-				$webserverClass         = array_get($webserverConfiguration, 'class');
-			} else {
-				$webserver = 'Nginx';
-			}
-			
-			// hook into the webservice of choice once object creation succeeded
-			if ($webserver) {
-				/** @noinspection PhpUndefinedMethodInspection */
-				/** @noinspection PhpUndefinedVariableInspection */
-				(new $webserverClass($website))->register();
-			}
-			
-			if ($Customer->exists && $Host->exists) {
-				$this->info('Configuration successful');
-			}
-		} else {
-			$this->error('The boparaiamrit/webserver package is not installed');
+		/** @var Customer $Customer */
+		$Customer = $this->Customer->create(compact('name', 'email'));
+		
+		if (empty($identifier)) {
+			$identifier = str_limit(str_replace(['.'], '', $hostname), 100, '');
 		}
-	}
-	
-	/**
-	 * Publish files for all Hyn packages.
-	 */
-	protected function publishFiles()
-	{
-		foreach (config('config.packages', []) as $name => $package) {
-			if (class_exists(array_get($package, 'service-provider'))) {
-				$this->call('vendor:publish', [
-					'--provider' => array_get($package, 'service-provider'),
-					'-n',
-				]);
-			}
+		
+		/** @var Host $Host */
+		$Host = $this->Host->create([
+			'hostname'    => $hostname,
+			'identifier'  => $identifier,
+			'customer_id' => $Customer->id,
+		]);
+		
+		$webserver = $this->option('webserver');
+		
+		if (empty($webserver)) {
+			$webserver = $this->anticipate('Integrate into a webserver?', ['no', 'apache', 'nginx'], 'no');
+		}
+		
+		if ($webserver != 'no') {
+			$webserverConfiguration = array_get($this->configuration, $webserver);
+			$webserverClass         = array_get($webserverConfiguration, 'class');
+		} else {
+			$webserver = 'Nginx';
+		}
+		
+		// hook into the webservice of choice once object creation succeeded
+		if ($webserver) {
+			/** @noinspection PhpUndefinedMethodInspection */
+			/** @noinspection PhpUndefinedVariableInspection */
+			(new $webserverClass($Host))->register();
+		}
+		
+		if ($Customer->exists && $Host->exists) {
+			$this->info('Configuration successful');
 		}
 	}
 }

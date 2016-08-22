@@ -1,15 +1,14 @@
 ;#
 ;#   Auto generated Fpm configuration
 ;#       @time: {{ date('H:i:s d-m-Y') }}
-;#       @author: boparaiamrit.me
-;#       @website: "{{ $website->present()->name }}"
+;#       @author: boparaiamrit@gmail.com
 ;#
 
 ;# unique fpm group
-[{{ $website->present()->urlName }}]
+[{{ $Host->identifier }}]
 
 ;# listening for nginx proxying
-listen=/run/php/php7.0-fpm.boparaiamrit-{{ $config['port'] + $website->id }}.sock
+listen=/run/php/php7.0-fpm.{{ $Host->identifier }}.sock
 listen.allowed_clients=127.0.0.1
 
 

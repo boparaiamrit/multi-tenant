@@ -3,19 +3,19 @@ server {
 
     listen {{ $config->port->http or 80 }};
 
-    @if(isset($ssl))
+    @if(isset($Ssl))
     listen {{ $config->port->https or 443 }} ssl spdy;
-    ssl_certificate_key {{ $ssl->pathKey }};
-    ssl_certificate {{ $ssl->pathPem }};
+    ssl_certificate_key {{ $Ssl->pathKey }};
+    ssl_certificate {{ $Ssl->pathPem }};
     @endif
 
 
 
     # server hostnames
-    @if(isset($hostname))
-        server_name {{ $hostname->hostname }};
+    @if(isset($Host))
+        server_name {{ $Host->hostname }};
     @else
-        server_name {{ $hostnames->implode('hostname', ' ') }};
+        server_name {{ $Hosts->implode('hostname', ' ') }};
     @endif
 
     # allow cross origin access
@@ -44,7 +44,7 @@ server {
 
     # pass the PHP scripts to FastCGI server from upstream phpfcgi
     location ~ \.php(/|$) {
-        fastcgi_pass    unix:/var/run/php/php7.0-fpm.boparaiamrit-{{ $fpm_port + $website->id }}.sock;
+        fastcgi_pass    unix:/var/run/php/php7.0-fpm.{{ $Host->identifier }}.sock;
         include         fastcgi_params;
 
         fastcgi_split_path_info ^(.+\.php)(/.*)$;

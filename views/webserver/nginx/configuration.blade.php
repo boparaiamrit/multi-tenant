@@ -1,25 +1,24 @@
 #
 #   Auto generated Nginx configuration
 #       @time: {{ date('H:i:s d-m-Y') }}
-#       @author: boparaiamrit-me/webserver
-#       @website: "{{ $website->present()->name }}"
+#       @author: boparaiamrit@gmail.com
 #
 
 #
 #   Hostnames with certificate
 #
-@foreach($website->hostnamesWithCertificate as $hostname)
+@foreach($Host->withCertificate as $Host)
     @include('webserver::nginx.includes.server-block', [
-        'hostname' => $hostname,
-        'ssl' => $hostname->certificate
+        'Host' => $Host,
+        'Ssl' => $Host->certificate
     ])
 @endforeach
 
 #
 #   Hostnames without certificate
 #
-@if($website->hostnamesWithoutCertificate->count() > 0)
+@if($Host->withoutCertificate->count() > 0)
     @include('webserver::nginx.includes.server-block', [
-        'hostnames' => $website->hostnamesWithoutCertificate
+        'Hosts' => $Host->withoutCertificate
     ])
 @endif

@@ -35,26 +35,23 @@ class SeedCommand extends \Illuminate\Database\Console\Seeds\SeedCommand
 	{
 		// if no customer option is set, simply run the native laravel seeder
 		if (!$this->option('customer')) {
-			$this->error('No Customer Provided.');
-			die;
-		}
-		
-		$Hosts = $this->getHostsFromOption();
-		
-		// forces database to customer
-		if (!$this->option('database')) {
-			$this->input->setOption('database', config('multitenant.database'));
-		}
-		
-		foreach ($Hosts as $Host) {
-			/** @var Host $Host */
-			$this->info("Seeding for {$Host->identifier}");
-			
-			app('config')->set('database.connections.main.database', $Host->identifier);
-			
-			$this->resolver->setDefaultConnection(config('database.default'));
-			
 			$this->getSeeder()->run();
+		} else {
+			$Hosts = $this->getHostsFromOption();
+			
+			// forces database to customer
+			if (!$this->option('database')) {
+				$this->input->setOption('database', config('multitenant.database'));
+			}
+			
+			foreach ($Hosts as $Host) {
+				/** @var Host $Host */
+				$this->info("Seeding for {$Host->identifier}");
+				
+				app('config')->set('database.connections.main.database', $Host->identifier);
+				
+				$this->getSeeder()->run();
+			}
 		}
 	}
 	
