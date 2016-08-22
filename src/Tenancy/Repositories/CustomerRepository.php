@@ -9,9 +9,9 @@ use Boparaiamrit\Tenancy\Models\Customer;
 class CustomerRepository extends BaseRepository implements CustomerRepositoryContract
 {
     /**
-     * @var Customer
+     * @var Customer|CustomerRepositoryContract
      */
-    protected $customer;
+    protected $Model;
 
     /**
      * Find a customer by name.
@@ -22,7 +22,7 @@ class CustomerRepository extends BaseRepository implements CustomerRepositoryCon
      */
     public function findByName($name)
     {
-        return $this->customer->where('name', $name)->first();
+        return $this->Model->where('name', $name)->first();
     }
 
     /**
@@ -34,8 +34,11 @@ class CustomerRepository extends BaseRepository implements CustomerRepositoryCon
      */
     public function forceDeleteByName($name)
     {
-        $customer = $this->customer->where('name', $name)->first();
+		/** @var Customer $Customer */
+		$Customer = $this->Model->where('name', $name)->first();
 
-        return $customer ? $customer->delete() : null;
+        $Customer ? $Customer->delete() : null;
+		
+		return true;
     }
 }

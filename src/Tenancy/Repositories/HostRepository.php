@@ -10,9 +10,9 @@ use Boparaiamrit\Tenancy\Models\Host;
 class HostRepository extends BaseRepository implements HostRepositoryContract
 {
 	/**
-	 * @var Host
+	 * @var HostRepositoryContract|Host
 	 */
-	protected $Host;
+	protected $Model;
 	
 	/**
 	 * @param Host $hostname
@@ -21,17 +21,7 @@ class HostRepository extends BaseRepository implements HostRepositoryContract
 	 */
 	public function findByHostname($hostname)
 	{
-		return $this->Host->where('hostname', $hostname)->first();
-	}
-	
-	/**
-	 * @return mixed
-	 */
-	public function getDefault()
-	{
-		$hostname = env('DEFAULT_HOST', 'my.promoto.dev');
-		
-		return $this->Host->where('hostname', $hostname)->first();
+		return $this->Model->where('hostname', $hostname)->first();
 	}
 	
 	/**
@@ -43,6 +33,6 @@ class HostRepository extends BaseRepository implements HostRepositoryContract
 	 */
 	public function paginated($perPage = 20)
 	{
-		return $this->Host->paginate($perPage);
+		return $this->Model->paginate($perPage);
 	}
 }

@@ -14,9 +14,4 @@ interface HostRepositoryContract extends BaseRepositoryContract
 	 * @return Host
 	 */
 	public function findByHostname($hostname);
-	
-	/**
-	 * @return Host
-	 */
-	public function getDefault();
 }

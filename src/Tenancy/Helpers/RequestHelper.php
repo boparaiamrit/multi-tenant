@@ -24,16 +24,6 @@ abstract class RequestHelper
 	 */
 	public static function getHost(HostRepositoryContract $Host)
 	{
-		$HostInstance = null;
-		
-		if (!app()->runningInConsole()) {
-			$HostInstance = $Host->findByHostname(request()->getHost());
-		}
-		
-		if (!$HostInstance) {
-			$HostInstance = $Host->getDefault();
-		}
-		
-		return $HostInstance;
+		return $Host->findByHostname(request()->getHost());
 	}
 }

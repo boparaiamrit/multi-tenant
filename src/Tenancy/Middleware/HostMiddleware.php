@@ -15,13 +15,14 @@ class HostMiddleware
 	{
 		$Host = $this->setUpHost();
 		
-		$redirectTo = $Host->redirectActionRequired();
-		
-		if ($Host && !empty($redirectTo)) {
-			return $redirectTo;
+		if ($Host) {
+			$redirectTo = $Host->redirectActionRequired();
+			if (!empty($redirectTo)) {
+				return $redirectTo;
+			}
+			
+			(new Configuration($Host->identifier))->reload();
 		}
-		
-		(new Configuration($Host->identifier))->reload();
 		
 		return $next($request);
 	}
