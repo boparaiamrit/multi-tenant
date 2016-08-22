@@ -31,4 +31,4 @@ pm.max_spare_servers    = 10
 pm.max_requests         = 20
 
 ;# force fpm workers into the following path
-chdir = {{ base_path() }}
+chdir = {{ $base_path }}

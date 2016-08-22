@@ -16,9 +16,11 @@ class SetupCommand extends Command
 	 * @var string
 	 */
 	protected $signature = 'multitenant:setup
-        {--customer= : Name of the first customer}
-        {--email= : Email address of the first customer}
-        {--hostname= : Domain- or hostname for the first customer website}
+        {--customer= : Name of the the Customer}
+        {--email= : Email address of the the Customer}
+        {--twitter_handle= : Twitter Handle of the the Customer}
+        {--website= : Website address of the the Customer}
+        {--hostname= : Domain- or hostname for the the Customer website}
         {--webserver= : Hook into webserver (nginx|no)}
         {--identifier= : Website identifier}';
 	
@@ -65,8 +67,9 @@ class SetupCommand extends Command
 		
 		$this->Host     = $Host;
 		$this->Customer = $Customer;
+		$this->Helper   = new ServerConfigurationHelper();
 		
-		$this->Helper = new ServerConfigurationHelper();
+		$this->configuration = config('webserver');
 	}
 	
 	/**
@@ -74,12 +77,12 @@ class SetupCommand extends Command
 	 */
 	public function handle()
 	{
-		$this->configuration = config('webserver');
-		
-		$name       = $this->option('customer');
-		$email      = $this->option('email');
-		$hostname   = $this->option('hostname');
-		$identifier = $this->option('identifier');
+		$name          = $this->option('customer');
+		$email         = $this->option('email');
+		$twitterHandle = $this->option('twitter_handle');
+		$website       = $this->option('website');
+		$hostname      = $this->option('hostname');
+		$identifier    = $this->option('identifier');
 		
 		if (empty($name)) {
 			$name = $this->ask('Please provide a customer name or restart command with --customer');
@@ -87,6 +90,14 @@ class SetupCommand extends Command
 		
 		if (empty($email)) {
 			$email = $this->ask('Please provide a customer email address or restart command with --email');
+		}
+		
+		if (empty($twitterHandle)) {
+			$twitterHandle = $this->ask('Please provide a customer twitter handle or restart command with --twitter_handle');
+		}
+		
+		if (empty($website)) {
+			$website = $this->ask('Please provide a customer website address or restart command with --website');
 		}
 		
 		if (empty($hostname)) {
@@ -101,20 +112,10 @@ class SetupCommand extends Command
 		$this->Helper->createDirectories();
 		
 		// Create the Customer configurations
+		$Customer = $this->createCustomer($name, $email, $twitterHandle, $website);
 		
-		/** @var Customer $Customer */
-		$Customer = $this->Customer->create(compact('name', 'email'));
-		
-		if (empty($identifier)) {
-			$identifier = str_limit(str_replace(['.'], '', $hostname), 100, '');
-		}
-		
-		/** @var Host $Host */
-		$Host = $this->Host->create([
-			'hostname'    => $hostname,
-			'identifier'  => $identifier,
-			'customer_id' => $Customer->id,
-		]);
+		// Create Host
+		$Host = $this->createHost($Customer, $identifier, $hostname);
 		
 		$webserver = $this->option('webserver');
 		
@@ -139,5 +140,55 @@ class SetupCommand extends Command
 		if ($Customer->exists && $Host->exists) {
 			$this->info('Configuration successful');
 		}
+	}
+	
+	/**
+	 * @param $name
+	 * @param $email
+	 * @param $twitterHandle
+	 * @param $website
+	 *
+	 * @return Customer
+	 */
+	private function createCustomer($name, $email, $twitterHandle, $website)
+	{
+		/** @var Customer $Customer */
+		$Customer = $this->Customer->Model->firstOrNew([
+			Customer::NAME  => $name,
+			Customer::EMAIL => $email
+		]);
+		
+		$Customer->website        = $website;
+		$Customer->twitter_handle = $twitterHandle;
+		$Customer->save();
+		
+		return $Customer;
+	}
+	
+	/**
+	 * @param $Customer
+	 * @param $identifier
+	 * @param $hostname
+	 *
+	 * @return Host
+	 */
+	private function createHost($Customer, $identifier, $hostname)
+	{
+		if (empty($identifier)) {
+			$identifier = str_limit(str_replace(['.'], '', $hostname), 100, '');
+		}
+		
+		
+		/** @noinspection PhpUndefinedFieldInspection */
+		/** @var Host $Host */
+		$Host = $this->Host->Model->firstOrCreate([
+			Host::HOSTNAME    => $hostname,
+			Host::IDENTIFIER  => $identifier,
+			Host::CUSTOMER_ID => $Customer->id
+		]);
+		
+		$Host->touch();
+		
+		return $Host;
 	}
 }

@@ -3,15 +3,16 @@
 namespace Boparaiamrit\Framework\Repositories;
 
 
+use Boparaiamrit\Tenancy\Models\BaseModel;
 use Closure;
 use Jenssegers\Mongodb\Eloquent\Model;
 
 abstract class BaseRepository
 {
 	/**
-	 * @var Model Model
+	 * @var BaseModel Model
 	 */
-	protected $Model;
+	public $Model;
 	
 	public function __construct()
 	{

@@ -37,7 +37,7 @@ class Host extends BaseModel
 	
 	protected $presenter = HostPresenter::class;
 	
-	protected $fillable = [self::HOSTNAME, self::REDIRECT_TO, self::IS_SECURE, self::CUSTOMER_ID];
+	protected $fillable = [self::HOSTNAME, self::IDENTIFIER, self::CUSTOMER_ID];
 	
 	/**
 	 * The customer who owns this hostname.

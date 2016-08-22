@@ -3,13 +3,11 @@
 namespace Boparaiamrit\Webserver;
 
 
-use Boparaiamrit\Tenancy\Contracts\CertificateRepositoryContract;
-use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
 class WebserverServiceProvider extends ServiceProvider
 {
+	const TOOLBOX_COMMAND = 'webserver.command.toolbox';
 	/**
 	 * Indicates if loading of the provider is deferred.
 	 *
@@ -47,12 +45,11 @@ class WebserverServiceProvider extends ServiceProvider
 		/*
 		 * Toolbox command
 		 */
-		$this->app->bind('boparaiamrit.webserver.command.toolbox', function ($app) {
-			/** @var Application $app */
-			return new Commands\ToolboxCommand($app->make(HostRepositoryContract::class));
+		$this->app->bind(self::TOOLBOX_COMMAND, function () {
+			return new Commands\ToolboxCommand();
 		});
 		
-		$this->commands(['boparaiamrit.webserver.command.toolbox']);
+		$this->commands([self::TOOLBOX_COMMAND]);
 	}
 	
 	/**
@@ -63,8 +60,7 @@ class WebserverServiceProvider extends ServiceProvider
 	public function provides()
 	{
 		return [
-			'boparaiamrit.webserver.command.toolbox',
-			CertificateRepositoryContract::class,
+			self::TOOLBOX_COMMAND
 		];
 	}
 }

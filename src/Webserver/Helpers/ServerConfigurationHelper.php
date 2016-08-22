@@ -3,8 +3,6 @@
 namespace Boparaiamrit\Webserver\Helpers;
 
 
-use File;
-
 /**
  * Class ServerConfigurationHelper.
  */
@@ -18,9 +16,9 @@ class ServerConfigurationHelper
 	{
 		foreach (config('webserver', []) as $key => $params) {
 			$path = array_get($params, 'path');
-			
-			if ($path && !File::isDirectory($path)) {
-				File::makeDirectory($path, 0755, true);
+			$File = app('files');
+			if ($path && !$File->isDirectory($path)) {
+				$File->makeDirectory($path, 0755, true);
 			}
 		}
 	}

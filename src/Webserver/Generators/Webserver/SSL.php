@@ -6,7 +6,7 @@ use File;
 use Boparaiamrit\Webserver\Abstracts\AbstractGenerator;
 use Boparaiamrit\Tenancy\Models\Certificate;
 
-class Ssl extends AbstractGenerator
+class SSL extends AbstractGenerator
 {
     /**
      * @var Certificate

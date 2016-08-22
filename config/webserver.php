@@ -60,6 +60,7 @@ return [
 		 */
 		'depends' => [
 			'fpm',
+			'supervisor'
 		],
 	],
 	
@@ -103,6 +104,15 @@ return [
 			'restart' => '/etc/init.d/supervisor restart',
 		],
 		'mask'    => '%s.conf',
-		'include' => 'include=%s*;'
+		'include' => "[include]\nfiles=%s*;"
 	],
+	
+	/*
+     * Env
+     */
+	'env'        => [
+		'path'    => base_path('envs/'),
+		'class'   => 'Boparaiamrit\Webserver\Generators\Webserver\Env',
+		'enabled' => true,
+	]
 ];

@@ -6,7 +6,7 @@ namespace Boparaiamrit\Webserver\Commands;
 use Boparaiamrit\Framework\Commands\AbstractRootCommand;
 use Boparaiamrit\Tenancy\Contracts\CertificateRepositoryContract;
 use Boparaiamrit\Tenancy\Models\Certificate;
-use Boparaiamrit\Webserver\Generators\Webserver\Ssl;
+use Boparaiamrit\Webserver\Generators\Webserver\SSL;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class CertificateCommand extends AbstractRootCommand implements ShouldQueue
@@ -50,7 +50,7 @@ class CertificateCommand extends AbstractRootCommand implements ShouldQueue
 		
 		$action = sprintf('on%s', ucfirst($this->action));
 		
-		(new Ssl($this->getCertificate()))->{$action}();
+		(new SSL($this->getCertificate()))->{$action}();
 	}
 	
 	/**

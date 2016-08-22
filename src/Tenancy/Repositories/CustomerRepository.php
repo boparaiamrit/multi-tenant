@@ -9,16 +9,11 @@ use Boparaiamrit\Tenancy\Models\Customer;
 class CustomerRepository extends BaseRepository implements CustomerRepositoryContract
 {
     /**
-     * @var Customer|CustomerRepositoryContract
-     */
-    protected $Model;
-
-    /**
      * Find a customer by name.
      *
      * @param $name
      *
-     * @return Customer
+     * @return Customer|mixed
      */
     public function findByName($name)
     {

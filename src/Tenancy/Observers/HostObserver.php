@@ -2,6 +2,7 @@
 
 namespace Boparaiamrit\Tenancy\Observers;
 
+
 use Boparaiamrit\Tenancy\Models\Host;
 use Boparaiamrit\Webserver\Commands\WebserverCommand;
 use Illuminate\Foundation\Bus\DispatchesJobs;

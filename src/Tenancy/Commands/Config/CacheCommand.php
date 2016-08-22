@@ -37,7 +37,7 @@ class CacheCommand extends ConfigCacheCommand
 	public function fire()
 	{
 		// if no tenant option is set, simply run the native laravel seeder
-		if (!$this->option('tenant')) {
+		if (!$this->option('customer')) {
 			$this->error('No Customer Provided.');
 			die;
 		}
@@ -45,7 +45,7 @@ class CacheCommand extends ConfigCacheCommand
 		$Hosts = $this->getHostsFromOption();
 		
 		foreach ($Hosts as $Host) {
-//			$this->call('config:clear');
+			$this->call('config:clear');
 			
 			/** @var HostRepositoryContract|Host $Host */
 			$config = $this->getFreshCustomerConfiguration($Host->identifier);

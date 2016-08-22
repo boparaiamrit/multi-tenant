@@ -35,7 +35,7 @@ class ClearCommand extends ConfigClearCommand
 	public function fire()
 	{
 		// if no tenant option is set, simply run the native laravel seeder
-		if (!$this->option('tenant')) {
+		if (!$this->option('customer')) {
 			$this->error('No Customer Provided.');
 			die;
 		}

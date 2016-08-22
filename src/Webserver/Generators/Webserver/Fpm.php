@@ -51,7 +51,7 @@ class Fpm extends AbstractFileGenerator
 	protected function serviceReload()
 	{
 		if (!$this->isInstalled()) {
-			return;
+			return false;
 		}
 		
 		$restart = array_get($this->configuration(), 'actions.restart');

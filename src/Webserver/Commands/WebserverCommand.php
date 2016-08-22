@@ -6,9 +6,11 @@ namespace Boparaiamrit\Webserver\Commands;
 use Boparaiamrit\Framework\Commands\AbstractRootCommand;
 use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
 use Boparaiamrit\Tenancy\Models\Host;
+use Boparaiamrit\Webserver\Generators\Webserver\Env;
 use Boparaiamrit\Webserver\Generators\Webserver\Fpm;
 use Boparaiamrit\Webserver\Generators\Webserver\Nginx;
-use Boparaiamrit\Webserver\Generators\Webserver\Ssl;
+use Boparaiamrit\Webserver\Generators\Webserver\SSL;
+use Boparaiamrit\Webserver\Generators\Webserver\Supervisor;
 
 class WebserverCommand extends AbstractRootCommand
 {
@@ -53,7 +55,7 @@ class WebserverCommand extends AbstractRootCommand
 		$action = sprintf('on%s', ucfirst($this->action));
 		
 		if(!empty($this->Host->certificate_id)) {
-			(new Ssl($this->Host->certificate))->onUpdate();
+			(new SSL($this->Host->certificate))->onUpdate();
 		}
 		
 		// Php FPM
@@ -61,6 +63,12 @@ class WebserverCommand extends AbstractRootCommand
 		
 		// Webservers
 		(new Nginx($this->Host))->{$action}();
+		
+		// Supervisor
+		(new Supervisor($this->Host))->{$action}();
+		
+		// Env
+		(new Env($this->Host))->{$action}();
 	}
 	
 	

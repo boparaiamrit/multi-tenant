@@ -177,6 +177,24 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 	}
 	
 	/**
+	 * Finds first directory that exists.
+	 *
+	 * @param array $paths
+	 *
+	 * @return string
+	 */
+	protected function findPathForRegistration($paths = [])
+	{
+		foreach ($paths as $path) {
+			if (!empty($path) && app('files')->isDirectory($path)) {
+				return $path;
+			}
+		}
+		
+		return '';
+	}
+	
+	/**
 	 * Registers the service.
 	 */
 	public function register()
@@ -215,23 +233,5 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 		if (method_exists($this, 'serviceReload')) {
 			$this->serviceReload();
 		}
-	}
-	
-	/**
-	 * Finds first directory that exists.
-	 *
-	 * @param array $paths
-	 *
-	 * @return string
-	 */
-	protected function findPathForRegistration($paths = [])
-	{
-		foreach ($paths as $path) {
-			if (!empty($path) && app('files')->isDirectory($path)) {
-				return $path;
-			}
-		}
-		
-		return '';
 	}
 }

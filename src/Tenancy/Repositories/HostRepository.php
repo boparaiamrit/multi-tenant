@@ -10,11 +10,6 @@ use Boparaiamrit\Tenancy\Models\Host;
 class HostRepository extends BaseRepository implements HostRepositoryContract
 {
 	/**
-	 * @var HostRepositoryContract|Host
-	 */
-	protected $Model;
-	
-	/**
 	 * @param Host $hostname
 	 *
 	 * @return mixed

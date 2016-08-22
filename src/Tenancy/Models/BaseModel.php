@@ -20,6 +20,7 @@ use Laracasts\Presenter\PresentableTrait;
  * @method static Model find($id, $column = [])
  * @method static Model findOrFail($id, $column = [])
  * @method static Model firstOrNew($attributes)
+ * @method static Model firstOrCreate($attributes)
  * @method static Builder orderBy($column, $sort)
  * @method static Builder whereIn($column, array $values)
  * @method static Builder where($column, $operator = null, $value = null, $boolean = 'and')

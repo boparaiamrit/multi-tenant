@@ -4,6 +4,7 @@ namespace Boparaiamrit\Tenancy;
 
 
 use Boparaiamrit\Tenancy\Commands\Config\CacheCommand;
+use Boparaiamrit\Tenancy\Commands\Queue\WorkCommand;
 use Boparaiamrit\Tenancy\Commands\Seeds\SeedCommand;
 use Boparaiamrit\Tenancy\Commands\SetupCommand;
 use Boparaiamrit\Tenancy\Contracts\CustomerRepositoryContract;
@@ -66,6 +67,11 @@ class TenancyServiceProvider extends ServiceProvider
 		/** @noinspection PhpUnusedParameterInspection */
 		$this->app->extend('command.seed', function ($command, $app) {
 			return new SeedCommand($app['db']);
+		});
+		
+		/** @noinspection PhpUnusedParameterInspection */
+		$this->app->extend('command.queue.work', function ($command, $app) {
+			return new WorkCommand($app['queue.worker']);
 		});
 	}
 	

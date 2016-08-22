@@ -4,6 +4,7 @@ namespace Boparaiamrit\Tenancy\Traits;
 
 
 use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
+use Boparaiamrit\Tenancy\Models\Host;
 use Symfony\Component\Console\Input\InputOption;
 
 trait DatabaseCommandTrait
@@ -23,6 +24,21 @@ trait DatabaseCommandTrait
 				->where('identifier', $this->option('customer'))
 				->get();
 		}
+	}
+	
+	/**
+	 * @return Host
+	 */
+	protected function getHostFromOption()
+	{
+		$repository = app(HostRepositoryContract::class);
+		
+		/** @var Host $Host */
+		$Host = $repository->queryBuilder()
+						   ->where('identifier', $this->option('customer'))
+						   ->first();
+		
+		return $Host;
 	}
 	
 	/**
