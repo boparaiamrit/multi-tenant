@@ -7,20 +7,53 @@ use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
 use Boparaiamrit\Tenancy\Models\Host;
 use Boparaiamrit\Webserver\Abstracts\AbstractGenerator;
 use ReflectionClass;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
-abstract class AbstractFileGenerator extends AbstractGenerator
+abstract class FileGenerator extends AbstractGenerator
 {
 	/**
 	 * @var Host|HostRepositoryContract
 	 */
 	protected $Host;
 	
+	protected $Output;
+	
 	/**
 	 * @param Host $Host
+	 *
+	 * @internal param ConsoleOutput $ConsoleOutput
 	 */
 	public function __construct(Host $Host)
 	{
 		$this->Host = $Host;
+		
+		$this->Output = new ConsoleOutput();
+	}
+	
+	/**
+	 * Writes the contents to disk on Creation.
+	 *
+	 * @return int
+	 */
+	public function onCreate()
+	{
+		if (is_null($this->Host)) {
+			return false;
+		}
+		
+		$serviceName = $this->beautifyName();
+		
+		$path = $this->publishPath();
+		$data = $this->generate()->render();
+		if (app('files')->put($path, $data, true)) {
+			$this->output(sprintf('%s files has been published successfully.', $serviceName));
+		}
+		
+		if ($this->serviceReload()) {
+			$this->output(sprintf('%s has been restart successfully.', $serviceName));
+		}
+		
+		return true;
 	}
 	
 	/**
@@ -50,7 +83,17 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 	 */
 	public function onDelete()
 	{
-		return app('files')->delete($this->publishPath()) && $this->serviceReload();
+		$serviceName = $this->beautifyName();
+		
+		if (app('files')->delete($this->publishPath())) {
+			$this->output(sprintf('%s files has been deleted successfully.', $serviceName));
+		}
+		
+		if ($this->serviceReload()) {
+			$this->output(sprintf('%s has been restart successfully.', $serviceName));
+		}
+		
+		return true;
 	}
 	
 	/**
@@ -131,21 +174,19 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 	}
 	
 	/**
-	 * Writes the contents to disk on Creation.
-	 *
-	 * @return int
+	 * @return string
 	 */
-	public function onCreate()
+	protected function beautifyName()
 	{
-		if (is_null($this->Host)) {
-			return false;
+		$name = $this->baseName();
+		
+		if ($name == 'fpm' || $name == 'ssl') {
+			$name = mb_strtoupper($name);
+		} else {
+			$name = ucfirst($name);
 		}
 		
-		return app('files')->put(
-			$this->publishPath(),
-			$this->generate()->render(),
-			true
-		) && $this->serviceReload();
+		return $name;
 	}
 	
 	/**
@@ -196,18 +237,37 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 	
 	/**
 	 * Registers the service.
+	 *
+	 * @return bool
 	 */
 	public function register()
 	{
 		if (!$this->isInstalled()) {
-			return;
+			return false;
 		}
 		
 		// create a unique filename for the global include directory
-		$webserviceFileLocation = sprintf('%s%s',
-			$this->findPathForRegistration(array_get($this->configuration(), 'conf', [])),
-			sprintf(array_get($this->configuration(), 'mask', '%s'), substr(md5(env('APP_KEY')), 0, 10))
-		);
+		$path = $this->findPathForRegistration(array_get($this->configuration(), 'conf', []));
+		
+		$mask     = array_get($this->configuration(), 'mask', '%s');
+		$filename = sprintf($mask, substr(md5(env('APP_KEY')), 0, 10));
+		
+		$webserviceFileLocation = sprintf('%s%s', $path, $filename);
+		
+		if (app('files')->exists($webserviceFileLocation)) {
+			$depends = array_get($this->configuration(), 'depends', []);
+			
+			foreach ($depends as $depend) {
+				$class = config("webserver.{$depend}.class");
+				if (empty($class)) {
+					continue;
+				}
+				/** @noinspection PhpUndefinedMethodInspection */
+				(new $class($this->Host))->register();
+			}
+			
+			return true;
+		}
 		
 		// load the tenant include path
 		$targetPath = array_get($this->configuration(), 'path');
@@ -215,23 +275,18 @@ abstract class AbstractFileGenerator extends AbstractGenerator
 		// save file to global include path
 		app('files')->put($webserviceFileLocation, sprintf(array_get($this->configuration(), 'include'), $targetPath));
 		
-		/*
-		 * Register any depending services as well
-		 */
-		$depends = array_get($this->configuration(), 'depends', []);
-		
-		foreach ($depends as $depend) {
-			$class = config("webserver.{$depend}.class");
-			if (empty($class)) {
-				continue;
-			}
-			/** @noinspection PhpUndefinedMethodInspection */
-			(new $class($this->Host))->register();
-		}
-		
 		// reload any services
 		if (method_exists($this, 'serviceReload')) {
-			$this->serviceReload();
+			if ($this->serviceReload()) {
+				$this->output($this->baseName() . ' has been restart successfully.');
+			}
 		}
+		
+		return true;
+	}
+	
+	public function output($message)
+	{
+		$this->Output->writeln(sprintf("<%s>$message</%s>", 'info', 'info'));
 	}
 }

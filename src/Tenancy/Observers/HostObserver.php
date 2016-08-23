@@ -5,20 +5,15 @@ namespace Boparaiamrit\Tenancy\Observers;
 
 use Boparaiamrit\Tenancy\Models\Host;
 use Boparaiamrit\Webserver\Commands\WebserverCommand;
-use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class HostObserver
 {
-	use DispatchesJobs;
-	
 	/**
 	 * @param Host $Host
 	 */
 	public function created($Host)
 	{
-		$this->dispatch(
-			new WebserverCommand($Host->id, 'create')
-		);
+		(new WebserverCommand($Host, 'create'))->fire();
 	}
 	
 	/**
@@ -26,9 +21,7 @@ class HostObserver
 	 */
 	public function updated($Host)
 	{
-		$this->dispatch(
-			new WebserverCommand($Host->id, 'update')
-		);
+		(new WebserverCommand($Host, 'update'))->fire();
 	}
 	
 	/**
@@ -36,8 +29,6 @@ class HostObserver
 	 */
 	public function deleting($Host)
 	{
-		$this->dispatch(
-			new WebserverCommand($Host->id, 'delete')
-		);
+		(new WebserverCommand($Host, 'delete'))->fire();
 	}
 }

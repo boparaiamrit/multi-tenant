@@ -3,9 +3,9 @@
 namespace Boparaiamrit\Webserver\Generators\Webserver;
 
 
-use Boparaiamrit\Webserver\Generators\AbstractFileGenerator;
+use Boparaiamrit\Webserver\Generators\FileGenerator;
 
-class Supervisor extends AbstractFileGenerator
+class Supervisor extends FileGenerator
 {
 	/**
 	 * Generates the view that is written.
@@ -62,40 +62,11 @@ class Supervisor extends AbstractFileGenerator
 	
 	/**
 	 * Registers the service.
+	 *
+	 * @return bool|void
 	 */
 	public function register()
 	{
-		if (!$this->isInstalled()) {
-			return;
-		}
-		
-		// load the tenant include path
-		$targetPath = array_get($this->configuration(), 'path');
-		$confPath   = array_get($this->configuration(), 'main');
-		
-		$File = app('files');
-		if (!str_contains($File->get($confPath), $targetPath)) {
-			// save file to global include path
-			$File->append($confPath, sprintf(array_get($this->configuration(), 'include'), $targetPath));
-		}
-		
-		/*
-		 * Register any depending services as well
-		 */
-		$depends = array_get($this->configuration(), 'depends', []);
-		
-		foreach ($depends as $depend) {
-			$class = config("webserver.{$depend}.class");
-			if (empty($class)) {
-				continue;
-			}
-			/** @noinspection PhpUndefinedMethodInspection */
-			(new $class($this->Host))->register();
-		}
-		
-		// reload any services
-		if (method_exists($this, 'serviceReload')) {
-			$this->serviceReload();
-		}
+		return true;
 	}
 }

@@ -4,6 +4,7 @@ namespace Boparaiamrit\Tenancy;
 
 
 use Boparaiamrit\Tenancy\Commands\Config\CacheCommand;
+use Boparaiamrit\Tenancy\Commands\Config\ClearCommand;
 use Boparaiamrit\Tenancy\Commands\Queue\WorkCommand;
 use Boparaiamrit\Tenancy\Commands\Seeds\SeedCommand;
 use Boparaiamrit\Tenancy\Commands\SetupCommand;
@@ -62,6 +63,11 @@ class TenancyServiceProvider extends ServiceProvider
 		/** @noinspection PhpUnusedParameterInspection */
 		$this->app->extend('command.config.cache', function ($command, $app) {
 			return new CacheCommand($app['files']);
+		});
+		
+		/** @noinspection PhpUnusedParameterInspection */
+		$this->app->extend('command.config.clear', function ($command, $app) {
+			return new ClearCommand($app['files']);
 		});
 		
 		/** @noinspection PhpUnusedParameterInspection */

@@ -1,0 +1,51 @@
+<?php
+
+namespace Boparaiamrit\Tenancy\Commands;
+
+
+use Boparaiamrit\Tenancy\Bootstrap\Configuration;
+use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
+use Boparaiamrit\Tenancy\Models\Host;
+use Symfony\Component\Console\Input\InputOption;
+
+trait TTenancyCommand
+{
+	/**
+	 * @return Host
+	 */
+	protected function getHost()
+	{
+		$repository = app(HostRepositoryContract::class);
+		
+		/** @var Host $Host */
+		$Host = $repository->queryBuilder()
+						   ->where('identifier', $this->option('host'))
+						   ->first();
+		if (is_null($Host)) {
+			$this->error('Host not found');
+			exit;
+		}
+		
+		return $Host;
+	}
+	
+	protected function checkForHost()
+	{
+		if ($this->option('host') !== 'default') {
+			$Host = $this->getHost();
+			(new Configuration($Host->identifier))->reload();
+		}
+	}
+	
+	/**
+	 * Get the console command options.
+	 *
+	 * @return array
+	 */
+	protected function getOptions()
+	{
+		/** @noinspection PhpUndefinedMethodInspection */
+		/** @noinspection PhpUndefinedClassInspection */
+		return array_merge(parent::getOptions(), [['host', null, InputOption::VALUE_OPTIONAL, 'The host(s) to apply on; use {all|identifier}', 'default']]);
+	}
+}

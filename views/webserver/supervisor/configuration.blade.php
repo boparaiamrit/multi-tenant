@@ -7,7 +7,7 @@
 ;# unique fpm group
 [program:{{ $Host->identifier }}]
 process_name=%(program_name)s_%(process_num)02d
-command=/usr/bin/php {{ $base_path }}/artisan queue:work beanstalkd --sleep=3 --tries=3 --daemon --customer={{$Host->identifier}}
+command=/usr/bin/php {{ $base_path }}/artisan queue:work beanstalkd --sleep=3 --tries=3 --daemon --host={{$Host->identifier}}
 autostart=true
 autorestart=true
 user={{ $user }}

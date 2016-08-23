@@ -3,9 +3,9 @@
 namespace Boparaiamrit\Webserver\Generators\Webserver;
 
 
-use Boparaiamrit\Webserver\Generators\AbstractFileGenerator;
+use Boparaiamrit\Webserver\Generators\FileGenerator;
 
-class Fpm extends AbstractFileGenerator
+class Fpm extends FileGenerator
 {
 	/**
 	 * Generates the view that is written.

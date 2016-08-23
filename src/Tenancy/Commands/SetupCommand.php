@@ -108,7 +108,7 @@ class SetupCommand extends Command
 			$identifier = $this->ask('Please provide an identifier with a max length of 10 or restart command with --identifier');
 		}
 		
-		$this->comment('Welcome to boparaiamrit multitenancy.');
+		$this->comment('Welcome to Boparaiamrit Multitenancy.');
 		$this->Helper->createDirectories();
 		
 		// Create the Customer configurations
@@ -137,8 +137,10 @@ class SetupCommand extends Command
 			(new $webserverClass($Host))->register();
 		}
 		
+		$this->call('db:seed', ['--host' => $Host->identifier]);
+		
 		if ($Customer->exists && $Host->exists) {
-			$this->info('Configuration successful');
+			$this->info('Configuration successful.');
 		}
 	}
 	
@@ -181,13 +183,17 @@ class SetupCommand extends Command
 		
 		/** @noinspection PhpUndefinedFieldInspection */
 		/** @var Host $Host */
-		$Host = $this->Host->Model->firstOrCreate([
+		$Host = $this->Host->Model->firstOrNew([
 			Host::HOSTNAME    => $hostname,
 			Host::IDENTIFIER  => $identifier,
 			Host::CUSTOMER_ID => $Customer->id
 		]);
 		
-		$Host->touch();
+		if ($Host->exists) {
+			$Host->touch();
+		} else {
+			$Host->save();
+		}
 		
 		return $Host;
 	}

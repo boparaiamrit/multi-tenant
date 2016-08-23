@@ -3,9 +3,9 @@
 namespace Boparaiamrit\Webserver\Generators\Webserver;
 
 
-use Boparaiamrit\Webserver\Generators\AbstractFileGenerator;
+use Boparaiamrit\Webserver\Generators\FileGenerator;
 
-class Env extends AbstractFileGenerator
+class Env extends FileGenerator
 {
 	/**
 	 * Generates the view that is written.
@@ -39,6 +39,6 @@ class Env extends AbstractFileGenerator
 	 */
 	protected function serviceReload()
 	{
-		return false;
+		return true;
 	}
 }

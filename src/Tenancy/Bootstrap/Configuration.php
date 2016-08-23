@@ -11,24 +11,24 @@ use Symfony\Component\Finder\SplFileInfo;
 class Configuration
 {
 	protected $app;
-	protected $tenant;
+	protected $host;
 	
-	function __construct($tenant)
+	function __construct($host)
 	{
-		$this->app    = app('app');
-		$this->tenant = $tenant;
+		$this->app  = app('app');
+		$this->host = $host;
 	}
 	
 	public function reload()
 	{
-		$this->reloadEnvironment();
+		$this->reloadEnv();
 		$this->reloadConfig();
 	}
 	
-	private function reloadEnvironment()
+	private function reloadEnv()
 	{
 		$environmentPath = base_path() . '/envs';
-		$environmentFile = '.' . $this->tenant . '.env';
+		$environmentFile = '.' . $this->host . '.env';
 		
 		(new Dotenv($environmentPath, $environmentFile))->overload();
 	}
@@ -60,7 +60,7 @@ class Configuration
 	
 	private function getCachedConfigPath()
 	{
-		return $this->app->bootstrapPath() . '/cache/' . $this->tenant . '/config.php';
+		return $this->app->bootstrapPath() . '/cache/' . $this->host . '/config.php';
 	}
 	
 	/**

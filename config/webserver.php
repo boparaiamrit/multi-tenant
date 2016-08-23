@@ -96,15 +96,11 @@ return [
 		'path'    => storage_path('webserver/supervisor/'),
 		'class'   => 'Boparaiamrit\Webserver\Generators\Webserver\Supervisor',
 		'enabled' => true,
-		'conf'    => ['/etc/supervisor/conf.d/'],
-		// path to service daemon, used to verify service exists
 		'service' => '/etc/init.d/supervisor',
 		// how to run actions for this service
 		'actions' => [
 			'restart' => '/etc/init.d/supervisor restart',
-		],
-		'mask'    => '%s.conf',
-		'include' => "[include]\nfiles=%s*;"
+		]
 	],
 	
 	/*

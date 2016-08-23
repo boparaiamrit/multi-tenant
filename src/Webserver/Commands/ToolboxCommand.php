@@ -3,29 +3,26 @@
 namespace Boparaiamrit\Webserver\Commands;
 
 
-use Boparaiamrit\Framework\Commands\AbstractRootCommand;
-use Boparaiamrit\Tenancy\Traits\DatabaseCommandTrait;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Symfony\Component\Console\Input\InputOption;
+use Boparaiamrit\Framework\Commands\AbstractCommand;
+use Boparaiamrit\Tenancy\Commands\TTenancyCommand;
+use Symfony\Component\Console\Input\InputArgument;
 
-class ToolboxCommand extends AbstractRootCommand
+class ToolboxCommand extends AbstractCommand
 {
-	use DispatchesJobs, DatabaseCommandTrait;
+	use TTenancyCommand;
 	
-	protected $signature = 'webserver:toolbox {--action=} {--customer=}';
-	
-	protected $description = 'Allows mutation of webserver related to tenancy.';
+	protected $name = 'webserver:toolbox';
 	
 	/**
 	 * Handles command execution.
 	 */
-	public function handle()
+	public function fire()
 	{
-		$Host = $this->getHostFromOption();
+		$Host = $this->getHost();
 		
-		$action = $this->option('action');
+		$action = $this->argument('action');
 		if ($action == 'update' || $action == 'delete') {
-			$this->dispatch(new WebserverCommand($Host->id, $action));
+			(new WebserverCommand($Host, $action))->fire();
 		} else {
 			$this->error('Unknown action, please specify one.');
 			
@@ -33,14 +30,11 @@ class ToolboxCommand extends AbstractRootCommand
 		}
 	}
 	
-	/**
-	 * @return array
-	 */
-	protected function getOptions()
+	public function getArguments()
 	{
-		return array_merge(
-			[['action', null, InputOption::VALUE_REQUIRED, 'The action must be required.']],
-			$this->getCustomerOption()
-		);
+		return array_merge(parent::getArguments(), [
+			['action', null, InputArgument::REQUIRED, 'Action Required']
+		]);
 	}
+	
 }

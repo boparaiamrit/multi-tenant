@@ -3,13 +3,12 @@
 namespace Boparaiamrit\Webserver\Commands;
 
 
-use Boparaiamrit\Framework\Commands\AbstractRootCommand;
+use Boparaiamrit\Framework\Commands\AbstractCommand;
 use Boparaiamrit\Tenancy\Contracts\CertificateRepositoryContract;
 use Boparaiamrit\Tenancy\Models\Certificate;
 use Boparaiamrit\Webserver\Generators\Webserver\SSL;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
-class CertificateCommand extends AbstractRootCommand implements ShouldQueue
+class CertificateCommand extends AbstractCommand
 {
 	
 	/**
@@ -42,7 +41,7 @@ class CertificateCommand extends AbstractRootCommand implements ShouldQueue
 	 *
 	 * @return void
 	 */
-	public function handle()
+	public function fire()
 	{
 		if (!in_array($this->action, ['create', 'update', 'delete'])) {
 			return;

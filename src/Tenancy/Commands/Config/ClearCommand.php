@@ -3,18 +3,15 @@
 namespace Boparaiamrit\Tenancy\Commands\Config;
 
 
-use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
-use Boparaiamrit\Tenancy\Traits\DatabaseCommandTrait;
+use Boparaiamrit\Tenancy\Commands\TTenancyCommand;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Console\ConfigClearCommand;
 
 class ClearCommand extends ConfigClearCommand
 {
-	use DatabaseCommandTrait;
-	/**
-	 * @var HostRepositoryContract
-	 */
-	protected $Host;
+	use TTenancyCommand;
+	
+	protected $signature = 'config:clear {--host=default}';
 	
 	/**
 	 * SeedCommand constructor.
@@ -25,8 +22,6 @@ class ClearCommand extends ConfigClearCommand
 	public function __construct(Filesystem $files)
 	{
 		parent::__construct($files);
-		
-		$this->Host = app(HostRepositoryContract::class);
 	}
 	
 	/**
@@ -34,38 +29,23 @@ class ClearCommand extends ConfigClearCommand
 	 */
 	public function fire()
 	{
-		// if no tenant option is set, simply run the native laravel seeder
-		if (!$this->option('customer')) {
-			$this->error('No Customer Provided.');
-			die;
-		}
-		
-		$Hosts = $this->getHostsFromOption();
-		
-		foreach ($Hosts as $Host) {
+		if ($this->option('host') !== 'default') {
+			$Host = $this->getHost();
+			
 			$directory = $this->getCachedConfigDirectory($Host->identifier);
-			if (!$this->files->isDirectory($directory)) {
+			if ($this->files->isDirectory($directory)) {
 				$this->files->deleteDirectory($directory);
 			}
+			
+			$this->info('Configuration cache cleared!');
+		} else {
+			parent::fire();
 		}
-		
-		$this->info('Configuration cache cleared!');
 	}
 	
-	/**
-	 * @return array
-	 */
-	protected function getOptions()
-	{
-		return array_merge(
-			parent::getOptions(),
-			$this->getCustomerOption()
-		);
-	}
-	
-	private function getCachedConfigDirectory($customer)
+	private function getCachedConfigDirectory($hostname)
 	{
 		/** @noinspection PhpUndefinedMethodInspection */
-		return $this->laravel->bootstrapPath() . '/cache/' . $customer;
+		return $this->laravel->bootstrapPath() . '/cache/' . $hostname;
 	}
 }

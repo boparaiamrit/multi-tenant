@@ -4,19 +4,15 @@ namespace Boparaiamrit\Tenancy\Commands\Config;
 
 
 use Boparaiamrit\Tenancy\Bootstrap\Configuration;
-use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
-use Boparaiamrit\Tenancy\Models\Host;
-use Boparaiamrit\Tenancy\Traits\DatabaseCommandTrait;
+use Boparaiamrit\Tenancy\Commands\TTenancyCommand;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Console\ConfigCacheCommand;
 
 class CacheCommand extends ConfigCacheCommand
 {
-	use DatabaseCommandTrait;
-	/**
-	 * @var HostRepositoryContract
-	 */
-	protected $Host;
+	use TTenancyCommand;
+	
+	protected $signature = 'config:cache {--host=default}';
 	
 	/**
 	 * SeedCommand constructor.
@@ -27,8 +23,6 @@ class CacheCommand extends ConfigCacheCommand
 	public function __construct(Filesystem $files)
 	{
 		parent::__construct($files);
-		
-		$this->Host = app(HostRepositoryContract::class);
 	}
 	
 	/**
@@ -36,20 +30,12 @@ class CacheCommand extends ConfigCacheCommand
 	 */
 	public function fire()
 	{
-		// if no tenant option is set, simply run the native laravel seeder
-		if (!$this->option('customer')) {
-			$this->error('No Customer Provided.');
-			die;
-		}
-		
-		$Hosts = $this->getHostsFromOption();
-		
-		foreach ($Hosts as $Host) {
+		if ($this->option('host') !== 'default') {
 			$this->call('config:clear');
 			
-			/** @var HostRepositoryContract|Host $Host */
-			$config = $this->getFreshCustomerConfiguration($Host->identifier);
+			$Host = $this->getHost();
 			
+			$config    = $this->getFreshCustomerConfiguration($Host->identifier);
 			$directory = $this->getCachedConfigDirectory($Host->identifier);
 			if (!$this->files->isDirectory($directory)) {
 				$this->files->makeDirectory($directory);
@@ -58,41 +44,32 @@ class CacheCommand extends ConfigCacheCommand
 			$this->files->put(
 				$this->getCachedConfigPath($Host->identifier), '<?php return ' . var_export($config, true) . ';' . PHP_EOL
 			);
+			
+			$this->info('Configuration cached successfully!');
+		} else {
+			parent::fire();
 		}
-		
-		$this->info('Configuration cached successfully!');
 	}
 	
-	/**
-	 * @return array
-	 */
-	protected function getOptions()
-	{
-		return array_merge(
-			parent::getOptions(),
-			$this->getCustomerOption()
-		);
-	}
-	
-	private function getCachedConfigDirectory($customer)
+	private function getCachedConfigDirectory($hostname)
 	{
 		/** @noinspection PhpUndefinedMethodInspection */
-		return $this->laravel->bootstrapPath() . '/cache/' . $customer;
+		return $this->laravel->bootstrapPath() . '/cache/' . $hostname;
 	}
 	
-	private function getCachedConfigPath($customer)
+	private function getCachedConfigPath($hostname)
 	{
-		return $this->getCachedConfigDirectory($customer) . '/config.php';
+		return $this->getCachedConfigDirectory($hostname) . '/config.php';
 	}
 	
 	/**
 	 * Boot a fresh copy of the application configuration.
 	 *
-	 * @param $customer
+	 * @param $hostname
 	 *
 	 * @return array
 	 */
-	protected function getFreshCustomerConfiguration($customer)
+	protected function getFreshCustomerConfiguration($hostname)
 	{
 		/** @noinspection PhpUndefinedMethodInspection */
 		$path = $this->laravel->bootstrapPath() . '/app.php';
@@ -102,7 +79,7 @@ class CacheCommand extends ConfigCacheCommand
 		
 		$app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
 		
-		(new Configuration($customer))->reload();
+		(new Configuration($hostname))->reload();
 		
 		/** @noinspection PhpUndefinedMethodInspection */
 		return $app['config']->all();
