@@ -10,15 +10,5 @@ return [
 	 * tenant data is loaded to be used. Disabling auto detection comes down to you setting
 	 * the current hostname or tenant by yourself.
 	 */
-	'middleware' => true,
-	
-	/*
-	 * The queue to run webserver tasks on
-	 * The specified queue name must have root privileges. If no value specified the default queue is
-	 * used.
-	 */
-	'queue'      => [
-		'root'  => null,
-		'other' => null,
-	]
+	'middleware' => true
 ];
