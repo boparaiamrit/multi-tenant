@@ -3,7 +3,7 @@
 namespace Boparaiamrit\Tenancy\Commands;
 
 
-use Boparaiamrit\Tenancy\Bootstrap\Configuration;
+use Boparaiamrit\Tenancy\Bootstrap\LoadConfiguration;
 use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
 use Boparaiamrit\Tenancy\Models\Host;
 use Symfony\Component\Console\Input\InputOption;
@@ -27,14 +27,6 @@ trait TTenancyCommand
 		}
 		
 		return $Host;
-	}
-	
-	protected function checkForHost()
-	{
-		if ($this->option('host') !== 'default') {
-			$Host = $this->getHost();
-			(new Configuration($Host->identifier))->reload();
-		}
 	}
 	
 	/**

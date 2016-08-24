@@ -32,11 +32,6 @@ class TenancyServiceProvider extends ServiceProvider
 		$this->mergeConfigFrom(__DIR__ . '/../../config/multitenant.php', 'multitenant');
 		$this->publishes([__DIR__ . '/../../config/multitenant.php' => config_path('multitenant.php')], 'multitenant-config');
 		
-		// Tenancy Binding
-		(new TenancyEnvironment())->setup($app);
-		
-		// Register Commands
-		$this->commands(SetupCommand::class);
 		
 		// register middleware
 		if (config('multitenant.middleware')) {
@@ -60,6 +55,9 @@ class TenancyServiceProvider extends ServiceProvider
 	 */
 	public function register()
 	{
+		/** @noinspection PhpUndefinedMethodInspection */
+		$this->app->bootstrapWith([Bootstrap\LoadConfiguration::class]);
+		
 		/** @noinspection PhpUnusedParameterInspection */
 		$this->app->extend('command.config.cache', function ($command, $app) {
 			return new CacheCommand($app['files']);
@@ -79,6 +77,29 @@ class TenancyServiceProvider extends ServiceProvider
 		$this->app->extend('command.queue.work', function ($command, $app) {
 			return new WorkCommand($app['queue.worker']);
 		});
+		
+		$this->app->bind(Contracts\CustomerRepositoryContract::class, function () {
+			return new Repositories\CustomerRepository(new Models\Customer());
+		});
+		
+		$this->app->bind(Contracts\HostRepositoryContract::class, function () {
+			return new Repositories\HostRepository(new Models\Host());
+		});
+		
+		$this->app->bind(Contracts\CertificateRepositoryContract::class, function () {
+			return new Repositories\CustomerRepository(new Models\Certificate());
+		});
+		
+		$this->app->bind(SetupCommand::class, function ($app) {
+			/** @var Application $app */
+			return new SetupCommand(
+				$app->make(CustomerRepositoryContract::class),
+				$app->make(HostRepositoryContract::class)
+			);
+		});
+		
+		// Register Commands
+		$this->commands(SetupCommand::class);
 	}
 	
 	/**

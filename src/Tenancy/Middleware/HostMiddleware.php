@@ -3,7 +3,6 @@
 namespace Boparaiamrit\Tenancy\Middleware;
 
 
-use Boparaiamrit\Tenancy\Bootstrap\Configuration;
 use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
 use Boparaiamrit\Tenancy\Helpers\RequestHelper;
 use Closure;
@@ -20,8 +19,6 @@ class HostMiddleware
 			if (!empty($redirectTo)) {
 				return $redirectTo;
 			}
-			
-			(new Configuration($Host->identifier))->reload();
 		}
 		
 		return $next($request);

@@ -3,7 +3,6 @@
 namespace Boparaiamrit\Tenancy\Commands\Config;
 
 
-use Boparaiamrit\Tenancy\Bootstrap\Configuration;
 use Boparaiamrit\Tenancy\Commands\TTenancyCommand;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Console\ConfigCacheCommand;
@@ -35,7 +34,7 @@ class CacheCommand extends ConfigCacheCommand
 			
 			$Host = $this->getHost();
 			
-			$config    = $this->getFreshCustomerConfiguration($Host->identifier);
+			$config    = $this->getFreshCustomerConfiguration();
 			$directory = $this->getCachedConfigDirectory($Host->identifier);
 			if (!$this->files->isDirectory($directory)) {
 				$this->files->makeDirectory($directory);
@@ -62,14 +61,7 @@ class CacheCommand extends ConfigCacheCommand
 		return $this->getCachedConfigDirectory($hostname) . '/config.php';
 	}
 	
-	/**
-	 * Boot a fresh copy of the application configuration.
-	 *
-	 * @param $hostname
-	 *
-	 * @return array
-	 */
-	protected function getFreshCustomerConfiguration($hostname)
+	protected function getFreshCustomerConfiguration()
 	{
 		/** @noinspection PhpUndefinedMethodInspection */
 		$path = $this->laravel->bootstrapPath() . '/app.php';
@@ -78,8 +70,6 @@ class CacheCommand extends ConfigCacheCommand
 		$app = require $path;
 		
 		$app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
-		
-		(new Configuration($hostname))->reload();
 		
 		/** @noinspection PhpUndefinedMethodInspection */
 		return $app['config']->all();

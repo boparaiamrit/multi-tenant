@@ -5,36 +5,33 @@ namespace Boparaiamrit\Tenancy\Bootstrap;
 
 use Dotenv\Dotenv;
 use Illuminate\Config\Repository;
+use Illuminate\Contracts\Foundation\Application;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
-class Configuration
+class LoadConfiguration
 {
+	/**
+	 * @var Application
+	 */
 	protected $app;
+	
+	/**
+	 * @var string
+	 */
 	protected $host;
 	
-	function __construct($host)
+	/**
+	 * @param Application $app
+	 */
+	public function bootstrap(Application $app)
 	{
-		$this->app  = app('app');
-		$this->host = $host;
-	}
-	
-	public function reload()
-	{
-		$this->reloadEnv();
-		$this->reloadConfig();
-	}
-	
-	private function reloadEnv()
-	{
-		$environmentPath = base_path() . '/envs';
-		$environmentFile = '.' . $this->host . '.env';
+		$this->app = $app;
 		
-		(new Dotenv($environmentPath, $environmentFile))->overload();
-	}
-	
-	private function reloadConfig()
-	{
+		if (!$this->envReloaded()) {
+			return;
+		}
+		
 		$items = [];
 		// First we will see if we have a cache configuration file. If we do, we'll load
 		// the configuration items from that file so that it is very quick. Otherwise
@@ -53,19 +50,71 @@ class Configuration
 			$items = $this->loadConfigurationFiles();
 		}
 		
-		$this->app->extend('config', function () use ($items) {
+		$app->extend('config', function () use ($items) {
 			return new Repository($items);
 		});
+		
+		/** @var Repository $Config */
+		$Config = $this->app['config'];
+		/** @noinspection PhpUndefinedMethodInspection */
+		$app->detectEnvironment(function () use ($Config) {
+			return $Config->get('app.env', 'production');
+		});
+		
+		date_default_timezone_set($Config->get('app.timezone'));
+		
+		mb_internal_encoding('UTF-8');
+	}
+	
+	private function envReloaded()
+	{
+		global $argv;
+		if (!empty($argv)) {
+			$commandComponents = $argv;
+			array_shift($commandComponents);
+			
+			$host = null;
+			foreach ($commandComponents as $commandComponent) {
+				if (str_contains($commandComponent, '--host=')) {
+					$host = explode('=', $commandComponent);
+					if (count($host) == 2 && array_has($host, '1')) {
+						$host = array_get($host, '1');
+					}
+				}
+			}
+		} else {
+			$host = request()->getHost();
+			$host = str_replace(['.'], '', $host);
+		}
+		
+		if (empty($host)) {
+			return false;
+		}
+		
+		$envPath = base_path() . '/envs';
+		$envFile = '.' . $host . '.env';
+		
+		$filePath = $envPath . DIRECTORY_SEPARATOR . $envFile;
+		if (file_exists($filePath)) {
+			(new Dotenv($envPath, $envFile))->overload();
+			$this->host = $host;
+			
+			return true;
+		}
+		
+		return false;
 	}
 	
 	private function getCachedConfigPath()
 	{
+		/** @noinspection PhpUndefinedMethodInspection */
 		return $this->app->bootstrapPath() . '/cache/' . $this->host . '/config.php';
 	}
 	
 	/**
 	 * Load the configuration items from all of the files.
 	 *
+	 * @return array
 	 */
 	protected function loadConfigurationFiles()
 	{
@@ -87,6 +136,7 @@ class Configuration
 	{
 		$files = [];
 		
+		/** @noinspection PhpUndefinedMethodInspection */
 		$configPath = realpath($this->app->configPath());
 		
 		foreach (Finder::create()->files()->name('*.php')->in($configPath) as $file) {

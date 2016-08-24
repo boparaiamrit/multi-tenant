@@ -25,9 +25,6 @@ class SeedCommand extends \Illuminate\Database\Console\Seeds\SeedCommand
 	 */
 	public function fire()
 	{
-		// if no customer option is set, simply run the native laravel seeder
-		$this->checkForHost();
-		
 		parent::fire();
 	}
 }

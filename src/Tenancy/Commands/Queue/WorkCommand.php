@@ -26,8 +26,6 @@ class WorkCommand extends \Illuminate\Queue\Console\WorkCommand
 	 */
 	public function fire()
 	{
-		$this->checkForHost();
-		
 		parent::fire();
 	}
 }
