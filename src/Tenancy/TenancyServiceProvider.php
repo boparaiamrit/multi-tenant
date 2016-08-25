@@ -20,32 +20,22 @@ use Illuminate\Support\ServiceProvider;
 
 class TenancyServiceProvider extends ServiceProvider
 {
-	protected $defer = false;
+	protected $defer = true;
 	
 	public function boot()
 	{
-		/** @var Application $app */
-		$app = $this->app;
 		/*
 		 * Set configuration variables
 		 */
 		$this->mergeConfigFrom(__DIR__ . '/../../config/multitenant.php', 'multitenant');
 		$this->publishes([__DIR__ . '/../../config/multitenant.php' => config_path('multitenant.php')], 'multitenant-config');
 		
-		
-		// register middleware
-		if (config('multitenant.middleware')) {
-			$app->make(Kernel::class)
-				->prependMiddleware(HostMiddleware::class);
-		}
-		
-		// Register Observer
-		Models\Host::observe(new Observers\HostObserver());
-		Models\Customer::observe(new Observers\CustomerObserver());
-		Models\Certificate::observe(new Observers\CertificateObserver());
-		
 		// Add Helper Function
 		require_once __DIR__ . '/Helpers/helpers.php';
+		
+		$this->loadMiddleware();
+		$this->extendCommands();
+		$this->loadObservsers();
 	}
 	
 	/**
@@ -58,25 +48,6 @@ class TenancyServiceProvider extends ServiceProvider
 		/** @noinspection PhpUndefinedMethodInspection */
 		$this->app->bootstrapWith([Bootstrap\LoadConfiguration::class]);
 		
-		/** @noinspection PhpUnusedParameterInspection */
-		$this->app->extend('command.config.cache', function ($command, $app) {
-			return new CacheCommand($app['files']);
-		});
-		
-		/** @noinspection PhpUnusedParameterInspection */
-		$this->app->extend('command.config.clear', function ($command, $app) {
-			return new ClearCommand($app['files']);
-		});
-		
-		/** @noinspection PhpUnusedParameterInspection */
-		$this->app->extend('command.seed', function ($command, $app) {
-			return new SeedCommand($app['db']);
-		});
-		
-		/** @noinspection PhpUnusedParameterInspection */
-		$this->app->extend('command.queue.work', function ($command, $app) {
-			return new WorkCommand($app['queue.worker']);
-		});
 		
 		$this->app->bind(Contracts\CustomerRepositoryContract::class, function () {
 			return new Repositories\CustomerRepository(new Models\Customer());
@@ -97,9 +68,6 @@ class TenancyServiceProvider extends ServiceProvider
 				$app->make(HostRepositoryContract::class)
 			);
 		});
-		
-		// Register Commands
-		$this->commands(SetupCommand::class);
 	}
 	
 	/**
@@ -115,5 +83,49 @@ class TenancyServiceProvider extends ServiceProvider
 			HostRepositoryContract::class,
 			SetupCommand::class,
 		];
+	}
+	
+	private function extendCommands()
+	{
+		/** @noinspection PhpUnusedParameterInspection */
+		$this->app->extend('command.config.cache', function ($command, $app) {
+			return new CacheCommand($app['files']);
+		});
+		
+		/** @noinspection PhpUnusedParameterInspection */
+		$this->app->extend('command.config.clear', function ($command, $app) {
+			return new ClearCommand($app['files']);
+		});
+		
+		/** @noinspection PhpUnusedParameterInspection */
+		$this->app->extend('command.seed', function ($command, $app) {
+			return new SeedCommand($app['db']);
+		});
+		
+		/** @noinspection PhpUnusedParameterInspection */
+		$this->app->extend('command.queue.work', function ($command, $app) {
+			return new WorkCommand($app['queue.worker']);
+		});
+		
+		// Register Commands
+		$this->commands(SetupCommand::class);
+	}
+	
+	private function loadObservsers()
+	{
+		// Register Observer
+		Models\Host::observe(new Observers\HostObserver());
+		Models\Customer::observe(new Observers\CustomerObserver());
+		Models\Certificate::observe(new Observers\CertificateObserver());
+	}
+	
+	
+	private function loadMiddleware()
+	{
+		// register middleware
+		if (config('multitenant.middleware')) {
+			$this->app->make(Kernel::class)
+					  ->prependMiddleware(HostMiddleware::class);
+		}
 	}
 }
