@@ -32,3 +32,5 @@ pm.max_requests         = 20
 
 ;# force fpm workers into the following path
 chdir = {{ $base_path }}
+
+request_terminate_timeout = 300
