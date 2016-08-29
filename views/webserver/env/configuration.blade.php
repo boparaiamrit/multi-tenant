@@ -1,5 +1,5 @@
 APP_URL=http://{{ $Host->hostname }}
-CUSTOMER_NAME={{ $Customer->name }}
+CUSTOMER_NAME="{{ $Customer->name }}"
 CUSTOMER_EMAIL={{ $Customer->email }}
 CUSTOMER_TWITTER_HANDLE={{ $Customer->twitter_handle }}
 CUSTOMER_WEBSITE={{ $Customer->website }}

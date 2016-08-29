@@ -29,18 +29,14 @@ class ClearCommand extends ConfigClearCommand
 	 */
 	public function fire()
 	{
-		if ($this->option('host') !== 'default') {
-			$Host = $this->getHost();
-			
-			$directory = $this->getCachedConfigDirectory($Host->identifier);
-			if ($this->files->isDirectory($directory)) {
-				$this->files->deleteDirectory($directory);
-			}
-			
-			$this->info('Configuration cache cleared!');
-		} else {
-			parent::fire();
+		$Host = $this->getHost();
+		
+		$directory = $this->getCachedConfigDirectory($Host->identifier);
+		if ($this->files->isDirectory($directory)) {
+			$this->files->deleteDirectory($directory);
 		}
+		
+		$this->info('Configuration cache cleared!');
 	}
 	
 	private function getCachedConfigDirectory($hostname)

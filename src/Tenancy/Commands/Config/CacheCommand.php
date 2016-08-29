@@ -29,25 +29,21 @@ class CacheCommand extends ConfigCacheCommand
 	 */
 	public function fire()
 	{
-		if ($this->option('host') !== 'default') {
-			$this->call('config:clear');
-			
-			$Host = $this->getHost();
-			
-			$config    = $this->getFreshCustomerConfiguration();
-			$directory = $this->getCachedConfigDirectory($Host->identifier);
-			if (!$this->files->isDirectory($directory)) {
-				$this->files->makeDirectory($directory);
-			}
-			
-			$this->files->put(
-				$this->getCachedConfigPath($Host->identifier), '<?php return ' . var_export($config, true) . ';' . PHP_EOL
-			);
-			
-			$this->info('Configuration cached successfully!');
-		} else {
-			parent::fire();
+		$this->call('config:clear');
+		
+		$Host = $this->getHost();
+		
+		$config    = $this->getFreshCustomerConfiguration();
+		$directory = $this->getCachedConfigDirectory($Host->identifier);
+		if (!$this->files->isDirectory($directory)) {
+			$this->files->makeDirectory($directory);
 		}
+		
+		$this->files->put(
+			$this->getCachedConfigPath($Host->identifier), '<?php return ' . var_export($config, true) . ';' . PHP_EOL
+		);
+		
+		$this->info('Configuration cached successfully!');
 	}
 	
 	private function getCachedConfigDirectory($hostname)

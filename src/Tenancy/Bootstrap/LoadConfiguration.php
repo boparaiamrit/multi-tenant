@@ -88,7 +88,7 @@ class LoadConfiguration
 		}
 		
 		if (empty($host)) {
-			return false;
+			$host = config('env.default_host');
 		}
 		
 		$envPath = base_path() . '/envs';

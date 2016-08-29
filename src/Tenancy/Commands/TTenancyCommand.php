@@ -3,7 +3,6 @@
 namespace Boparaiamrit\Tenancy\Commands;
 
 
-use Boparaiamrit\Tenancy\Bootstrap\LoadConfiguration;
 use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
 use Boparaiamrit\Tenancy\Models\Host;
 use Symfony\Component\Console\Input\InputOption;
@@ -17,9 +16,15 @@ trait TTenancyCommand
 	{
 		$repository = app(HostRepositoryContract::class);
 		
+		$identifier = $this->option('host');
+		
+		if ($identifier == 'default') {
+			$identifier = config('env.default_host');
+		}
+		
 		/** @var Host $Host */
 		$Host = $repository->queryBuilder()
-						   ->where('identifier', $this->option('host'))
+						   ->where('identifier', $identifier)
 						   ->first();
 		if (is_null($Host)) {
 			$this->error('Host not found');

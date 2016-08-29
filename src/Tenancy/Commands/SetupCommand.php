@@ -7,7 +7,7 @@ use Boparaiamrit\Tenancy\Contracts\CustomerRepositoryContract;
 use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
 use Boparaiamrit\Tenancy\Models\Customer;
 use Boparaiamrit\Tenancy\Models\Host;
-use Boparaiamrit\Webserver\Helpers\ServerConfigurationHelper;
+use Boparaiamrit\Webserver\Helpers\ServerHelper;
 use Illuminate\Console\Command;
 
 class SetupCommand extends Command
@@ -16,12 +16,11 @@ class SetupCommand extends Command
 	 * @var string
 	 */
 	protected $signature = 'multitenant:setup
+		{--hostname= : Domain- or hostname for the the Customer website}
         {--customer= : Name of the the Customer}
         {--email= : Email address of the the Customer}
         {--twitter_handle= : Twitter Handle of the the Customer}
         {--website= : Website address of the the Customer}
-        {--hostname= : Domain- or hostname for the the Customer website}
-        {--webserver= : Hook into webserver (nginx|no)}
         {--identifier= : Website identifier}';
 	
 	/**
@@ -40,7 +39,7 @@ class SetupCommand extends Command
 	protected $Customer;
 	
 	/**
-	 * @var ServerConfigurationHelper
+	 * @var ServerHelper
 	 */
 	protected $Helper;
 	
@@ -67,9 +66,11 @@ class SetupCommand extends Command
 		
 		$this->Host     = $Host;
 		$this->Customer = $Customer;
-		$this->Helper   = new ServerConfigurationHelper();
 		
 		$this->configuration = config('webserver');
+		
+		// Create Directory not have
+		(new ServerHelper())->createDirectories();
 	}
 	
 	/**
@@ -108,8 +109,8 @@ class SetupCommand extends Command
 			$identifier = $this->ask('Please provide an identifier with a max length of 10 or restart command with --identifier');
 		}
 		
-		$this->comment('Welcome to Boparaiamrit Multitenancy.');
-		$this->Helper->createDirectories();
+		// Seed DB with Local Data
+		$this->info('Multitenancy Setup');
 		
 		// Create the Customer configurations
 		$Customer = $this->createCustomer($name, $email, $twitterHandle, $website);
@@ -117,26 +118,7 @@ class SetupCommand extends Command
 		// Create Host
 		$Host = $this->createHost($Customer, $identifier, $hostname);
 		
-		$webserver = $this->option('webserver');
-		
-		if (empty($webserver)) {
-			$webserver = $this->anticipate('Integrate into a webserver?', ['no', 'apache', 'nginx'], 'no');
-		}
-		
-		if ($webserver != 'no') {
-			$webserverConfiguration = array_get($this->configuration, $webserver);
-			$webserverClass         = array_get($webserverConfiguration, 'class');
-		} else {
-			$webserver = 'Nginx';
-		}
-		
-		// hook into the webservice of choice once object creation succeeded
-		if ($webserver) {
-			/** @noinspection PhpUndefinedMethodInspection */
-			/** @noinspection PhpUndefinedVariableInspection */
-			(new $webserverClass($Host))->register();
-		}
-		
+		// Seed DB with Local Data
 		$this->call('db:seed', ['--host' => $Host->identifier]);
 		
 		if ($Customer->exists && $Host->exists) {
@@ -155,10 +137,11 @@ class SetupCommand extends Command
 	private function createCustomer($name, $email, $twitterHandle, $website)
 	{
 		/** @var Customer $Customer */
-		$Customer = $this->Customer->Model->firstOrNew([
-			Customer::NAME  => $name,
-			Customer::EMAIL => $email
-		]);
+		$Customer = $this->Customer
+			->Model->firstOrNew([
+				Customer::NAME  => $name,
+				Customer::EMAIL => $email
+			]);
 		
 		$Customer->website        = $website;
 		$Customer->twitter_handle = $twitterHandle;
@@ -180,14 +163,14 @@ class SetupCommand extends Command
 			$identifier = str_limit(str_replace(['.'], '', $hostname), 100, '');
 		}
 		
-		
 		/** @noinspection PhpUndefinedFieldInspection */
 		/** @var Host $Host */
-		$Host = $this->Host->Model->firstOrNew([
-			Host::HOSTNAME    => $hostname,
-			Host::IDENTIFIER  => $identifier,
-			Host::CUSTOMER_ID => $Customer->id
-		]);
+		$Host = $this->Host
+			->Model->firstOrNew([
+				Host::HOSTNAME    => $hostname,
+				Host::IDENTIFIER  => $identifier,
+				Host::CUSTOMER_ID => $Customer->id
+			]);
 		
 		if ($Host->exists) {
 			$Host->touch();

@@ -45,11 +45,11 @@ abstract class FileGenerator extends AbstractGenerator
 		
 		$path = $this->publishPath();
 		$data = $this->generate()->render();
-		if (app('files')->put($path, $data, true)) {
+		if (app('files')->put($path, $data)) {
 			$this->output(sprintf('%s files has been published successfully.', $serviceName));
 		}
 		
-		if ($this->serviceReload()) {
+		if (($this->baseName() != 'env') && $this->serviceReload()) {
 			$this->output(sprintf('%s has been restart successfully.', $serviceName));
 		}
 		
@@ -89,7 +89,7 @@ abstract class FileGenerator extends AbstractGenerator
 			$this->output(sprintf('%s files has been deleted successfully.', $serviceName));
 		}
 		
-		if ($this->serviceReload()) {
+		if (($this->baseName() != 'env') && $this->serviceReload()) {
 			$this->output(sprintf('%s has been restart successfully.', $serviceName));
 		}
 		
@@ -233,56 +233,6 @@ abstract class FileGenerator extends AbstractGenerator
 		}
 		
 		return '';
-	}
-	
-	/**
-	 * Registers the service.
-	 *
-	 * @return bool
-	 */
-	public function register()
-	{
-		if (!$this->isInstalled()) {
-			return false;
-		}
-		
-		// create a unique filename for the global include directory
-		$path = $this->findPathForRegistration(array_get($this->configuration(), 'conf', []));
-		
-		$mask     = array_get($this->configuration(), 'mask', '%s');
-		$filename = sprintf($mask, substr(md5(env('APP_KEY')), 0, 10));
-		
-		$webserviceFileLocation = sprintf('%s%s', $path, $filename);
-		
-		if (app('files')->exists($webserviceFileLocation)) {
-			$depends = array_get($this->configuration(), 'depends', []);
-			
-			foreach ($depends as $depend) {
-				$class = config("webserver.{$depend}.class");
-				if (empty($class)) {
-					continue;
-				}
-				/** @noinspection PhpUndefinedMethodInspection */
-				(new $class($this->Host))->register();
-			}
-			
-			return true;
-		}
-		
-		// load the tenant include path
-		$targetPath = array_get($this->configuration(), 'path');
-		
-		// save file to global include path
-		app('files')->put($webserviceFileLocation, sprintf(array_get($this->configuration(), 'include'), $targetPath));
-		
-		// reload any services
-		if (method_exists($this, 'serviceReload')) {
-			if ($this->serviceReload()) {
-				$this->output($this->baseName() . ' has been restart successfully.');
-			}
-		}
-		
-		return true;
 	}
 	
 	public function output($message)

@@ -6,7 +6,7 @@ namespace Boparaiamrit\Webserver\Helpers;
 /**
  * Class ServerConfigurationHelper.
  */
-class ServerConfigurationHelper
+class ServerHelper
 {
 	/**
 	 * Creates directories if not yet existing
