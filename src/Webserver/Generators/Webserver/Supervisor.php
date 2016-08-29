@@ -24,8 +24,6 @@ class Supervisor extends FileGenerator
 			$config['user'] = $this->Host->identifier;
 		} else if (is_string($defaultUser)) {
 			$config['user'] = $defaultUser;
-		} else if ($defaultUser === false) {
-			$config['user'] = 'vagrant';
 		}
 		
 		return view('webserver::supervisor.configuration', $config);
