@@ -2,7 +2,6 @@
 
 use Boparaiamrit\Tenancy\Contracts\CustomerRepositoryContract;
 use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
-use Boparaiamrit\Tenancy\Helpers\RequestHelper;
 
 
 if (!function_exists('customer')) {
@@ -19,9 +18,9 @@ if (!function_exists('customer')) {
 			return app(CustomerRepositoryContract::class)->findById($id);
 		}
 		
-		$host = app(RequestHelper::CUSTOMER_HOST);
+		$Host = app(HostRepositoryContract::class)->findByHostname(app('hostname'));
 		
-		return $host ? $host->customer : false;
+		return $Host ? $Host->customer : false;
 	}
 }
 
@@ -39,8 +38,15 @@ if (!function_exists('host')) {
 			return app(HostRepositoryContract::class)->findById($id);
 		}
 		
-		$host = app(RequestHelper::CUSTOMER_HOST);
+		$Host = app(HostRepositoryContract::class)->findByHostname(app('hostname'));
 		
-		return $host ? $host : false;
+		return $Host ? $Host : false;
+	}
+}
+
+if (!function_exists('hostname_cleaner')) {
+	function hostname_cleaner($hostname = null)
+	{
+		return trim(str_replace(['.'], '', $hostname));
 	}
 }

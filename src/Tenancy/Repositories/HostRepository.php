@@ -16,7 +16,9 @@ class HostRepository extends BaseRepository implements HostRepositoryContract
 	 */
 	public function findByHostname($hostname)
 	{
-		return $this->Model->where('hostname', $hostname)->first();
+		return $this->Model->where('hostname', $hostname)
+						   ->orWhere('identifier', $hostname)
+						   ->first();
 	}
 	
 	/**

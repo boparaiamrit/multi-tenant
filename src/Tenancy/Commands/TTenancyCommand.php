@@ -16,18 +16,19 @@ trait TTenancyCommand
 	{
 		$repository = app(HostRepositoryContract::class);
 		
-		$identifier = $this->option('host');
+		$hostname = $this->option('hostname');
 		
-		if ($identifier == 'default') {
-			$identifier = config('env.default_host');
+		if ($hostname == 'default') {
+			$hostname = config('env.default_host');
 		}
 		
+		$hostname = hostname_cleaner($hostname);
+		
 		/** @var Host $Host */
-		$Host = $repository->queryBuilder()
-						   ->where('identifier', $identifier)
-						   ->first();
+		$Host = $repository->findByHostname($hostname);
+		
 		if (is_null($Host)) {
-			$this->error('Host not found');
+			$this->error('Hostname not found');
 			exit;
 		}
 		
@@ -43,6 +44,8 @@ trait TTenancyCommand
 	{
 		/** @noinspection PhpUndefinedMethodInspection */
 		/** @noinspection PhpUndefinedClassInspection */
-		return array_merge(parent::getOptions(), [['host', null, InputOption::VALUE_OPTIONAL, 'The host(s) to apply on; use {all|identifier}', 'default']]);
+		return array_merge(parent::getOptions(), [
+			['hostname', null, InputOption::VALUE_OPTIONAL, 'The hostname(s) to apply on; use {all|identifier}', 'default']
+		]);
 	}
 }

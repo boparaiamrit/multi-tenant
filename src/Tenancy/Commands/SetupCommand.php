@@ -119,7 +119,7 @@ class SetupCommand extends Command
 		$Host = $this->createHost($Customer, $identifier, $hostname);
 		
 		// Seed DB with Local Data
-		$this->call('db:seed', ['--host' => $Host->identifier]);
+		$this->call('db:seed', ['--hostname' => $hostname]);
 		
 		if ($Customer->exists && $Host->exists) {
 			$this->info('Configuration successful.');
@@ -160,7 +160,7 @@ class SetupCommand extends Command
 	private function createHost($Customer, $identifier, $hostname)
 	{
 		if (empty($identifier)) {
-			$identifier = str_limit(str_replace(['.'], '', $hostname), 100, '');
+			$identifier = hostname_cleaner($hostname);
 		}
 		
 		/** @noinspection PhpUndefinedFieldInspection */

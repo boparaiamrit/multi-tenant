@@ -19,7 +19,7 @@ class LoadConfiguration
 	/**
 	 * @var string
 	 */
-	protected $hostIdentifier;
+	protected $hostname;
 	
 	/**
 	 * @param Application $app
@@ -73,36 +73,39 @@ class LoadConfiguration
 			$commandComponents = $argv;
 			array_shift($commandComponents);
 			
-			$hostIdentifier = null;
+			$hostname = null;
 			foreach ($commandComponents as $commandComponent) {
-				if (str_contains($commandComponent, '--host=')) {
-					$hostIdentifier = explode('=', $commandComponent);
-					if (count($hostIdentifier) == 2 && array_has($hostIdentifier, '1')) {
-						$hostIdentifier = array_get($hostIdentifier, '1');
+				if (str_contains($commandComponent, '--hostname=')) {
+					$hostname = explode('=', $commandComponent);
+					if (count($hostname) == 2 && array_has($hostname, '1')) {
+						$hostname = array_get($hostname, '1');
 					}
 				}
 			}
 		} else {
-			$hostIdentifier = request()->getHost();
-			$hostIdentifier = str_replace(['.'], '', $hostIdentifier);
+			$hostname = request()->getHost();
 		}
 		
-		if (empty($hostIdentifier)) {
-			$hostIdentifier = config('env.default_host');
+		if (empty($hostname)) {
+			$hostname = config('env.default_host');
 		}
 		
-		$this->app->instance('host.identifier', $hostIdentifier);
+		$hostname = trim(str_replace(['.'], '', $hostname));
+		
+		$this->app->instance('hostname', $hostname);
 		
 		$envPath = base_path() . '/envs';
-		$envFile = '.' . $hostIdentifier . '.env';
+		$envFile = '.' . $hostname . '.env';
 		
 		$filePath = $envPath . DIRECTORY_SEPARATOR . $envFile;
 		if (file_exists($filePath)) {
 			(new Dotenv($envPath, $envFile))->overload();
-			$this->hostIdentifier = $hostIdentifier;
+			$this->hostname = $hostname;
 			
 			return true;
 		}
+		
+		info('default env ' . $hostname);
 		
 		return false;
 	}
@@ -110,7 +113,7 @@ class LoadConfiguration
 	private function getCachedConfigPath()
 	{
 		/** @noinspection PhpUndefinedMethodInspection */
-		return $this->app->bootstrapPath() . '/cache/' . $this->hostIdentifier . '/config.php';
+		return $this->app->bootstrapPath() . '/cache/' . $this->hostname . '/config.php';
 	}
 	
 	/**
