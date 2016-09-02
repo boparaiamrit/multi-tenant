@@ -11,10 +11,7 @@ use Boparaiamrit\Tenancy\Commands\Seeds\SeedCommand;
 use Boparaiamrit\Tenancy\Commands\SetupCommand;
 use Boparaiamrit\Tenancy\Contracts\CustomerRepositoryContract;
 use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
-use Boparaiamrit\Tenancy\Helpers\RequestHelper;
-use Boparaiamrit\Tenancy\Middleware\HostMiddleware;
 use Boparaiamrit\Tenancy\Observers\CertificateObserver;
-use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
@@ -34,7 +31,6 @@ class TenancyServiceProvider extends ServiceProvider
 		// Add Helper Function
 		require_once __DIR__ . '/Helpers/helpers.php';
 		
-		$this->loadMiddleware();
 		$this->extendCommands();
 		$this->loadObservsers();
 	}
@@ -79,7 +75,6 @@ class TenancyServiceProvider extends ServiceProvider
 	public function provides()
 	{
 		return [
-			RequestHelper::CUSTOMER_HOST,
 			CustomerRepositoryContract::class,
 			HostRepositoryContract::class,
 			SetupCommand::class,
@@ -123,15 +118,5 @@ class TenancyServiceProvider extends ServiceProvider
 		Models\Host::observe(new Observers\HostObserver());
 		Models\Customer::observe(new Observers\CustomerObserver());
 		Models\Certificate::observe(new Observers\CertificateObserver());
-	}
-	
-	
-	private function loadMiddleware()
-	{
-		// register middleware
-		if (config('multitenant.middleware')) {
-			$this->app->make(Kernel::class)
-					  ->prependMiddleware(HostMiddleware::class);
-		}
 	}
 }

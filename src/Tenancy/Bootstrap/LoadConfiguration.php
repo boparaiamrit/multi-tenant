@@ -19,7 +19,7 @@ class LoadConfiguration
 	/**
 	 * @var string
 	 */
-	protected $host;
+	protected $hostIdentifier;
 	
 	/**
 	 * @param Application $app
@@ -73,31 +73,33 @@ class LoadConfiguration
 			$commandComponents = $argv;
 			array_shift($commandComponents);
 			
-			$host = null;
+			$hostIdentifier = null;
 			foreach ($commandComponents as $commandComponent) {
 				if (str_contains($commandComponent, '--host=')) {
-					$host = explode('=', $commandComponent);
-					if (count($host) == 2 && array_has($host, '1')) {
-						$host = array_get($host, '1');
+					$hostIdentifier = explode('=', $commandComponent);
+					if (count($hostIdentifier) == 2 && array_has($hostIdentifier, '1')) {
+						$hostIdentifier = array_get($hostIdentifier, '1');
 					}
 				}
 			}
 		} else {
-			$host = request()->getHost();
-			$host = str_replace(['.'], '', $host);
+			$hostIdentifier = request()->getHost();
+			$hostIdentifier = str_replace(['.'], '', $hostIdentifier);
 		}
 		
-		if (empty($host)) {
-			$host = config('env.default_host');
+		if (empty($hostIdentifier)) {
+			$hostIdentifier = config('env.default_host');
 		}
+		
+		$this->app->instance('host.identifier', $hostIdentifier);
 		
 		$envPath = base_path() . '/envs';
-		$envFile = '.' . $host . '.env';
+		$envFile = '.' . $hostIdentifier . '.env';
 		
 		$filePath = $envPath . DIRECTORY_SEPARATOR . $envFile;
 		if (file_exists($filePath)) {
 			(new Dotenv($envPath, $envFile))->overload();
-			$this->host = $host;
+			$this->hostIdentifier = $hostIdentifier;
 			
 			return true;
 		}
@@ -108,7 +110,7 @@ class LoadConfiguration
 	private function getCachedConfigPath()
 	{
 		/** @noinspection PhpUndefinedMethodInspection */
-		return $this->app->bootstrapPath() . '/cache/' . $this->host . '/config.php';
+		return $this->app->bootstrapPath() . '/cache/' . $this->hostIdentifier . '/config.php';
 	}
 	
 	/**
