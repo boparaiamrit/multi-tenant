@@ -11,7 +11,7 @@ class CacheCommand extends ConfigCacheCommand
 {
 	use TTenancyCommand;
 	
-	protected $signature = 'config:cache {--host=default}';
+	protected $name = 'config:cache';
 	
 	/**
 	 * SeedCommand constructor.

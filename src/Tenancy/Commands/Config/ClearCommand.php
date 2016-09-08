@@ -11,7 +11,7 @@ class ClearCommand extends ConfigClearCommand
 {
 	use TTenancyCommand;
 	
-	protected $signature = 'config:clear {--host=default}';
+	protected $name = 'config:clear';
 	
 	/**
 	 * SeedCommand constructor.
