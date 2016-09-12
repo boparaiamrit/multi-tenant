@@ -122,13 +122,13 @@ class SetupCommand extends Command
 		
 		
 		// Seed Entites before doing anything
-		$this->call('db:seed', ['--hostname' => $Host->identifier, '--class' => EntitySeeder::class]);
+		$this->call('db:seed', ['--hostname' => $Host->identifier, '--class' => EntitySeeder::class, '--force']);
 		
 		// Create New Admin
 		$this->createAdmin($Customer);
 		
 		// Seed DB with Local Data
-		$this->call('db:seed', ['--hostname' => $Host->identifier]);
+		$this->call('db:seed', ['--hostname' => $Host->identifier, '--force']);
 		
 		if ($Customer->exists && $Host->exists) {
 			$this->info('Configuration successful.');
