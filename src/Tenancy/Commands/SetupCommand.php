@@ -8,7 +8,9 @@ use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
 use Boparaiamrit\Tenancy\Models\Customer;
 use Boparaiamrit\Tenancy\Models\Host;
 use Boparaiamrit\Webserver\Helpers\ServerHelper;
+use Database\Seeds\EntitySeeder;
 use Illuminate\Console\Command;
+use Promoto\Models\Admin;
 
 class SetupCommand extends Command
 {
@@ -113,10 +115,14 @@ class SetupCommand extends Command
 		// Create Host
 		$Host = $this->createHost($Customer, $identifier, $domain);
 		
-		$GLOBALS['hostname'] = $Host->identifier;
+		// Seed Entites before doing anything
+		$this->call('db:seed', ['--hostname' => $Host->identifier, '--class' => EntitySeeder::class, '--force']);
+		
+		// Create New Admin
+		$this->createAdmin($Customer);
 		
 		// Seed DB with Local Data
-		$this->call('db:seed');
+		$this->call('db:seed', ['--hostname' => $Host->identifier, '--force']);
 		
 		if ($Customer->exists && $Host->exists) {
 			$this->info('Configuration successful.');
@@ -176,5 +182,29 @@ class SetupCommand extends Command
 		}
 		
 		return $Host;
+	}
+	
+	/**
+	 * @param Customer $Customer
+	 */
+	private function createAdmin($Customer)
+	{
+		Admin::unguard(true);
+		
+		/** @var Admin $Admin */
+		$Admin = Admin::firstOrNew([
+			Admin::EMAIL => $Customer->email
+		]);
+		
+		$partsOfName = explode(' ', $Customer->name);
+		
+		$Admin->first_name = array_shift($partsOfName);
+		$Admin->last_name  = implode(' ', $partsOfName);
+		$Admin->name       = $Customer->name;
+		$Admin->password   = bcrypt('welcome');
+		$Admin->image      = 'http://placehold.it/64x64';
+		$Admin->status     = 'active';
+		$Admin->default    = false;
+		$Admin->save();
 	}
 }
