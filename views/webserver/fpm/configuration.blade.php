@@ -24,11 +24,11 @@ listen.mode  = 0666
 
 ;# fpm pool management variables
 pm=dynamic
-pm.max_children         = 20
-pm.start_servers        = 5
-pm.min_spare_servers    = 5
-pm.max_spare_servers    = 10
-pm.max_requests         = 20
+pm.max_children         = 8
+pm.start_servers        = 2
+pm.min_spare_servers    = 2
+pm.max_spare_servers    = 4
+pm.max_requests         = 8
 
 ;# force fpm workers into the following path
 chdir = {{ $base_path }}

@@ -8,7 +8,9 @@ use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
 use Boparaiamrit\Tenancy\Models\Customer;
 use Boparaiamrit\Tenancy\Models\Host;
 use Boparaiamrit\Webserver\Helpers\ServerHelper;
+use Database\Seeds\EntitySeeder;
 use Illuminate\Console\Command;
+use Promoto\Models\Admin;
 
 class SetupCommand extends Command
 {
@@ -16,11 +18,11 @@ class SetupCommand extends Command
 	 * @var string
 	 */
 	protected $signature = 'multitenant:setup
+		{--customer= : Name of the the Customer}
+		{--email= : Email address of the the Customer}
+		{--website= : Website address of the the Customer}
+		{--twitter_handle= : Twitter Handle of the the Customer}
 		{--hostname= : Domain- or hostname for the the Customer website}
-        {--customer= : Name of the the Customer}
-        {--email= : Email address of the the Customer}
-        {--twitter_handle= : Twitter Handle of the the Customer}
-        {--website= : Website address of the the Customer}
         {--identifier= : Website identifier}';
 	
 	/**
@@ -118,8 +120,15 @@ class SetupCommand extends Command
 		// Create Host
 		$Host = $this->createHost($Customer, $identifier, $hostname);
 		
+		
+		// Seed Entites before doing anything
+		$this->call('db:seed', ['--hostname' => $Host->identifier, '--class' => EntitySeeder::class]);
+		
+		// Create New Admin
+		$this->createAdmin($Customer);
+		
 		// Seed DB with Local Data
-		$this->call('db:seed', ['--hostname' => $hostname]);
+		$this->call('db:seed', ['--hostname' => $Host->identifier]);
 		
 		if ($Customer->exists && $Host->exists) {
 			$this->info('Configuration successful.');
@@ -179,5 +188,29 @@ class SetupCommand extends Command
 		}
 		
 		return $Host;
+	}
+	
+	/**
+	 * @param Customer $Customer
+	 */
+	private function createAdmin($Customer)
+	{
+		Admin::unguard(true);
+		
+		/** @var Admin $Admin */
+		$Admin = Admin::firstOrNew([
+			Admin::EMAIL => $Customer->email
+		]);
+		
+		$partsOfName = explode(' ', $Customer->name);
+		
+		$Admin->first_name = array_shift($partsOfName);
+		$Admin->last_name  = implode(' ', $partsOfName);
+		$Admin->name       = $Customer->name;
+		$Admin->password   = bcrypt('welcome');
+		$Admin->image      = 'http://placehold.it/64x64';
+		$Admin->status     = 'active';
+		$Admin->default    = false;
+		$Admin->save();
 	}
 }

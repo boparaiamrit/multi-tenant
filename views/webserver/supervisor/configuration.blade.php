@@ -6,31 +6,25 @@
 
 ;# unique fpm group
 [program:{{ $Host->identifier }}]
-process_name=%(program_name)s_%(process_num)02d
 command=/usr/bin/php {{ $base_path }}/artisan queue:work beanstalkd --sleep=3 --tries=3 --daemon --hostname={{$Host->identifier}} --queue="{{$Host->identifier}}"
 autostart=true
 autorestart=true
 user={{ $user }}
-numprocs=2
 redirect_stderr=true
 stdout_logfile={{ $base_path }}/storage/logs/supervisor-{{ $Host->identifier }}.log
 
 [program:{{ $Host->identifier }}.gravatar]
-process_name=%(program_name)s_%(process_num)02d
 command=/usr/bin/php {{ $base_path }}/artisan queue:work beanstalkd --sleep=3 --tries=3 --daemon --hostname={{$Host->identifier}} --queue="{{$Host->identifier}}.gravatar"
 autostart=true
 autorestart=true
 user={{ $user }}
-numprocs=2
 redirect_stderr=true
 stdout_logfile={{ $base_path }}/storage/logs/supervisor-{{ $Host->identifier }}.log
 
 [program:{{ $Host->identifier }}.twitter]
-process_name=%(program_name)s_%(process_num)02d
 command=/usr/bin/php {{ $base_path }}/artisan queue:work beanstalkd --sleep=3 --tries=3 --daemon --hostname={{$Host->identifier}} --queue="{{$Host->identifier}}.twitter"
 autostart=true
 autorestart=true
 user={{ $user }}
-numprocs=2
 redirect_stderr=true
 stdout_logfile={{ $base_path }}/storage/logs/supervisor-{{ $Host->identifier }}.log

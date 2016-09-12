@@ -4,6 +4,7 @@ namespace Boparaiamrit\Tenancy\Commands\Seeds;
 
 
 use Boparaiamrit\Tenancy\Commands\TTenancyCommand;
+use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Database\ConnectionResolverInterface as Resolver;
 
 class SeedCommand extends \Illuminate\Database\Console\Seeds\SeedCommand
@@ -25,6 +26,19 @@ class SeedCommand extends \Illuminate\Database\Console\Seeds\SeedCommand
 	 */
 	public function fire()
 	{
+		$this->reboot();
+		
 		parent::fire();
+	}
+	
+	private function reboot()
+	{
+		/** @noinspection PhpUndefinedMethodInspection */
+		$path = $this->laravel->bootstrapPath() . '/app.php';
+		
+		/** @noinspection PhpIncludeInspection */
+		$app = require $path;
+		
+		$app->make(Kernel::class)->bootstrap();
 	}
 }
