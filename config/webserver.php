@@ -1,15 +1,9 @@
 <?php
 
-/**
- * All hyn-me/webserver related configuration options.
- *
- * @warning please be advised, read the documentation on http://hyn.me before editing
- *
- * None of the generated configurations will work as long as you don't add the paths to the corresponding webservice
- * configuration file. See documentation for more info.
- */
-
 return [
+	
+	'machine' => env('WEBSERVER_MACHINE', 'linux'),
+	
 	'webservers' => ['nginx'],
 	
 	'user'       => env('WEBSERVER_USER'),
@@ -27,21 +21,29 @@ return [
 		'path' => storage_path('logs'),
 	],
 	
+	'php_path'   => '/usr/local/bin/php',
+	
 	/*
 	 * Nginx
 	 */
 	'nginx'      => [
 		'path'    => storage_path('webserver/nginx/'),
-		'port'    => [
-			'http'  => 80,
-			'https' => 443,
-		],
+		'port'    => 80,
 		// path to service daemon, used to verify service exists
-		'service' => '/etc/init.d/nginx',
+		'service' => [
+			'mac'   => '/usr/local/bin/nginx',
+			'linux' => '/etc/init.d/nginx'
+		],
 		// how to run actions for this service
 		'actions' => [
-			'configtest' => '/etc/init.d/nginx configtest',
-			'restart'    => '/etc/init.d/nginx restart',
+			'configtest' => [
+				'mac'   => '/usr/local/bin/nginx -t',
+				'linux' => '/etc/init.d/nginx configtest'
+			],
+			'restart'    => [
+				'mac'   => 'brew services restart nginx',
+				'linux' => '/etc/init.d/nginx reload'
+			]
 		]
 	],
 	
@@ -51,11 +53,21 @@ return [
 	'fpm'        => [
 		'path'    => storage_path('webserver/fpm/'),
 		// path to service daemon, used to verify service exists
-		'service' => '/etc/init.d/php7.0-fpm',
+		// path to service daemon, used to verify service exists
+		'service' => [
+			'mac'   => '/usr/local/sbin/php70-fpm',
+			'linux' => '/etc/init.d/php7.0-fpm'
+		],
 		// how to run actions for this service
 		'actions' => [
-			'configtest' => '/etc/init.d/php7.0-fpm -t',
-			'restart'    => '/etc/init.d/php7.0-fpm restart',
+			'configtest' => [
+				'mac'   => '/usr/local/sbin/php70-fpm configtest',
+				'linux' => '/etc/init.d/php7.0-fpm status'
+			],
+			'restart'    => [
+				'mac'   => 'brew services restart php70',
+				'linux' => '/etc/init.d/php7.0-fpm restart'
+			]
 		],
 		/*
 		 * base modifier for fpm pool port
@@ -70,11 +82,21 @@ return [
      */
 	'supervisor' => [
 		'path'    => storage_path('webserver/supervisor/'),
-		'service' => '/etc/init.d/supervisor',
+		'service' => [
+			'mac'   => '/usr/local/bin/supervisord',
+			'linux' => '/etc/init.d/supervisor'
+		],
 		// how to run actions for this service
 		'actions' => [
-			'restart' => '/etc/init.d/supervisor restart',
-		]
+			'configtest' => [
+				'mac'   => '',
+				'linux' => ''
+			],
+			'restart'    => [
+				'mac'   => 'brew services restart supervisor',
+				'linux' => '/etc/init.d/supervisor restart'
+			]
+		],
 	],
 	
 	/*
@@ -89,5 +111,5 @@ return [
 	 */
 	'ssl'        => [
 		'path' => storage_path('webserver/ssl'),
-	],
+	]
 ];

@@ -117,13 +117,15 @@ abstract class FileGenerator extends AbstractGenerator
 		$test  = 1;
 		$test2 = 1;
 		
-		$configtest = array_get($this->configuration(), 'actions.configtest');
+		$machine = config('webserver.machine');
+		
+		$configtest = array_get($this->configuration(), 'actions.configtest.' . $machine);
 		if (!empty($configtest)) {
 			exec($configtest, $out, $test);
 		}
 		
 		if ($test == 0) {
-			$restart = array_get($this->configuration(), 'actions.restart');
+			$restart = array_get($this->configuration(), 'actions.restart.' . $machine);
 			if (!empty($restart)) {
 				exec($restart, $out, $test2);
 			}
@@ -141,7 +143,9 @@ abstract class FileGenerator extends AbstractGenerator
 	 */
 	public function isInstalled()
 	{
-		$service = array_get($this->configuration(), 'service');
+		$machine = config('webserver.machine');
+		
+		$service = array_get($this->configuration(), 'service.' . $machine);
 		
 		return $service && app('files')->exists($service);
 	}

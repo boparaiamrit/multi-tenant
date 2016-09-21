@@ -14,12 +14,24 @@ class Nginx extends FileGenerator
 	 */
 	public function generate()
 	{
+		$hostName       = $this->Host->hostname;
+		$hostIdentifier = $this->Host->identifier;
+		
+		$machine = config('webserver.machine');
+		
+		if ($machine == 'linux') {
+			$listenSocket = 'unix:/var/run/php/php7.0-fpm.' . $hostIdentifier . '.sock';
+		} else {
+			$listenSocket = '127.0.0.1:9000';
+		}
+		
 		return view('webserver::nginx.configuration', [
-			'Host'        => $this->Host,
-			'public_path' => public_path(),
-			'log_path'    => config('webserver.log.path') . "/nginx-{$this->Host->identifier}",
-			'config'      => config('webserver.nginx'),
-			'fpm_port'    => config('webserver.fpm.port'),
+			'port'            => config('webserver.nginx.port'),
+			'host_name'       => $hostName,
+			'group'           => config('webserver.group'),
+			'config'          => config('webserver.nginx'),
+			'log_path'        => config('webserver.log.path') . '/nginx-' . $hostIdentifier,
+			'listen_socket'   => $listenSocket
 		]);
 	}
 	

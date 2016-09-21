@@ -14,19 +14,19 @@ class Supervisor extends FileGenerator
 	 */
 	public function generate()
 	{
-		$config = [
-			'Host'      => $this->Host,
-			'base_path' => base_path(),
-		];
+		$hostIdentifier = $this->Host->identifier;
 		
-		$defaultUser = config('webserver.user');
-		if ($defaultUser === true) {
-			$config['user'] = $this->Host->identifier;
-		} else if (is_string($defaultUser)) {
-			$config['user'] = $defaultUser;
+		$user = config('webserver.user');
+		if ($user === true) {
+			$user = $hostIdentifier;
 		}
 		
-		return view('webserver::supervisor.configuration', $config);
+		return view('webserver::supervisor.configuration', [
+			'user'            => $user,
+			'base_path'       => base_path(),
+			'php_path'        => config('webserver.php_path'),
+			'host_identifier' => $hostIdentifier
+		]);
 	}
 	
 	/**
@@ -50,21 +50,15 @@ class Supervisor extends FileGenerator
 			return false;
 		}
 		
-		$restart = array_get($this->configuration(), 'actions.restart');
+		$test = 1;
+		
+		$machine = config('webserver.machine');
+		
+		$restart = array_get($this->configuration(), 'actions.restart.' . $machine);
 		if (!empty($restart)) {
 			exec($restart, $out, $test);
 		}
 		
-		return $restart == 0;
-	}
-	
-	/**
-	 * Registers the service.
-	 *
-	 * @return bool|void
-	 */
-	public function register()
-	{
-		return true;
+		return $test == 0;
 	}
 }
