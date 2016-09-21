@@ -8,9 +8,7 @@ use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
 use Boparaiamrit\Tenancy\Models\Customer;
 use Boparaiamrit\Tenancy\Models\Host;
 use Boparaiamrit\Webserver\Helpers\ServerHelper;
-use Database\Seeds\EntitySeeder;
 use Illuminate\Console\Command;
-use Promoto\Models\Admin;
 
 class SetupCommand extends Command
 {
@@ -18,11 +16,11 @@ class SetupCommand extends Command
 	 * @var string
 	 */
 	protected $signature = 'multitenant:setup
-		{--customer= : Name of the the Customer}
-		{--email= : Email address of the the Customer}
-		{--website= : Website address of the the Customer}
-		{--twitter_handle= : Twitter Handle of the the Customer}
-		{--hostname= : Domain- or hostname for the the Customer website}
+		{--domain= : Domain or domain for the the Customer website}
+        {--customer= : Name of the the Customer}
+        {--email= : Email address of the the Customer}
+        {--twitter_handle= : Twitter Handle of the the Customer}
+        {--website= : Website address of the the Customer}
         {--identifier= : Website identifier}';
 	
 	/**
@@ -49,11 +47,6 @@ class SetupCommand extends Command
 	 * @var array
 	 */
 	protected $configuration;
-	
-	/**
-	 * @var int
-	 */
-	protected $step = 1;
 	
 	/**
 	 * @param CustomerRepositoryContract $Customer
@@ -84,7 +77,7 @@ class SetupCommand extends Command
 		$email         = $this->option('email');
 		$twitterHandle = $this->option('twitter_handle');
 		$website       = $this->option('website');
-		$hostname      = $this->option('hostname');
+		$domain        = $this->option('domain');
 		$identifier    = $this->option('identifier');
 		
 		if (empty($name)) {
@@ -103,8 +96,8 @@ class SetupCommand extends Command
 			$website = $this->ask('Please provide a customer website address or restart command with --website');
 		}
 		
-		if (empty($hostname)) {
-			$hostname = $this->ask('Please provide a customer hostname or restart command with --hostname');
+		if (empty($domain)) {
+			$domain = $this->ask('Please provide a customer domain or restart command with --domain');
 		}
 		
 		if (!empty($identifier) && strlen($identifier) > 100) {
@@ -118,17 +111,12 @@ class SetupCommand extends Command
 		$Customer = $this->createCustomer($name, $email, $twitterHandle, $website);
 		
 		// Create Host
-		$Host = $this->createHost($Customer, $identifier, $hostname);
+		$Host = $this->createHost($Customer, $identifier, $domain);
 		
-		
-		// Seed Entites before doing anything
-		$this->call('db:seed', ['--hostname' => $Host->identifier, '--class' => EntitySeeder::class, '--force']);
-		
-		// Create New Admin
-		$this->createAdmin($Customer);
+		$GLOBALS['hostname'] = $Host->identifier;
 		
 		// Seed DB with Local Data
-		$this->call('db:seed', ['--hostname' => $Host->identifier, '--force']);
+		$this->call('db:seed');
 		
 		if ($Customer->exists && $Host->exists) {
 			$this->info('Configuration successful.');
@@ -162,21 +150,21 @@ class SetupCommand extends Command
 	/**
 	 * @param $Customer
 	 * @param $identifier
-	 * @param $hostname
+	 * @param $domain
 	 *
 	 * @return Host
 	 */
-	private function createHost($Customer, $identifier, $hostname)
+	private function createHost($Customer, $identifier, $domain)
 	{
 		if (empty($identifier)) {
-			$identifier = hostname_cleaner($hostname);
+			$identifier = hostname_cleaner($domain);
 		}
 		
 		/** @noinspection PhpUndefinedFieldInspection */
 		/** @var Host $Host */
 		$Host = $this->Host
 			->Model->firstOrNew([
-				Host::HOSTNAME    => $hostname,
+				Host::HOSTNAME    => $domain,
 				Host::IDENTIFIER  => $identifier,
 				Host::CUSTOMER_ID => $Customer->id
 			]);
@@ -188,29 +176,5 @@ class SetupCommand extends Command
 		}
 		
 		return $Host;
-	}
-	
-	/**
-	 * @param Customer $Customer
-	 */
-	private function createAdmin($Customer)
-	{
-		Admin::unguard(true);
-		
-		/** @var Admin $Admin */
-		$Admin = Admin::firstOrNew([
-			Admin::EMAIL => $Customer->email
-		]);
-		
-		$partsOfName = explode(' ', $Customer->name);
-		
-		$Admin->first_name = array_shift($partsOfName);
-		$Admin->last_name  = implode(' ', $partsOfName);
-		$Admin->name       = $Customer->name;
-		$Admin->password   = bcrypt('welcome');
-		$Admin->image      = 'http://placehold.it/64x64';
-		$Admin->status     = 'active';
-		$Admin->default    = false;
-		$Admin->save();
 	}
 }

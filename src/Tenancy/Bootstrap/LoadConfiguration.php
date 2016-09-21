@@ -87,7 +87,11 @@ class LoadConfiguration
 		}
 		
 		if (empty($hostname)) {
-			$hostname = config('env.default_host');
+			$hostname = array_get($GLOBALS, 'hostname');
+			
+			if (empty($hostname)) {
+				$hostname = config('env.default_host');
+			}
 		}
 		
 		$hostname = trim(str_replace(['.'], '', $hostname));
@@ -104,8 +108,6 @@ class LoadConfiguration
 			
 			return true;
 		}
-		
-		info('default env ' . $hostname);
 		
 		return false;
 	}

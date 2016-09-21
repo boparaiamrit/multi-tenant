@@ -6,6 +6,7 @@ namespace Boparaiamrit\Tenancy;
 use Boparaiamrit\Tenancy\Commands\Config\CacheCommand;
 use Boparaiamrit\Tenancy\Commands\Config\ClearCommand;
 use Boparaiamrit\Tenancy\Commands\Queue\ListenCommand;
+use Boparaiamrit\Tenancy\Commands\Queue\RestartCommand;
 use Boparaiamrit\Tenancy\Commands\Queue\WorkCommand;
 use Boparaiamrit\Tenancy\Commands\Seeds\SeedCommand;
 use Boparaiamrit\Tenancy\Commands\SetupCommand;
@@ -106,6 +107,11 @@ class TenancyServiceProvider extends ServiceProvider
 		/** @noinspection PhpUnusedParameterInspection */
 		$this->app->extend('command.queue.listen', function ($command, $app) {
 			return new ListenCommand($app['queue.listener']);
+		});
+		
+		/** @noinspection PhpUnusedParameterInspection */
+		$this->app->extend('command.queue.restart', function ($command, $app) {
+			return new RestartCommand();
 		});
 		
 		// Register Commands

@@ -14,16 +14,27 @@ class Fpm extends FileGenerator
 	 */
 	public function generate()
 	{
+		$hostIdentifier = $this->Host->identifier;
+		
+		$machine = config('webserver.machine');
+		
+		if ($machine == 'linux') {
+			$listenSocket = '/var/run/php/php7.0-fpm.' . $hostIdentifier . '.sock';
+		} else {
+			$listenSocket = '127.0.0.1:9000';
+		}
+		
 		$config = [
-			'Host'      => $this->Host,
-			'base_path' => base_path(),
-			'group'     => config('webserver.group'),
-			'config'    => config('webserver.fpm'),
+			'machine'         => $machine,
+			'group'           => config('webserver.group'),
+			'base_path'       => base_path(),
+			'listen_socket'   => $listenSocket,
+			'host_identifier' => $hostIdentifier
 		];
 		
 		$defaultUser = config('webserver.user');
 		if ($defaultUser === true) {
-			$config['user'] = $this->Host->identifier;
+			$config['user'] = $hostIdentifier;
 		} else if (is_string($defaultUser)) {
 			$config['user'] = $defaultUser;
 		}
@@ -39,24 +50,5 @@ class Fpm extends FileGenerator
 	protected function publishPath()
 	{
 		return sprintf('%s%s.conf', config('webserver.fpm.path'), $this->name());
-	}
-	
-	/**
-	 * Reloads service if possible.
-	 *
-	 * @return bool
-	 */
-	protected function serviceReload()
-	{
-		if (!$this->isInstalled()) {
-			return false;
-		}
-		
-		$restart = array_get($this->configuration(), 'actions.restart');
-		if (!empty($restart)) {
-			exec($restart, $out, $test);
-		}
-		
-		return $restart == 0;
 	}
 }

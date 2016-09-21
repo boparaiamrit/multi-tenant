@@ -1,24 +1,30 @@
-#
-#   Auto generated Nginx configuration
-#       @time: {{ date('H:i:s d-m-Y') }}
-#       @author: boparaiamrit@gmail.com
-#
+server {
+    listen {!! $port !!};
+    server_name {!! $host_name !!};
 
-#
-#   Hostnames with certificate
-#
-@foreach($Host->withCertificate as $Host)
-    @include('webserver::nginx.includes.server-block', [
-        'Host' => $Host,
-        'Ssl' => $Host->certificate
-    ])
-@endforeach
+    add_header Access-Control-Allow-Origin *;
+    add_header Access-Control-Request-Method GET;
 
-#
-#   Hostnames without certificate
-#
-@if($Host->withoutCertificate->count() > 0)
-    @include('webserver::nginx.includes.server-block', [
-        'Hosts' => $Host->withoutCertificate
-    ])
-@endif
+    if ( $host ~* ^www\.(.*) ) {
+        set             $host_nowww     $1;
+        rewrite         ^(.*)$          $scheme://$host_nowww$1 permanent;
+    }
+
+    root {!! public_path() !!};
+    index index.php;
+
+    error_log {!! $log_path !!}.error.log notice;
+
+    location / {
+        index index.php;
+        try_files $uri $uri/ $uri/index.php?$args /index.php?$args;
+    }
+
+    location ~ \.php(/|$) {
+        fastcgi_pass {!! $listen_socket !!};
+        include fastcgi_params;
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_read_timeout 300;
+    }
+}
