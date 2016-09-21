@@ -6,22 +6,25 @@ return [
 	
 	'webservers' => ['nginx'],
 	
-	'user'       => env('WEBSERVER_USER'),
+	'user'  => env('WEBSERVER_USER'),
 	
 	/*
 	 * The group the tenant files should belong to
 	 */
-	'group'      => env('WEBSERVER_GROUP'),
+	'group' => env('WEBSERVER_GROUP'),
 	
 	/*
 	 * Logging specific settings
 	 */
-	'log'        => [
+	'log'   => [
 		// path where to store the webserver logs
 		'path' => storage_path('logs'),
 	],
 	
-	'php_path'   => '/usr/local/bin/php',
+	'php_path'   => [
+		'mac'   => '/usr/local/bin/php',
+		'linux' => '/usr/bin/php'
+	],
 	
 	/*
 	 * Nginx

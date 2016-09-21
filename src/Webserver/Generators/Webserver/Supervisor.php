@@ -24,7 +24,7 @@ class Supervisor extends FileGenerator
 		return view('webserver::supervisor.configuration', [
 			'user'            => $user,
 			'base_path'       => base_path(),
-			'php_path'        => config('webserver.php_path'),
+			'php_path'        => config('webserver.php_path.' . config('webserver.machine')),
 			'host_identifier' => $hostIdentifier
 		]);
 	}
