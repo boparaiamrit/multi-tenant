@@ -29,9 +29,14 @@ class ClearCommand extends ConfigClearCommand
 	 */
 	public function fire()
 	{
-		$Host = $this->getHost();
+		$hostname = array_get($GLOBALS, 'hostname');
 		
-		$directory = $this->getCachedConfigDirectory($Host->identifier);
+		if (empty($hostname)) {
+			$Host     = $this->getHost();
+			$hostname = $Host->identifier;
+		}
+		
+		$directory = $this->getCachedConfigDirectory($hostname);
 		if ($this->files->isDirectory($directory)) {
 			$this->files->deleteDirectory($directory);
 		}

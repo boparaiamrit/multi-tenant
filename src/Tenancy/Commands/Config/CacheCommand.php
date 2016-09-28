@@ -29,9 +29,11 @@ class CacheCommand extends ConfigCacheCommand
 	 */
 	public function fire()
 	{
-		$this->call('config:clear');
-		
 		$Host = $this->getHost();
+		
+		array_set($GLOBALS, 'hostname', $Host->identifier);
+		
+		$this->call('config:clear');
 		
 		$config    = $this->getFreshCustomerConfiguration();
 		$directory = $this->getCachedConfigDirectory($Host->identifier);
