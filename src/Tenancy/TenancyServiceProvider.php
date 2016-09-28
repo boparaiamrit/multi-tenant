@@ -3,6 +3,7 @@
 namespace Boparaiamrit\Tenancy;
 
 
+use Boparaiamrit\Tenancy\Commands\Cache;
 use Boparaiamrit\Tenancy\Commands\Config\CacheCommand;
 use Boparaiamrit\Tenancy\Commands\Config\ClearCommand;
 use Boparaiamrit\Tenancy\Commands\Queue\ListenCommand;
@@ -15,7 +16,6 @@ use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
 use Boparaiamrit\Tenancy\Observers\CertificateObserver;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
-
 
 class TenancyServiceProvider extends ServiceProvider
 {
@@ -112,6 +112,11 @@ class TenancyServiceProvider extends ServiceProvider
 		/** @noinspection PhpUnusedParameterInspection */
 		$this->app->extend('command.queue.restart', function ($command, $app) {
 			return new RestartCommand();
+		});
+		
+		/** @noinspection PhpUnusedParameterInspection */
+		$this->app->extend('command.cache.clear', function ($command, $app) {
+			return new Cache\ClearCommand($app['cache']);
 		});
 		
 		// Register Commands
