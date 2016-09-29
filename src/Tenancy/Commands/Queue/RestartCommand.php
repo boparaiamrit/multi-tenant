@@ -14,10 +14,12 @@ class RestartCommand extends \Illuminate\Queue\Console\RestartCommand
 	 */
 	public function fire()
 	{
+		$Host = $this->getHost();
+		
 		/** @noinspection PhpUndefinedMethodInspection */
 		$this->laravel['cache']
 			->forever('illuminate:queue:restart', time());
 		
-		$this->info('Broadcasting queue restart signal.');
+		$this->info(sprintf('Broadcasting queue restart signal for %s.', $Host->identifier));
 	}
 }

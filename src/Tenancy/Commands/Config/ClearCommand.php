@@ -41,7 +41,7 @@ class ClearCommand extends ConfigClearCommand
 			$this->files->deleteDirectory($directory);
 		}
 		
-		$this->info('Configuration cache cleared!');
+		$this->info(sprintf('%s configuration\'s cleared successfully.', str_studly($hostname)));
 	}
 	
 	private function getCachedConfigDirectory($hostname)

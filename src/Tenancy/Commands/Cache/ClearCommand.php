@@ -34,21 +34,21 @@ class ClearCommand extends \Illuminate\Cache\Console\ClearCommand
 		/** @noinspection PhpUndefinedMethodInspection */
 		$this->laravel['events']->fire('cache:clearing', [$store, $tags]);
 		
+		$Host = $this->getHost();
+		
 		if (!empty($tags)) {
 			$Cache->tags($tags)->flush();
 		} else {
-			$Host = $this->getHost();
-			
 			$Redis = $Cache->getRedis()->connection();
 			
-			$keys  = $Redis->keys($Host->identifier . ':*');
+			$keys = $Redis->keys($Host->identifier . ':*');
 			
 			foreach ($keys as $key) {
 				$Redis->del($key);
 			}
 		}
 		
-		$this->info('Cache cleared successfully.');
+		$this->info(sprintf('%s cache\'s cleared successfully.', str_studly($Host->identifier)));
 		
 		/** @noinspection PhpUndefinedMethodInspection */
 		$this->laravel['events']->fire('cache:cleared', [$store, $tags]);

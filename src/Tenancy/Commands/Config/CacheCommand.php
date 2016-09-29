@@ -45,7 +45,7 @@ class CacheCommand extends ConfigCacheCommand
 			$this->getCachedConfigPath($Host->identifier), '<?php return ' . var_export($config, true) . ';' . PHP_EOL
 		);
 		
-		$this->info('Configuration cached successfully!');
+		$this->info(sprintf('%s configuration\'s cached successfully.', str_studly($Host->identifier)));
 	}
 	
 	private function getCachedConfigDirectory($hostname)
