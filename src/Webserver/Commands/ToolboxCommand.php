@@ -18,15 +18,17 @@ class ToolboxCommand extends AbstractCommand
 	 */
 	public function fire()
 	{
-		$Host = $this->getHost();
+		$Hosts = $this->getHosts();
 		
-		$action = $this->argument('action');
-		if ($action == 'update' || $action == 'delete') {
-			(new WebserverCommand($Host, $action))->fire();
-		} else {
-			$this->error('Unknown action, please specify one.');
-			
-			return;
+		foreach ($Hosts as $Host) {
+			$action = $this->argument('action');
+			if ($action == 'update' || $action == 'delete') {
+				(new WebserverCommand($Host, $action))->fire();
+			} else {
+				$this->error('Unknown action, please specify one.');
+				
+				return;
+			}
 		}
 	}
 	

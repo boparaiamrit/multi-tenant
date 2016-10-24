@@ -4,6 +4,7 @@ namespace Boparaiamrit\Tenancy\Commands\Config;
 
 
 use Boparaiamrit\Tenancy\Commands\TTenancyCommand;
+use Boparaiamrit\Tenancy\Models\Host;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Console\ConfigCacheCommand;
 
@@ -29,23 +30,26 @@ class CacheCommand extends ConfigCacheCommand
 	 */
 	public function fire()
 	{
-		$Host = $this->getHost();
+		$Hosts = $this->getHosts();
 		
-		array_set($GLOBALS, 'hostname', $Host->identifier);
-		
-		$this->call('config:clear');
-		
-		$config    = $this->getFreshCustomerConfiguration();
-		$directory = $this->getCachedConfigDirectory($Host->identifier);
-		if (!$this->files->isDirectory($directory)) {
-			$this->files->makeDirectory($directory);
+		foreach ($Hosts as $Host) {
+			/** @var Host $Host */
+			$hostname = $Host->identifier;
+			
+			$this->call('config:clear', ['--hostname' => $hostname]);
+			
+			$config    = $this->getFreshCustomerConfiguration();
+			$directory = $this->getCachedConfigDirectory($hostname);
+			if (!$this->files->isDirectory($directory)) {
+				$this->files->makeDirectory($directory);
+			}
+			
+			$this->files->put(
+				$this->getCachedConfigPath($hostname), '<?php return ' . var_export($config, true) . ';' . PHP_EOL
+			);
+			
+			$this->info(sprintf('%s configuration\'s cached successfully.', str_studly($hostname)));
 		}
-		
-		$this->files->put(
-			$this->getCachedConfigPath($Host->identifier), '<?php return ' . var_export($config, true) . ';' . PHP_EOL
-		);
-		
-		$this->info(sprintf('%s configuration\'s cached successfully.', str_studly($Host->identifier)));
 	}
 	
 	private function getCachedConfigDirectory($hostname)

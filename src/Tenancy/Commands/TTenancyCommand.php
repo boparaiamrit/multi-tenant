@@ -4,35 +4,36 @@ namespace Boparaiamrit\Tenancy\Commands;
 
 
 use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
-use Boparaiamrit\Tenancy\Models\Host;
+use Illuminate\Database\Eloquent\Collection;
 use Symfony\Component\Console\Input\InputOption;
 
 trait TTenancyCommand
 {
 	/**
-	 * @return Host
+	 * @return Collection
 	 */
-	protected function getHost()
+	protected function getHosts()
 	{
-		$repository = app(HostRepositoryContract::class);
+		$Repository = app(HostRepositoryContract::class);
 		
 		$hostname = $this->option('hostname');
 		
-		if ($hostname == 'default') {
-			$hostname = config('env.default_host');
+		if ($hostname == 'all') {
+			/** @var Collection $Hosts */
+			$Hosts = $Repository->all();
+		} else {
+			$hostname = hostname_cleaner($hostname);
+			
+			/** @var Collection $Hosts */
+			$Hosts = $Repository->findByHostname($hostname);
+			
+			if ($Hosts->isEmpty()) {
+				$this->error('Hostname not found');
+				exit;
+			}
 		}
 		
-		$hostname = hostname_cleaner($hostname);
-		
-		/** @var Host $Host */
-		$Host = $repository->findByHostname($hostname);
-		
-		if (is_null($Host)) {
-			$this->error('Hostname not found');
-			exit;
-		}
-		
-		return $Host;
+		return $Hosts;
 	}
 	
 	/**
@@ -42,10 +43,12 @@ trait TTenancyCommand
 	 */
 	protected function getOptions()
 	{
+		$hostname = config('env.default_host');
+		
 		/** @noinspection PhpUndefinedMethodInspection */
 		/** @noinspection PhpUndefinedClassInspection */
 		return array_merge(parent::getOptions(), [
-			['hostname', null, InputOption::VALUE_OPTIONAL, 'The hostname(s) to apply on; use {all|identifier}', 'default']
+			['hostname', null, InputOption::VALUE_OPTIONAL, 'The hostname(s) to apply on; use {all|hostname}', $hostname]
 		]);
 	}
 }

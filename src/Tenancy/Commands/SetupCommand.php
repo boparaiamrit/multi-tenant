@@ -113,12 +113,10 @@ class SetupCommand extends Command
 		// Create Host
 		$Host = $this->createHost($Customer, $identifier, $domain);
 		
-		// Set hostname globally
-		array_set($GLOBALS, 'hostname', $Host->identifier);
 		array_set($GLOBALS, 'customer', ['name' => $Customer->name, 'email' => $Customer->email]);
 		
 		// Seed DB with Local Data
-		$this->call('db:seed');
+		$this->call('db:seed', ['--force' => true, '--hostname' => $Host->identifier]);
 		
 		if ($Customer->exists && $Host->exists) {
 			$this->info('Configuration successful.');

@@ -31,26 +31,28 @@ class ClearCommand extends \Illuminate\Cache\Console\ClearCommand
 		/** @var RedisStore $Cache */
 		$Cache = $this->cache->store($store = $this->argument('store'));
 		
-		/** @noinspection PhpUndefinedMethodInspection */
-		$this->laravel['events']->fire('cache:clearing', [$store, $tags]);
+		$Hosts = $this->getHosts();
 		
-		$Host = $this->getHost();
-		
-		if (!empty($tags)) {
-			$Cache->tags($tags)->flush();
-		} else {
-			$Redis = $Cache->getRedis()->connection();
+		foreach ($Hosts as $Host) {
+			/** @noinspection PhpUndefinedMethodInspection */
+			$this->laravel['events']->fire('cache:clearing', [$store, $tags]);
 			
-			$keys = $Redis->keys($Host->identifier . ':*');
-			
-			foreach ($keys as $key) {
-				$Redis->del($key);
+			if (!empty($tags)) {
+				$Cache->tags($tags)->flush();
+			} else {
+				$Redis = $Cache->getRedis()->connection();
+				
+				$keys = $Redis->keys($Host->identifier . ':*');
+				
+				foreach ($keys as $key) {
+					$Redis->del($key);
+				}
 			}
+			
+			$this->info(sprintf('%s cache\'s cleared successfully.', str_studly($Host->identifier)));
+			
+			/** @noinspection PhpUndefinedMethodInspection */
+			$this->laravel['events']->fire('cache:cleared', [$store, $tags]);
 		}
-		
-		$this->info(sprintf('%s cache\'s cleared successfully.', str_studly($Host->identifier)));
-		
-		/** @noinspection PhpUndefinedMethodInspection */
-		$this->laravel['events']->fire('cache:cleared', [$store, $tags]);
 	}
 }

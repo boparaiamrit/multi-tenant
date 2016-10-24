@@ -31,7 +31,10 @@ return [
 	 */
 	'nginx'      => [
 		'path'    => storage_path('webserver/nginx/'),
-		'port'    => 80,
+		'port'    => [
+			'mac'   => 8080,
+			'linux' => 80
+		],
 		// path to service daemon, used to verify service exists
 		'service' => [
 			'mac'   => '/usr/local/bin/nginx',

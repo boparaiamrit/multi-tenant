@@ -18,7 +18,7 @@ class HostRepository extends BaseRepository implements HostRepositoryContract
 	{
 		return $this->Model->where('hostname', $hostname)
 						   ->orWhere('identifier', $hostname)
-						   ->first();
+						   ->get();
 	}
 	
 	/**

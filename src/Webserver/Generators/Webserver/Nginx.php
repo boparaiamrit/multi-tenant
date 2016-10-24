@@ -17,7 +17,7 @@ class Nginx extends FileGenerator
 		$hostName       = $this->Host->hostname;
 		$hostIdentifier = $this->Host->identifier;
 		
-		$machine = config('webserver.machine');
+		$machine = config('webserver.machine', 'linux');
 		
 		if ($machine == 'linux') {
 			$listenSocket = 'unix:/var/run/php/php7.0-fpm.' . $hostIdentifier . '.sock';
@@ -26,12 +26,12 @@ class Nginx extends FileGenerator
 		}
 		
 		return view('webserver::nginx.configuration', [
-			'port'            => config('webserver.nginx.port'),
-			'host_name'       => $hostName,
-			'group'           => config('webserver.group'),
-			'config'          => config('webserver.nginx'),
-			'log_path'        => config('webserver.log.path') . '/nginx-' . $hostIdentifier,
-			'listen_socket'   => $listenSocket
+			'port'          => config('webserver.nginx.port.' . $machine),
+			'host_name'     => $hostName,
+			'group'         => config('webserver.group'),
+			'config'        => config('webserver.nginx'),
+			'log_path'      => config('webserver.log.path') . '/nginx-' . $hostIdentifier,
+			'listen_socket' => $listenSocket
 		]);
 	}
 	
