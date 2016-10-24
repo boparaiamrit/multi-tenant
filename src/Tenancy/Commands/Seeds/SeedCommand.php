@@ -33,6 +33,8 @@ class SeedCommand extends \Illuminate\Database\Console\Seeds\SeedCommand
 			/** @var Host $Host */
 			$hostname = $Host->identifier;
 			
+			array_set($GLOBALS, 'hostname', $hostname);
+			
 			if ($hostname != config('env.default_host')) {
 				/** @noinspection PhpUndefinedMethodInspection */
 				$path = $this->laravel->bootstrapPath() . '/app.php';

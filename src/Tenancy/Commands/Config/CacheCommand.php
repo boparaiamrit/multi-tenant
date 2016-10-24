@@ -38,6 +38,8 @@ class CacheCommand extends ConfigCacheCommand
 			
 			$this->call('config:clear', ['--hostname' => $hostname]);
 			
+			array_set($GLOBALS, 'hostname', $hostname);
+			
 			$config    = $this->getFreshCustomerConfiguration();
 			$directory = $this->getCachedConfigDirectory($hostname);
 			if (!$this->files->isDirectory($directory)) {
