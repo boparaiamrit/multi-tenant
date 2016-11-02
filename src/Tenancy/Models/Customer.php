@@ -20,12 +20,14 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class Customer extends BaseModel
 {
+	const COLLECTION = 'customers';
+	
 	const NAME           = 'name';
 	const EMAIL          = 'email';
 	const TWITTER_HANDLE = 'twitter_handle';
 	const WEBSITE        = 'website';
 	
-	protected $collection = 'customers';
+	protected $collection = self::COLLECTION;
 	
 	protected $presenter = CustomerPresenter::class;
 	

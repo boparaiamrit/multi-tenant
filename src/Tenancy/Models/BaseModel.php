@@ -16,6 +16,7 @@ use Laracasts\Presenter\PresentableTrait;
  * @property \Carbon\Carbon $updated_at
  *
  * @method static Model all($column = [])
+ * @method static Model get($column = [])
  * @method static Model first($column = [])
  * @method static Model find($id, $column = [])
  * @method static Model findOrFail($id, $column = [])
