@@ -31,11 +31,11 @@ class Host extends BaseModel
 	/**
 	 * The customer who owns this hostname.
 	 *
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Customer
 	 */
 	public function customer()
 	{
-		return $this->belongsTo(Customer::class);
+		return $this->belongsTo(Customer::class, self::CUSTOMER_ID);
 	}
 	
 	public function getCustomers()

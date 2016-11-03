@@ -17,6 +17,9 @@ use Illuminate\Database\Eloquent\Collection;
  * @property Carbon     $created_at
  * @property Carbon     $updated_at
  * @property Carbon     $deleted_at
+ * @property string     $logo
+ * @property string     $banner
+ * @property string     $phone
  */
 class Customer extends BaseModel
 {
