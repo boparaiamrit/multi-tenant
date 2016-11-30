@@ -19,7 +19,7 @@ class Fpm extends FileGenerator
 		$machine = config('webserver.machine');
 		
 		if ($machine == 'linux') {
-			$listenSocket = '/var/run/php/php7.0-fpm.' . $hostIdentifier . '.sock';
+			$listenSocket = '/var/run/php/php7.1-fpm.' . $hostIdentifier . '.sock';
 		} else {
 			$listenSocket = '127.0.0.1:9000';
 		}

@@ -58,13 +58,13 @@ return [
 		// path to service daemon, used to verify service exists
 		'service' => [
 			'mac'   => '/usr/local/sbin/php70-fpm',
-			'linux' => '/etc/init.d/php7.0-fpm'
+			'linux' => '/etc/init.d/php7.1-fpm'
 		],
 		// how to run actions for this service
 		'actions' => [
 			'restart' => [
 				'mac'   => 'brew services restart php70',
-				'linux' => '/etc/init.d/php7.0-fpm restart'
+				'linux' => '/etc/init.d/php7.1-fpm restart'
 			]
 		],
 		/*
