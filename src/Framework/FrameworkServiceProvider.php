@@ -2,62 +2,46 @@
 
 namespace Boparaiamrit\Framework;
 
-use Boparaiamrit\Framework\Validation\ExtendedValidation;
-use Illuminate\Support\Arr;
+
 use Illuminate\Support\ServiceProvider;
 
 class FrameworkServiceProvider extends ServiceProvider
 {
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
-    public function boot()
-    {
-        $this->mergeConfigFrom(__DIR__ . '/../../config/config.php', 'config');
+	/**
+	 * Indicates if loading of the provider is deferred.
+	 *
+	 * @var bool
+	 */
+	protected $defer = false;
 	
-		/** @noinspection PhpUndefinedFieldInspection */
-		$this->app->validator->resolver(function ($translator, $data, $rules, $messages) {
-            return new ExtendedValidation($translator, $data, $rules, $messages);
-        });
-    }
-
-    /**
-     * Register the service provider.
-     *
-     * @throws \Exception
-     */
-    public function register()
-    {
-        $config = require __DIR__ . '/../../config/config.php';
-        $packages = Arr::get($config, 'packages', []);
-
-        if (empty($packages)) {
-            throw new \Exception("It seems config files are not available, boparaiamrit won't work without the configuration file");
-        }
-
-        foreach ($packages as $name => $package) {
-            // register service provider for package
-            if (class_exists(Arr::get($package, 'service-provider'))) {
-                $this->app->register(Arr::get($package, 'service-provider'));
-            }
-            // set global state
-            $this->app->bind("boparaiamrit.package.$name", function () use ($package) {
-                return class_exists(Arr::get($package, 'service-provider')) ? $package : false;
-            });
-        }
-    }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return [];
-    }
+	public function boot()
+	{
+	}
+	
+	/**
+	 * Register the service provider.
+	 *
+	 * @throws \Exception
+	 */
+	public function register()
+	{
+		$this->mergeConfigFrom(__DIR__ . '/../../config/framework.php', 'framework');
+		
+		$packages = config('framework.packages');
+		
+		if (empty($packages)) {
+			throw new \Exception("It seems config files are not available, boparaiamrit won't work without the configuration file");
+		}
+		
+		foreach ($packages as $name => $package) {
+			// register service provider for package
+			if (class_exists(array_get($package, 'service-provider'))) {
+				$this->app->register(array_get($package, 'service-provider'));
+			}
+			// set global state
+			$this->app->bind("boparaiamrit.package.$name", function () use ($package) {
+				return class_exists(array_get($package, 'service-provider')) ? $package : false;
+			});
+		}
+	}
 }

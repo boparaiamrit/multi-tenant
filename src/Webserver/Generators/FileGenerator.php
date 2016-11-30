@@ -114,26 +114,15 @@ abstract class FileGenerator extends AbstractGenerator
 			return false;
 		}
 		
-		$test  = 1;
-		$test2 = 1;
+		$test = 1;
 		
 		$machine = config('webserver.machine');
-		
-		$configtest = array_get($this->configuration(), 'actions.configtest.' . $machine);
-		if (!empty($configtest)) {
-			exec($configtest, $out, $test);
+		$restart = array_get($this->configuration(), 'actions.restart.' . $machine);
+		if (!empty($restart)) {
+			exec($restart, $out, $test);
 		}
 		
-		if ($test == 0) {
-			$restart = array_get($this->configuration(), 'actions.restart.' . $machine);
-			if (!empty($restart)) {
-				exec($restart, $out, $test2);
-			}
-		} else {
-			$test2 = 1;
-		}
-		
-		return $test == 0 && $test2 == 0;
+		return $test == 0;
 	}
 	
 	/**

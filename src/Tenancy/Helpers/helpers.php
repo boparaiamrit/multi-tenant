@@ -1,8 +1,8 @@
 <?php
 
-use Boparaiamrit\Tenancy\Contracts\CustomerRepositoryContract;
-use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
-
+use Boparaiamrit\Tenancy\Models\Customer;
+use Boparaiamrit\Tenancy\Models\Host;
+use Jenssegers\Mongodb\Eloquent\Model;
 
 if (!function_exists('customer')) {
 	/**
@@ -10,15 +10,16 @@ if (!function_exists('customer')) {
 	 *
 	 * @param null $id
 	 *
-	 * @return CustomerRepositoryContract|bool
+	 * @return Model|Customer|bool
 	 */
 	function customer($id = null)
 	{
 		if (!empty($id)) {
-			return app(CustomerRepositoryContract::class)->findById($id);
+			return Customer::find($id);
 		}
 		
-		$Host = app(HostRepositoryContract::class)->findByHostname(app('hostname'));
+		$Host = Host::where('hostname', app('hostname'))
+					->first();
 		
 		return $Host ? $Host->customer : false;
 	}
@@ -30,15 +31,17 @@ if (!function_exists('host')) {
 	 *
 	 * @param null $id
 	 *
-	 * @return HostRepositoryContract|bool
+	 * @return Model|Host|bool
 	 */
 	function host($id = null)
 	{
 		if (!empty($id)) {
-			return app(HostRepositoryContract::class)->findById($id);
+			return Host::find($id);
 		}
 		
-		$Host = app(HostRepositoryContract::class)->findByHostname(app('hostname'));
+		/** @var Host $Host */
+		$Host = Host::where('hostname', app('hostname'))
+					->first();
 		
 		return $Host ? $Host : false;
 	}

@@ -53,7 +53,6 @@ class Supervisor extends FileGenerator
 		$test = 1;
 		
 		$machine = config('webserver.machine');
-		
 		$restart = array_get($this->configuration(), 'actions.restart.' . $machine);
 		if (!empty($restart)) {
 			exec($restart, $out, $test);

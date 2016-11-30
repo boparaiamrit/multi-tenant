@@ -7,7 +7,6 @@ use Illuminate\Support\ServiceProvider;
 
 class WebserverServiceProvider extends ServiceProvider
 {
-	const TOOLBOX_COMMAND = 'webserver.command.toolbox';
 	/**
 	 * Indicates if loading of the provider is deferred.
 	 *
@@ -17,22 +16,11 @@ class WebserverServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
-		
 		// configuration
-		$this->mergeConfigFrom(
-			__DIR__ . '/../../config/webserver.php',
-			'webserver'
-		);
-		$this->publishes(
-			[__DIR__ . '/../../config/webserver.php' => config_path('webserver.php')],
-			'boparaiamrit-webserver-config'
-		);
+		$this->mergeConfigFrom(__DIR__ . '/../../config/webserver.php', 'webserver');
 		
 		// adds views
-		$this->loadViewsFrom(
-			__DIR__ . '/../../views/webserver',
-			'webserver'
-		);
+		$this->loadViewsFrom(__DIR__ . '/../../views/webserver', 'webserver');
 	}
 	
 	/**
@@ -45,11 +33,11 @@ class WebserverServiceProvider extends ServiceProvider
 		/*
 		 * Toolbox command
 		 */
-		$this->app->bind(self::TOOLBOX_COMMAND, function () {
-			return new Commands\ToolboxCommand();
+		$this->app->bind('webserver', function () {
+			return new Commands\WebserverCommand();
 		});
 		
-		$this->commands([self::TOOLBOX_COMMAND]);
+		$this->commands(Commands\WebserverCommand::class);
 	}
 	
 	/**
@@ -60,7 +48,7 @@ class WebserverServiceProvider extends ServiceProvider
 	public function provides()
 	{
 		return [
-			self::TOOLBOX_COMMAND
+			'webserver'
 		];
 	}
 }

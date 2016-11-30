@@ -3,68 +3,52 @@
 namespace Boparaiamrit\Webserver\Commands;
 
 
-use Boparaiamrit\Framework\Commands\AbstractCommand;
-use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
-use Boparaiamrit\Tenancy\Models\Host;
+use Boparaiamrit\Tenancy\Commands\TTenancyCommand;
 use Boparaiamrit\Webserver\Generators\Webserver\Env;
 use Boparaiamrit\Webserver\Generators\Webserver\Fpm;
 use Boparaiamrit\Webserver\Generators\Webserver\Nginx;
-use Boparaiamrit\Webserver\Generators\Webserver\SSL;
 use Boparaiamrit\Webserver\Generators\Webserver\Supervisor;
+use Illuminate\Console\Command;
+use Symfony\Component\Console\Input\InputArgument;
 
-class WebserverCommand extends AbstractCommand
+class WebserverCommand extends Command
 {
+	use TTenancyCommand;
+	
 	protected $name = 'webserver';
 	
 	/**
-	 * @var Host
-	 */
-	protected $Host;
-	
-	/**
-	 * @var string
-	 */
-	protected $action;
-	
-	/**
-	 * Create a new command instance.
-	 *
-	 * @param Host   $Host
-	 * @param string $action
-	 *
-	 */
-	public function __construct($Host, $action = 'update')
-	{
-		parent::__construct();
-		
-		$this->Host = $Host;
-		$this->action = $action;
-	}
-	
-	/**
-	 * Execute the command.
-	 *
-	 * @return void
+	 * Handles command execution.
 	 */
 	public function fire()
 	{
-		if (!in_array($this->action, ['create', 'update', 'delete'])) {
-			return;
+		$Hosts = $this->getHosts();
+		
+		foreach ($Hosts as $Host) {
+			$action = $this->argument('action');
+			
+			if (!in_array($action, ['update', 'delete'])) {
+				return;
+			}
+			
+			$action = sprintf('on%s', ucfirst($action));
+			
+			// Php FPM
+			(new Fpm($Host))->{$action}();
+			// Supervisor
+			(new Supervisor($Host))->{$action}();
+			// Webservers
+			(new Nginx($Host))->{$action}();
+			// Env
+			(new Env($Host))->{$action}();
 		}
-		
-		$action = sprintf('on%s', ucfirst($this->action));
-		
-		if (!empty($this->Host->certificate_id)) {
-			(new SSL($this->Host->certificate))->onUpdate();
-		}
-		
-		// Php FPM
-		(new Fpm($this->Host))->{$action}();
-		// Supervisor
-		(new Supervisor($this->Host))->{$action}();
-		// Webservers
-		(new Nginx($this->Host))->{$action}();
-		// Env
-		(new Env($this->Host))->{$action}();
 	}
+	
+	public function getArguments()
+	{
+		return array_merge(parent::getArguments(), [
+			['action', null, InputArgument::REQUIRED, 'Action Required']
+		]);
+	}
+	
 }

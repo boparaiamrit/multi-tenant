@@ -1,8 +1,4 @@
 APP_URL=http://{!! $Host->hostname !!}
-CUSTOMER_NAME="{!! $Customer->name  !!}"
-CUSTOMER_EMAIL={!! $Customer->email !!}
-CUSTOMER_TWITTER_HANDLE={!! $Customer->twitter_handle !!}
-CUSTOMER_WEBSITE={!! $Customer->website !!}
 CACHE_PREFIX={!! $Host->identifier !!}
 QUEUE_NAME={!! $Host->identifier !!}
 PUSHER_PREFIX={!! $Host->identifier  !!}

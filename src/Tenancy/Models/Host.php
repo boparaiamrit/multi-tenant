@@ -3,7 +3,6 @@
 namespace Boparaiamrit\Tenancy\Models;
 
 
-use Boparaiamrit\Tenancy\Presenters\HostPresenter;
 use Carbon\Carbon;
 
 /**
@@ -23,8 +22,6 @@ class Host extends BaseModel
 	const CUSTOMER_ID = 'customer_id';
 	
 	protected $collection = self::COLLECTION;
-	
-	protected $presenter = HostPresenter::class;
 	
 	protected $fillable = [self::HOSTNAME, self::IDENTIFIER, self::CUSTOMER_ID];
 	

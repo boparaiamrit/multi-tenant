@@ -15,8 +15,7 @@ class Env extends FileGenerator
 	public function generate()
 	{
 		$config = [
-			'Host'     => $this->Host,
-			'Customer' => $this->Host->customer
+			'Host' => $this->Host,
 		];
 		
 		return view('webserver::env.configuration', $config);

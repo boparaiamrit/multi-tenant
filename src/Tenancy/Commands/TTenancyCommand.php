@@ -3,7 +3,7 @@
 namespace Boparaiamrit\Tenancy\Commands;
 
 
-use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
+use Boparaiamrit\Tenancy\Models\Host;
 use Illuminate\Database\Eloquent\Collection;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -14,18 +14,18 @@ trait TTenancyCommand
 	 */
 	protected function getHosts()
 	{
-		$Repository = app(HostRepositoryContract::class);
-		
 		$hostname = $this->option('hostname');
 		
 		if ($hostname == 'all') {
 			/** @var Collection $Hosts */
-			$Hosts = $Repository->all();
+			$Hosts = Host::all();
 		} else {
 			$hostname = hostname_cleaner($hostname);
 			
 			/** @var Collection $Hosts */
-			$Hosts = $Repository->findByHostname($hostname);
+			$Hosts = Host::where('hostname', $hostname)
+						 ->orWhere('identifier', $hostname)
+						 ->get();
 			
 			if ($Hosts->isEmpty()) {
 				$this->error('Hostname not found');

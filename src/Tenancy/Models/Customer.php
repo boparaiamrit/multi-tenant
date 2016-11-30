@@ -3,7 +3,6 @@
 namespace Boparaiamrit\Tenancy\Models;
 
 
-use Boparaiamrit\Tenancy\Presenters\CustomerPresenter;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -13,13 +12,14 @@ use Illuminate\Database\Eloquent\Collection;
  * @property string     $email
  * @property string     $twitter_handle
  * @property string     $website
- * @property Collection $hosts
  * @property Carbon     $created_at
  * @property Carbon     $updated_at
  * @property Carbon     $deleted_at
  * @property string     $logo
  * @property string     $banner
  * @property string     $phone
+ * @property string     message
+ * @property Collection $hosts
  */
 class Customer extends BaseModel
 {
@@ -31,8 +31,6 @@ class Customer extends BaseModel
 	const WEBSITE        = 'website';
 	
 	protected $collection = self::COLLECTION;
-	
-	protected $presenter = CustomerPresenter::class;
 	
 	protected $fillable = [self::NAME, self::EMAIL, self::TWITTER_HANDLE, self::WEBSITE];
 	

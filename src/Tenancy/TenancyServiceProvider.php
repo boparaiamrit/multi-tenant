@@ -11,10 +11,6 @@ use Boparaiamrit\Tenancy\Commands\Queue\RestartCommand;
 use Boparaiamrit\Tenancy\Commands\Queue\WorkCommand;
 use Boparaiamrit\Tenancy\Commands\Seeds\SeedCommand;
 use Boparaiamrit\Tenancy\Commands\SetupCommand;
-use Boparaiamrit\Tenancy\Contracts\CustomerRepositoryContract;
-use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
-use Boparaiamrit\Tenancy\Observers\CertificateObserver;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
 class TenancyServiceProvider extends ServiceProvider
@@ -23,17 +19,15 @@ class TenancyServiceProvider extends ServiceProvider
 	
 	public function boot()
 	{
+		// Add Helper Function
+		require_once __DIR__ . '/Helpers/helpers.php';
+		
 		/*
 		 * Set configuration variables
 		 */
 		$this->mergeConfigFrom(__DIR__ . '/../../config/multitenant.php', 'multitenant');
-		$this->publishes([__DIR__ . '/../../config/multitenant.php' => config_path('multitenant.php')], 'multitenant-config');
-		
-		// Add Helper Function
-		require_once __DIR__ . '/Helpers/helpers.php';
 		
 		$this->extendCommands();
-		$this->loadObservsers();
 	}
 	
 	/**
@@ -46,25 +40,8 @@ class TenancyServiceProvider extends ServiceProvider
 		/** @noinspection PhpUndefinedMethodInspection */
 		$this->app->bootstrapWith([Bootstrap\LoadConfiguration::class]);
 		
-		
-		$this->app->bind(Contracts\CustomerRepositoryContract::class, function () {
-			return new Repositories\CustomerRepository(new Models\Customer());
-		});
-		
-		$this->app->bind(Contracts\HostRepositoryContract::class, function () {
-			return new Repositories\HostRepository(new Models\Host());
-		});
-		
-		$this->app->bind(Contracts\CertificateRepositoryContract::class, function () {
-			return new Repositories\CustomerRepository(new Models\Certificate());
-		});
-		
-		$this->app->bind(SetupCommand::class, function ($app) {
-			/** @var Application $app */
-			return new SetupCommand(
-				$app->make(CustomerRepositoryContract::class),
-				$app->make(HostRepositoryContract::class)
-			);
+		$this->app->bind(SetupCommand::class, function () {
+			return new SetupCommand();
 		});
 	}
 	
@@ -76,8 +53,6 @@ class TenancyServiceProvider extends ServiceProvider
 	public function provides()
 	{
 		return [
-			CustomerRepositoryContract::class,
-			HostRepositoryContract::class,
 			SetupCommand::class,
 		];
 	}
@@ -121,13 +96,5 @@ class TenancyServiceProvider extends ServiceProvider
 		
 		// Register Commands
 		$this->commands(SetupCommand::class);
-	}
-	
-	private function loadObservsers()
-	{
-		// Register Observer
-		Models\Host::observe(new Observers\HostObserver());
-		Models\Customer::observe(new Observers\CustomerObserver());
-		Models\Certificate::observe(new Observers\CertificateObserver());
 	}
 }

@@ -42,11 +42,7 @@ return [
 		],
 		// how to run actions for this service
 		'actions' => [
-			'configtest' => [
-				'mac'   => '/usr/local/bin/nginx -t',
-				'linux' => '/etc/init.d/nginx configtest'
-			],
-			'restart'    => [
+			'restart' => [
 				'mac'   => 'brew services restart nginx',
 				'linux' => '/etc/init.d/nginx reload'
 			]
@@ -66,11 +62,7 @@ return [
 		],
 		// how to run actions for this service
 		'actions' => [
-			'configtest' => [
-				'mac'   => '/usr/local/sbin/php70-fpm configtest',
-				'linux' => '/etc/init.d/php7.0-fpm status'
-			],
-			'restart'    => [
+			'restart' => [
 				'mac'   => 'brew services restart php70',
 				'linux' => '/etc/init.d/php7.0-fpm restart'
 			]
@@ -94,11 +86,7 @@ return [
 		],
 		// how to run actions for this service
 		'actions' => [
-			'configtest' => [
-				'mac'   => '',
-				'linux' => ''
-			],
-			'restart'    => [
+			'restart' => [
 				'mac'   => 'brew services restart supervisor',
 				'linux' => '/etc/init.d/supervisor restart'
 			]
@@ -110,12 +98,5 @@ return [
      */
 	'env'        => [
 		'path' => base_path('envs/'),
-	],
-	
-	/*
-	 * SSL
-	 */
-	'ssl'        => [
-		'path' => storage_path('webserver/ssl'),
 	]
 ];
