@@ -18,7 +18,10 @@ if (!function_exists('customer')) {
 			return Customer::find($id);
 		}
 		
-		$Host = Host::where('hostname', app('hostname'))
+		$hostname = app('hostname');
+		
+		$Host = Host::where('hostname', $hostname)
+					->orWhere('identifier', $hostname)
 					->first();
 		
 		return $Host ? $Host->customer : false;
@@ -39,8 +42,10 @@ if (!function_exists('host')) {
 			return Host::find($id);
 		}
 		
-		/** @var Host $Host */
-		$Host = Host::where('hostname', app('hostname'))
+		$hostname = app('hostname');
+		
+		$Host = Host::where('hostname', $hostname)
+					->orWhere('identifier', $hostname)
 					->first();
 		
 		return $Host ? $Host : false;
