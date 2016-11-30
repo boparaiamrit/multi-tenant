@@ -1,4 +1,4 @@
-APP_URL=http://{!! $Host->hostname !!}
+APP_URL={!! $Host->url !!}
 CACHE_PREFIX={!! $Host->identifier !!}
 QUEUE_NAME={!! $Host->identifier !!}
 PUSHER_PREFIX={!! $Host->identifier  !!}

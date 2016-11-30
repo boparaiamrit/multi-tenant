@@ -14,6 +14,18 @@ class Env extends FileGenerator
 	 */
 	public function generate()
 	{
+		$machine = config('webserver.machine', 'linux');
+		
+		$url  = 'http://' . $this->Host->hostname;
+		$port = config('webserver.nginx.port.' . $machine);
+		
+		if ($port == 8080) {
+			$url .= ':' . $port;
+		}
+		
+		/** @noinspection PhpUndefinedFieldInspection */
+		$this->Host->url = $url;
+		
 		$config = [
 			'Host' => $this->Host,
 		];
