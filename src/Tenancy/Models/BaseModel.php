@@ -6,10 +6,9 @@ namespace Boparaiamrit\Tenancy\Models;
 use Jenssegers\Mongodb\Eloquent\Builder;
 use Jenssegers\Mongodb\Eloquent\Model;
 use Jenssegers\Mongodb\Eloquent\SoftDeletes;
-use Laracasts\Presenter\PresentableTrait;
 
 /**
- * Promoto\Models\Base
+ * Boparaiamrit\Tenancy\Models
  *
  * @property string         $id
  * @property \Carbon\Carbon $created_at
@@ -31,7 +30,7 @@ use Laracasts\Presenter\PresentableTrait;
  */
 class BaseModel extends Model
 {
-	use PresentableTrait, SoftDeletes;
+	use SoftDeletes;
 	
 	public function __construct(array $attributes = [])
 	{
