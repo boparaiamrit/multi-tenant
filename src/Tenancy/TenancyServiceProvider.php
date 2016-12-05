@@ -11,6 +11,7 @@ use Boparaiamrit\Tenancy\Commands\Queue\RestartCommand;
 use Boparaiamrit\Tenancy\Commands\Queue\WorkCommand;
 use Boparaiamrit\Tenancy\Commands\Seeds\SeedCommand;
 use Boparaiamrit\Tenancy\Commands\SetupCommand;
+use Boparaiamrit\Tenancy\Commands\TinkerCommand;
 use Illuminate\Support\ServiceProvider;
 
 class TenancyServiceProvider extends ServiceProvider
@@ -95,6 +96,11 @@ class TenancyServiceProvider extends ServiceProvider
 		/** @noinspection PhpUnusedParameterInspection */
 		$this->app->extend('command.cache.clear', function ($command, $app) {
 			return new Cache\ClearCommand($app['cache']);
+		});
+		
+		/** @noinspection PhpUnusedParameterInspection */
+		$this->app->extend('command.tinker', function ($command, $app) {
+			return new TinkerCommand();
 		});
 		
 		// Register Commands
