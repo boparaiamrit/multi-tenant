@@ -89,7 +89,7 @@ class TenancyServiceProvider extends ServiceProvider
 		});
 		
 		/** @noinspection PhpUnusedParameterInspection */
-		$this->app->extend('command.queue.restart', function ($command, $app) {
+		$this->app->extend('command.queue.reload', function ($command, $app) {
 			return new RestartCommand();
 		});
 		

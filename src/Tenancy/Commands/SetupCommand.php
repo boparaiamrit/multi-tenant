@@ -4,15 +4,13 @@ namespace Boparaiamrit\Tenancy\Commands;
 
 
 use Boparaiamrit\Tenancy\Models\Host;
-use Boparaiamrit\Webserver\Generators\Webserver\Env;
-use Boparaiamrit\Webserver\Generators\Webserver\Fpm;
-use Boparaiamrit\Webserver\Generators\Webserver\Nginx;
-use Boparaiamrit\Webserver\Generators\Webserver\Supervisor;
-use Boparaiamrit\Webserver\Helpers\ServerHelper;
+use Boparaiamrit\Tenancy\Jobs\WebserverJob;
 use Illuminate\Console\Command;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class SetupCommand extends Command
 {
+	use DispatchesJobs;
 	/**
 	 * @var string
 	 */
@@ -30,17 +28,15 @@ class SetupCommand extends Command
 	 */
 	public function handle()
 	{
-		ServerHelper::createDirectories();
-		
 		$domain     = $this->option('domain');
 		$identifier = $this->option('identifier');
 		
 		if (empty($domain)) {
-			$domain = $this->ask('Please provide a customer domain or restart command with --domain');
+			$domain = $this->ask('Please provide a customer domain or reload command with --domain');
 		}
 		
 		if (!empty($identifier) && strlen($identifier) > 100) {
-			$identifier = $this->ask('Please provide an identifier with a max length of 10 or restart command with --identifier');
+			$identifier = $this->ask('Please provide an identifier with a max length of 10 or reload command with --identifier');
 		}
 		
 		// Seed DB with Local Data
@@ -49,21 +45,9 @@ class SetupCommand extends Command
 		// Create Host
 		$Host = $this->createHost($identifier, $domain);
 		
-		// Php FPM
-		(new Fpm($Host))->onCreate();
-		// Supervisor
-		(new Supervisor($Host))->onCreate();
-		// Webservers
-		(new Nginx($Host))->onCreate();
-		// Env
-		(new Env($Host))->onCreate();
+		$this->dispatch(new WebserverJob($Host));
 		
-		// Seed DB with Local Data
-		$this->call('db:seed', ['--force' => true, '--hostname' => $Host->identifier]);
-		
-		if ($Host->exists) {
-			$this->info('Configuration successful.');
-		}
+		$this->info('Host has been created. Other Processes going on. Once completed, you will be notify. ');
 	}
 	
 	/**

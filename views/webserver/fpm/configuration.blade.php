@@ -2,14 +2,14 @@
 listen={!! $listen_socket !!}
 listen.allowed_clients=127.0.0.1
 
-@if($machine == 'linux')
-    user={!! $user !!}
-    group={!! $group !!}
-    listen.owner={!! $user !!}
-    listen.group={!! $group !!}
-    listen.mode =0666
-
+@if($machine == 'ubuntu')
+  user={!! $user !!}
+  group={!! $group !!}
+  listen.owner={!! $user !!}
+  listen.group={!! $group !!}
+  listen.mode =0666
 @endif
+
 pm=dynamic
 pm.max_children=20
 pm.start_servers=5

@@ -3,7 +3,6 @@
 namespace Boparaiamrit\Webserver\Generators;
 
 
-use Boparaiamrit\Tenancy\Contracts\HostRepositoryContract;
 use Boparaiamrit\Tenancy\Models\Host;
 use Boparaiamrit\Webserver\Abstracts\AbstractGenerator;
 use ReflectionClass;
@@ -12,7 +11,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 abstract class FileGenerator extends AbstractGenerator
 {
 	/**
-	 * @var Host|HostRepositoryContract
+	 * @var Host
 	 */
 	protected $Host;
 	
@@ -50,7 +49,7 @@ abstract class FileGenerator extends AbstractGenerator
 		}
 		
 		if (($this->baseName() != 'env') && $this->serviceReload()) {
-			$this->output(sprintf('%s has been restart successfully.', $serviceName));
+			$this->output(sprintf('%s has been reload successfully.', $serviceName));
 		}
 		
 		return true;
@@ -90,7 +89,7 @@ abstract class FileGenerator extends AbstractGenerator
 		}
 		
 		if (($this->baseName() != 'env') && $this->serviceReload()) {
-			$this->output(sprintf('%s has been restart successfully.', $serviceName));
+			$this->output(sprintf('%s has been reload successfully.', $serviceName));
 		}
 		
 		return true;
@@ -117,12 +116,22 @@ abstract class FileGenerator extends AbstractGenerator
 		$test = 1;
 		
 		$machine = config('webserver.machine');
-		$restart = array_get($this->configuration(), 'actions.restart.' . $machine);
-		if (!empty($restart)) {
-			exec($restart, $out, $test);
+		$service = array_get($this->configuration(), 'service.' . $machine);
+		
+		$reload = $service . ' reload';
+		if (!empty($reload)) {
+			exec($reload, $out, $test);
 		}
 		
-		return $test == 0;
+		
+		$restart = $service . ' restart';
+		if ($test != 0) {
+			exec($restart, $out, $test);
+			
+			return $test == 0;
+		}
+		
+		return true;
 	}
 	
 	/**

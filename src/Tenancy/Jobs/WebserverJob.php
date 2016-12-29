@@ -1,19 +1,21 @@
 <?php
 
-namespace Boparaiamrit\Tenancy;
+namespace Boparaiamrit\Tenancy\Jobs;
 
 
 use Boparaiamrit\Webserver\Generators\Webserver\Env;
 use Boparaiamrit\Webserver\Generators\Webserver\Fpm;
 use Boparaiamrit\Webserver\Generators\Webserver\Nginx;
 use Boparaiamrit\Webserver\Generators\Webserver\Supervisor;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Promoto\Jobs\Job;
 
-class Webserver extends Job implements ShouldQueue
+class WebserverJob implements ShouldQueue
 {
-	use SerializesModels;
+	use SerializesModels, InteractsWithQueue, Queueable;
 	
 	protected $Host;
 	
@@ -36,5 +38,10 @@ class Webserver extends Job implements ShouldQueue
 		(new Nginx($this->Host))->onCreate();
 		// Env
 		(new Env($this->Host))->onCreate();
+		
+		// Seed DB with Local Data
+		app(Kernel::class)->call('db:seed', [
+			'--force' => true, '--hostname' => $this->Host->identifier
+		]);
 	}
 }

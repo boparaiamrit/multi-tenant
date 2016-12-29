@@ -17,12 +17,10 @@ class Nginx extends FileGenerator
 		$hostName       = $this->Host->hostname;
 		$hostIdentifier = $this->Host->identifier;
 		
-		$machine = config('webserver.machine', 'linux');
+		$machine = config('webserver.machine', 'ubuntu');
 		
-		if ($machine == 'linux') {
+		if ($machine == 'ubuntu') {
 			$listenSocket = 'unix:/var/run/php/php7.1-fpm.' . $hostIdentifier . '.sock';
-		} else {
-			$listenSocket = '127.0.0.1:9000';
 		}
 		
 		return view('webserver::nginx.configuration', [
@@ -42,6 +40,8 @@ class Nginx extends FileGenerator
 	 */
 	protected function publishPath()
 	{
-		return sprintf('%s%s.conf', config('webserver.nginx.path'), $this->name());
+		$machine = config('webserver.machine');
+		
+		return sprintf('%s%s.conf', config('webserver.nginx.path.' . $machine), $this->name());
 	}
 }

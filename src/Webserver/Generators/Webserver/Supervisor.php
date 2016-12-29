@@ -36,28 +36,8 @@ class Supervisor extends FileGenerator
 	 */
 	protected function publishPath()
 	{
-		return sprintf('%s%s.conf', config('webserver.supervisor.path'), $this->name());
-	}
-	
-	/**
-	 * Reloads service if possible.
-	 *
-	 * @return bool
-	 */
-	protected function serviceReload()
-	{
-		if (!$this->isInstalled()) {
-			return false;
-		}
-		
-		$test = 1;
-		
 		$machine = config('webserver.machine');
-		$restart = array_get($this->configuration(), 'actions.restart.' . $machine);
-		if (!empty($restart)) {
-			exec($restart, $out, $test);
-		}
 		
-		return $test == 0;
+		return sprintf('%s%s.conf', config('webserver.supervisor.path.' . $machine), $this->name());
 	}
 }
