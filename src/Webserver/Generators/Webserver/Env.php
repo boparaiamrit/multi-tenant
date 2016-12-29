@@ -40,9 +40,7 @@ class Env extends FileGenerator
 	 */
 	protected function publishPath()
 	{
-		$machine = config('webserver.machine');
-		
-		return sprintf('%s.%s.env', config('webserver.env.path.' . $machine), $this->name());
+		return sprintf('%s.%s.env', config('webserver.env.path'), $this->name());
 	}
 	
 	/**
