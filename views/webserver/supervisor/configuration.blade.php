@@ -21,3 +21,19 @@ autoreload=true
 user={{ $user }}
 redirect_stderr=true
 stdout_logfile={{ $base_path }}/storage/logs/supervisor-{!! $host_identifier !!}.log
+
+[program:{!! $host_identifier !!}.activity]
+command={!! $php_path !!} {!! $base_path !!}/artisan queue:work beanstalkd --daemon --sleep=3 --hostname={!! $host_identifier !!} --queue="{!! $host_identifier !!}.activity"
+autostart=true
+autoreload=true
+user={{ $user }}
+redirect_stderr=true
+stdout_logfile={{ $base_path }}/storage/logs/supervisor-{!! $host_identifier !!}.log
+
+[program:{!! $host_identifier !!}.notification]
+command={!! $php_path !!} {!! $base_path !!}/artisan queue:work beanstalkd --daemon --sleep=3 --hostname={!! $host_identifier !!} --queue="{!! $host_identifier !!}.notification"
+autostart=true
+autoreload=true
+user={{ $user }}
+redirect_stderr=true
+stdout_logfile={{ $base_path }}/storage/logs/supervisor-{!! $host_identifier !!}.log
