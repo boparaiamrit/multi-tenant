@@ -14,12 +14,12 @@ class Env extends FileGenerator
 	 */
 	public function generate()
 	{
-		$machine = config('webserver.machine', 'linux');
+		$machine = config('webserver.machine', 'ubuntu');
 		
 		$url  = 'http://' . $this->Host->hostname;
 		$port = config('webserver.nginx.port.' . $machine);
 		
-		if ($port == 8080) {
+		if ($port != 80) {
 			$url .= ':' . $port;
 		}
 		

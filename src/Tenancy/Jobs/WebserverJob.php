@@ -66,5 +66,5 @@ class WebserverJob implements ShouldQueue
 		]);
 		
 	}
-	
+
 }

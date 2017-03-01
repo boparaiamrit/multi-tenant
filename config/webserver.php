@@ -2,7 +2,7 @@
 
 return [
 	
-	'machine' => env('WEBSERVER_MACHINE', 'linux'),
+	'machine' => env('WEBSERVER_MACHINE', 'ubuntu'),
 	
 	'webservers' => ['nginx'],
 	
@@ -22,30 +22,22 @@ return [
 	],
 	
 	'php_path'   => [
-		'mac'   => '/usr/local/bin/php',
-		'linux' => '/usr/bin/php'
+		'ubuntu' => '/usr/bin/php'
 	],
 	
 	/*
 	 * Nginx
 	 */
 	'nginx'      => [
-		'path'    => storage_path('webserver/nginx/'),
+		'path'    => [
+			'ubuntu' => '/etc/nginx/sites-enabled/'
+		],
 		'port'    => [
-			'mac'   => 8080,
-			'linux' => 80
+			'ubuntu' => 80
 		],
 		// path to service daemon, used to verify service exists
 		'service' => [
-			'mac'   => '/usr/local/bin/nginx',
-			'linux' => '/etc/init.d/nginx'
-		],
-		// how to run actions for this service
-		'actions' => [
-			'restart' => [
-				'mac'   => 'brew services restart nginx',
-				'linux' => '/etc/init.d/nginx reload'
-			]
+			'ubuntu' => '/etc/init.d/nginx'
 		]
 	],
 	
@@ -53,44 +45,34 @@ return [
 	 * PHP FPM
 	 */
 	'fpm'        => [
-		'path'    => storage_path('webserver/fpm/'),
-		// path to service daemon, used to verify service exists
-		// path to service daemon, used to verify service exists
-		'service' => [
-			'mac'   => '/usr/local/sbin/php70-fpm',
-			'linux' => '/etc/init.d/php7.1-fpm'
-		],
-		// how to run actions for this service
-		'actions' => [
-			'restart' => [
-				'mac'   => 'brew services restart php70',
-				'linux' => '/etc/init.d/php7.1-fpm restart'
-			]
+		'path'    => [
+			'ubuntu' => '/etc/php/7.1/fpm/pool.d/'
 		],
 		/*
 		 * base modifier for fpm pool port
 		 * @example if base is 9000, will generate pool file for website Id 5 with port 9005
 		 * @info this port is used in Nginx configurations for the PHP proxy
 		 */
-		'port'    => 9000,
+		'port'    => [
+			'ubuntu' => 9000
+		],
+		// path to service daemon, used to verify service exists
+		// path to service daemon, used to verify service exists
+		'service' => [
+			'ubuntu' => '/etc/init.d/php7.1-fpm'
+		]
 	],
 	
 	/*
      * Supervisor
      */
 	'supervisor' => [
-		'path'    => storage_path('webserver/supervisor/'),
+		'path'    => [
+			'ubuntu' => '/etc/supervisor/conf.d/'
+		],
 		'service' => [
-			'mac'   => '/usr/local/bin/supervisord',
-			'linux' => '/etc/init.d/supervisor'
-		],
-		// how to run actions for this service
-		'actions' => [
-			'restart' => [
-				'mac'   => 'brew services restart supervisor',
-				'linux' => '/etc/init.d/supervisor restart'
-			]
-		],
+			'ubuntu' => '/etc/init.d/supervisor'
+		]
 	],
 	
 	/*

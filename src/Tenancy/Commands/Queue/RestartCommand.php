@@ -19,10 +19,10 @@ class RestartCommand extends \Illuminate\Queue\Console\RestartCommand
 		foreach ($Hosts as $Host) {
 			/** @noinspection PhpUndefinedMethodInspection */
 			$this->laravel['cache']
-				->forever('illuminate:queue:restart', time());
+				->forever('illuminate:queue:reload', time());
 			
 			/** @var Host $Host */
-			$this->info(sprintf('Broadcasting queue restart signal for %s.', $Host->identifier));
+			$this->info(sprintf('Broadcasting queue reload signal for %s.', $Host->identifier));
 		}
 	}
 }
