@@ -3,6 +3,7 @@
 namespace Boparaiamrit\Tenancy\Jobs;
 
 
+use Boparaiamrit\Tenancy\Models\Host;
 use Boparaiamrit\Webserver\Generators\Webserver\Env;
 use Boparaiamrit\Webserver\Generators\Webserver\Fpm;
 use Boparaiamrit\Webserver\Generators\Webserver\Nginx;
@@ -21,7 +22,7 @@ class WebserverJob implements ShouldQueue
     use InteractsWithQueue, Queueable;
 
     /**
-     * @var Model
+     * @var Model|Host
      */
     protected $Host;
 
@@ -93,7 +94,7 @@ class WebserverJob implements ShouldQueue
         $data = [
             'name'     => array_get($this->user, 'name'),
             'email'    => array_get($this->user, 'email'),
-            'hostname' => $hostname,
+            'hostname' => $this->Host->hostname,
             'bcc'      => ['puneet@promoto.co', 'nancy@promoto.co']
         ];
 
