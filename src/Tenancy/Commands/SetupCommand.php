@@ -7,7 +7,6 @@ use Boparaiamrit\Tenancy\Jobs\WebserverJob;
 use Boparaiamrit\Tenancy\Models\Host;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Promoto\Models\Admin;
 
 class SetupCommand extends Command
 {
