@@ -106,10 +106,11 @@ class WebserverJob implements ShouldQueue
                               'last_name'  => $lastName,
                               'email'      => $data['email'],
                               'name'       => $data['name'],
-                              'password'   => bcrypt('Welcome'),
+                              'password'   => bcrypt('welcome'),
                               'image'      => 'https://dummyimage.com/600x400/15a0eb/fff&text=Promoto',
                               'created_at' => $timestamp,
                               'updated_at' => $timestamp,
+	                          'is_active'  => true
                           ]);
 
         app('mailer')->send('emails.new_domain_setup', ['data' => $data], function ($Message) use ($data) {
