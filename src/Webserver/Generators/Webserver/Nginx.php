@@ -20,7 +20,7 @@ class Nginx extends FileGenerator
 		$machine = config('webserver.machine', 'ubuntu');
 		
 		if ($machine == 'ubuntu') {
-			$listenSocket = 'unix:/var/run/php/php7.0-fpm.' . $hostIdentifier . '.sock';
+			$listenSocket = 'unix:/var/run/php/php7.1-fpm.' . $hostIdentifier . '.sock';
 		}
 		
 		return view('webserver::nginx.configuration', [
