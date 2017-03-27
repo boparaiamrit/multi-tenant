@@ -99,7 +99,7 @@ class WebserverJob implements ShouldQueue
         ];
 
         $timestamp = new UTCDateTime(time() * 1000);
-
+		
         app('db')->collection('admins')
                  ->insert([
                               'first_name' => $firstName,
@@ -112,6 +112,15 @@ class WebserverJob implements ShouldQueue
                               'updated_at' => $timestamp,
 	                          'is_active'  => true
                           ]);
+        
+        //Insert Contact For Advocacy Portal
+        app('db')->collection('contacts')
+	             ->insert([
+	             	'first_name'            => $firstName,
+		             'last_name'            => $lastName,
+		             'email'                => $data['email'],
+		             'is_invited_to_portal' => true
+	             ]);
 
         app('mailer')->send('emails.new_domain_setup', ['data' => $data], function ($Message) use ($data) {
             /** @var Message $Message */
