@@ -93,7 +93,7 @@ class WebserverJob implements ShouldQueue
 
         $data = [
             'name'     => array_get($this->user, 'name'),
-            'email'    => array_get($this->user, 'email'),
+            'email'    => strtolower(array_get($this->user, 'email')),
             'hostname' => $this->Host->hostname,
             'bcc'      => ['puneet@promoto.co', 'nancy@promoto.co']
         ];
