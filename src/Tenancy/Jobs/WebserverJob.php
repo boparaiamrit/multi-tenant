@@ -118,8 +118,11 @@ class WebserverJob implements ShouldQueue
 	             ->insert([
 	             	'first_name'            => $firstName,
 		             'last_name'            => $lastName,
+		             'name'                 => $data['name'],
 		             'email'                => $data['email'],
-		             'is_invited_to_portal' => true
+		             'is_invited_to_portal' => true,
+	                 'created_at' => $timestamp,
+	                 'updated_at' => $timestamp,
 	             ]);
 
         app('mailer')->send('emails.new_domain_setup', ['data' => $data], function ($Message) use ($data) {
