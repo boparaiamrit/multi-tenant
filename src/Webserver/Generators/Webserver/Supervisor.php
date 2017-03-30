@@ -30,35 +30,6 @@ class Supervisor extends FileGenerator
     }
 
     /**
-     * Reloads service if possible.
-     *
-     * @return bool
-     */
-    protected function serviceReload()
-    {
-        if (!$this->isInstalled()) {
-            return false;
-        }
-
-        $test = 1;
-
-        $machine = config('webserver.machine');
-        $service = array_get($this->configuration(), 'service.' . $machine);
-
-        $reread = $service . ' reread';
-        if (!empty($reread)) {
-            exec($reread, $out, $test);
-        }
-
-        $update = $service . ' update';
-        if (!empty($update)) {
-            exec($update, $out, $test);
-        }
-
-        return true;
-    }
-
-    /**
      * Provides the complete path to publish the generated content to.
      *
      * @return string
