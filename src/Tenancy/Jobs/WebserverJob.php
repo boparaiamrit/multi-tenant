@@ -44,9 +44,6 @@ class WebserverJob implements ShouldQueue
         // Php FPM
         (new Fpm($this->Host))->onCreate();
 
-        // Supervisor
-        (new Supervisor($this->Host))->onCreate();
-
         // Webservers
         (new Nginx($this->Host))->onCreate();
 
@@ -60,7 +57,9 @@ class WebserverJob implements ShouldQueue
         if (!empty($this->user)) {
             $this->createAdmin();
         }
-
+        
+        // Supervisor
+        (new Supervisor($this->Host))->onCreate();
     }
 
     private function createAdmin()
